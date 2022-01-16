@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.jie.databinding.model.Goods" />
+
+        <import type="com.jie.databinding.SecondActivity.GoodsHandler" />
+
+        <variable
+            name="goods"
+            type="com.jie.databinding.model.Goods" />
+
+        <variable
+            name="goodsHandler"
+            type="com.jie.databinding.SecondActivity.GoodsHandler" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".SecondActivity">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_goods_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@{goods.mName, default=doge}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_goods_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@{String.valueOf(goods.price), default=0.19}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_goods_name"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_goods_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@{goods.details, default=hollyshit}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_goods_name" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_change_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:onClick="@{() -> goodsHandler.changeGoodsName()}"
+            android:text="改变属性name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_goods_detail" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:onClick="@{() -> goodsHandler.changeGoodDetails()}"
+            android:text="改变属性details"
+            app:layout_constraintStart_toEndOf="@id/btn_change_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_goods_detail" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
