@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DataBindingStudy">
         <activity
+            android:name=".ObservableCollectionActivity"
+            android:exported="false" />
+        <activity
             android:name=".ObservableFieldActivity"
             android:exported="false" />
         <activity

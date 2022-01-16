@@ -50,5 +50,12 @@ public class MainActivity extends AppCompatActivity {
                 activity.startActivity(new Intent(activity, ObservableFieldActivity.class));
             }
         }
+
+        public void toObservableCollection() {
+            if (mReference != null) {
+                MainActivity activity = mReference.get();
+                activity.startActivity(new Intent(activity, ObservableCollectionActivity.class));
+            }
+        }
     }
 }
