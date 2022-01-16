@@ -10,7 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DataBindingStudy">
         <activity
-            android:name=".SecondActivity"
+            android:name=".ObservableFieldActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BaseObservableActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

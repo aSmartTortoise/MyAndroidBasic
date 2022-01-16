@@ -4,27 +4,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.Observable;
 
+import com.jie.databinding.databinding.ActivityBaseobservableBinding;
 import com.jie.databinding.model.Goods;
 
 import android.os.Bundle;
 import android.util.Log;
 
-import com.jie.databinding.databinding.ActivitySecondBinding;
 
 import java.util.Random;
 
-public class SecondActivity extends AppCompatActivity {
+public class BaseObservableActivity extends AppCompatActivity {
     private final String TAG = "SecondActivity";
     private Goods mGoods;
-    private ActivitySecondBinding mSecondBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSecondBinding = DataBindingUtil.setContentView(this, R.layout.activity_second);
+        ActivityBaseobservableBinding baseobservableBinding = DataBindingUtil.setContentView(this, R.layout.activity_baseobservable);
         mGoods = new Goods("dogecoin", "buy somethings", 0.25F);
-        mSecondBinding.setGoods(mGoods);
-        mSecondBinding.setGoodsHandler(new GoodsHandler());
+        baseobservableBinding.setGoods(mGoods);
+        baseobservableBinding.setGoodsHandler(new GoodsHandler());
         mGoods.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {

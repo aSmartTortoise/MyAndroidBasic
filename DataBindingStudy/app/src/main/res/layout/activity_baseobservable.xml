@@ -7,7 +7,7 @@
 
         <import type="com.jie.databinding.model.Goods" />
 
-        <import type="com.jie.databinding.SecondActivity.GoodsHandler" />
+        <import type="com.jie.databinding.BaseObservableActivity" />
 
         <variable
             name="goods"
@@ -15,14 +15,14 @@
 
         <variable
             name="goodsHandler"
-            type="com.jie.databinding.SecondActivity.GoodsHandler" />
+            type="com.jie.databinding.BaseObservableActivity.GoodsHandler" />
     </data>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".SecondActivity">
+        tools:context=".BaseObservableActivity">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_goods_name"
