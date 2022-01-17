@@ -16,7 +16,15 @@ import java.lang.ref.WeakReference;
  *
  *  1 单向数据绑定
  *      实现数据变化自动驱动UI刷新的方式有：BaseObservable、ObservableField、ObservableCollection。
- *
+ *  2 双向绑定
+ *      当数据改变时驱动UI刷新，当UI改变时候，驱动数据改变。
+ *  3 事件绑定
+ *      事件绑定也是一种变量绑定，只不过设置的变量是回调接口而已，事件绑定可以用于以下多种回调
+ *  事件：
+ *      android:onClick
+ *      android:onLongClick
+ *      android:afterTextChanged
+ *      android:onTextChanged
  */
 public class MainActivity extends AppCompatActivity {
     private User mUser;
@@ -61,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
             if (mReference != null) {
                 MainActivity activity = mReference.get();
                 activity.startActivity(new Intent(activity, BothWayBindingActivity.class));
+            }
+        }
+
+        public void toEventBinding() {
+            if (mReference != null) {
+                MainActivity activity = mReference.get();
+                activity.startActivity(new Intent(activity, EventBindingActivity.class));
             }
         }
     }

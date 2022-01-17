@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.jie.databinding.model.User" />
+
+        <import type="com.jie.databinding.EventBindingActivity.UserPresenter" />
+
+        <variable
+            name="userInfo"
+            type="User" />
+
+        <variable
+            name="userPresenter"
+            type="UserPresenter" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/btn_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:onClick="@{() -> userPresenter.onUserNameClick(userInfo)}"
+            android:text="@{userInfo.name, default=Jacie}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_user_pwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="@{userInfo.pwd, default=123456}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_user_name" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edt_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:afterTextChanged="@{userPresenter.afterTextChanged}"
+            android:hint="用户名"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            app:layout_constraintTop_toBottomOf="@id/btn_user_pwd" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edt_user_pwd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:afterTextChanged="@{userPresenter.afterUserPwdChanged}"
+            android:hint="密码"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            app:layout_constraintTop_toBottomOf="@id/edt_user_name" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

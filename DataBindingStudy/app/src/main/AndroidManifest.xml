@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DataBindingStudy">
         <activity
+            android:name=".EventBindingActivity"
+            android:exported="false" />
+        <activity
             android:name=".BothWayBindingActivity"
             android:exported="false" />
         <activity
