@@ -5,7 +5,6 @@ import androidx.databinding.DataBindingUtil;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.jie.databinding.databinding.ActivityMainBinding;
 import com.jie.databinding.model.User;
@@ -55,6 +54,13 @@ public class MainActivity extends AppCompatActivity {
             if (mReference != null) {
                 MainActivity activity = mReference.get();
                 activity.startActivity(new Intent(activity, ObservableCollectionActivity.class));
+            }
+        }
+
+        public void toBothWayBinding() {
+            if (mReference != null) {
+                MainActivity activity = mReference.get();
+                activity.startActivity(new Intent(activity, BothWayBindingActivity.class));
             }
         }
     }

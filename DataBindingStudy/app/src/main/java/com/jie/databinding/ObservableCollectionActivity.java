@@ -21,6 +21,7 @@ public class ObservableCollectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityObservableCollectionBinding collectionBinding = DataBindingUtil.setContentView(this, R.layout.activity_observable_collection);
+        setTitle("ObservableCollection");
         map = new ObservableArrayMap<>();
         map.put("name", "frankie");
         map.put("age", "34");

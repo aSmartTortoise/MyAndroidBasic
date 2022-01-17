@@ -19,6 +19,7 @@ public class ObservableFieldActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityObservableFieldBinding fieldBinding = DataBindingUtil.setContentView(this, R.layout.activity_observable_field);
+        setTitle("ObservableField");
         mGoods = new ObservableGoods("dogeCoin", "wa, wonderfull coin", 0.15F);
         fieldBinding.setGoods(mGoods);
         fieldBinding.setDataHandler(new DataHandler(this));

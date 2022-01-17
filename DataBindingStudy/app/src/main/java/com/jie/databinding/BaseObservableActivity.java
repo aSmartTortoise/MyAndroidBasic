@@ -21,6 +21,7 @@ public class BaseObservableActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityBaseobservableBinding baseobservableBinding = DataBindingUtil.setContentView(this, R.layout.activity_baseobservable);
+        setTitle("BaseObservable");
         mGoods = new Goods("dogecoin", "buy somethings", 0.25F);
         baseobservableBinding.setGoods(mGoods);
         baseobservableBinding.setGoodsHandler(new GoodsHandler());
