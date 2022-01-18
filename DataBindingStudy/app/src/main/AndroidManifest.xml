@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DataBindingStudy">
         <activity
+            android:name=".InclueViewStubActivity"
+            android:exported="false" />
+        <activity
+            android:name=".OperatorActivity"
+            android:exported="false" />
+        <activity
             android:name=".ClassMethodActivity"
             android:exported="false" />
         <activity

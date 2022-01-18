@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.jie.databinding.model.User" />
+
+        <import type="com.jie.databinding.InclueViewStubActivity.Presenter" />
+
+        <variable
+            name="useInfo"
+            type="User" />
+
+        <variable
+            name="presenter"
+            type="Presenter" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_show"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="@{presenter::onClick}"
+            android:padding="10dp"
+            android:text="显示" />
+
+        <include
+            layout="@layout/view_include"
+            bind:userInfo="@{useInfo}" />
+
+        <ViewStub
+            android:layout_marginTop="10dp"
+            android:id="@+id/view_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout="@layout/view_stub"
+            bind:userInfo="@{useInfo}"/>
+
+    </LinearLayout>
+</layout>

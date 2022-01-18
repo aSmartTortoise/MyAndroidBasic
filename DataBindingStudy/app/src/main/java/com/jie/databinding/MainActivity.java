@@ -85,5 +85,19 @@ public class MainActivity extends AppCompatActivity {
                 activity.startActivity(new Intent(activity, ClassMethodActivity.class));
             }
         }
+
+        public void toOperator() {
+            if (mReference != null) {
+                MainActivity activity = mReference.get();
+                activity.startActivity(new Intent(activity, OperatorActivity.class));
+            }
+        }
+
+        public void toIncludeViewStub() {
+            if (mReference != null) {
+                MainActivity activity = mReference.get();
+                activity.startActivity(new Intent(activity, InclueViewStubActivity.class));
+            }
+        }
     }
 }
