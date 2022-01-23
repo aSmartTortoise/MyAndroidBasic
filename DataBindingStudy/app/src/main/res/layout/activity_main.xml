@@ -118,11 +118,12 @@
             android:layout_marginTop="10dp"
             android:onClick="@{() -> dataHandler.toOperator()}"
             android:text="study operator"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_class_method" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginStart="10dp"
             android:id="@+id/btn_inclue_viewstub"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -144,15 +145,26 @@
             app:layout_constraintTop_toBottomOf="@id/btn_operator" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_binding_adapter"
+            android:id="@+id/btn_binding_adapter_conversion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:onClick="@{() -> dataHandler.toBindingAdapter()}"
-            android:text="study bindingAdapter"
+            android:text="study bindingAdapter Conversion"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_inclue_viewstub" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_collection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:onClick="@{() -> dataHandler.toCollection()}"
+            android:text="study collection"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_binding_adapter_conversion" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

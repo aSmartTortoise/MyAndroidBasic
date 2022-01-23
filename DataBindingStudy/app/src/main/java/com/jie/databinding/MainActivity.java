@@ -30,6 +30,12 @@ import java.lang.ref.WeakReference;
  *  比如 android:src、android:text等，也可以自定义属性，在xml中使用。
  *  5 BindingConversion
  *      注解@BindingConversion可以将xml 空间属性的数据类型转换为其他数据类型。
+ *  6 Array、List、Set、Map...
+ *      DataBinding支持在布局文件中使用Array、List、Set、Map...，且在布局文件中都可以使用list[index]
+ *  的形式来获取元素。
+ *      为了和标签Variable的尖括号区分开，在声明List<String>之类的数据类型时，需要使用尖括号的转移字符。
+ *      左尖括号 <   ---> &lt;
+ *      右尖括号 >   ---> &gt;
  */
 public class MainActivity extends AppCompatActivity {
     private User mUser;
@@ -116,6 +122,13 @@ public class MainActivity extends AppCompatActivity {
             if (mReference != null) {
                 MainActivity activity = mReference.get();
                 activity.startActivity(new Intent(activity, BindingAdapterConversionActivity.class));
+            }
+        }
+
+        public void toCollection() {
+            if (mReference != null) {
+                MainActivity activity = mReference.get();
+                activity.startActivity(new Intent(activity, CollectionActivity.class));
             }
         }
     }
