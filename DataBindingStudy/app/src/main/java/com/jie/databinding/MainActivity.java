@@ -25,6 +25,11 @@ import java.lang.ref.WeakReference;
  *      android:onLongClick
  *      android:afterTextChanged
  *      android:onTextChanged
+ *  4 BindingAdapter
+ *      DataBinding提供了注解@BindingAdapter支持自定义属性或者修改原生属性。注解值可以是已有的xml属性，
+ *  比如 android:src、android:text等，也可以自定义属性，在xml中使用。
+ *  5 BindingConversion
+ *      注解@BindingConversion可以将xml 空间属性的数据类型转换为其他数据类型。
  */
 public class MainActivity extends AppCompatActivity {
     private User mUser;
@@ -104,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
             if (mReference != null) {
                 MainActivity activity = mReference.get();
                 activity.startActivity(new Intent(activity, ViewStubActivity2.class));
+            }
+        }
+
+        public void toBindingAdapter() {
+            if (mReference != null) {
+                MainActivity activity = mReference.get();
+                activity.startActivity(new Intent(activity, BindingAdapterConversionActivity.class));
             }
         }
     }
