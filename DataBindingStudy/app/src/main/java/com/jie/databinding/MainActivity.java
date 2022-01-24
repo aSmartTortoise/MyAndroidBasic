@@ -131,5 +131,12 @@ public class MainActivity extends AppCompatActivity {
                 activity.startActivity(new Intent(activity, CollectionActivity.class));
             }
         }
+
+        public void toRecyclerView() {
+            if (mReference != null) {
+                MainActivity activity = mReference.get();
+                activity.startActivity(new Intent(activity, RecyclerActivity.class));
+            }
+        }
     }
 }
