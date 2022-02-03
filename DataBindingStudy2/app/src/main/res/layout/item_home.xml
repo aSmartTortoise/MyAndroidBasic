@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="bean"
+            type="String" />
+
+        <variable
+            name="position"
+            type="int" />
+
+        <variable
+            name="itemClickListener"
+            type="com.jie.databinding.interf.ItemClickListener" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:background="#22000000"
+            android:id="@+id/tv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:onClick="@{(v) -> itemClickListener.onItemClick(v, position, bean)}"
+            android:textColor="#aaff0000"
+            android:textSize="18sp" />
+    </LinearLayout>
+</layout>
