@@ -1,5 +1,6 @@
 package com.jie.databinding.ui.activity
 
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,6 +34,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         btn.setOnClickListener {
             Log.d("刷新", "initBinding: wyj 再次设置数据")
             mHomeAdapter.setData(listOf("c","d","e","f"))
+        }
+
+        btnMultiType.setOnClickListener {
+            Intent(this@MainActivity, MultiTypeActivity::class.java).run {
+                startActivity(this)
+            }
         }
     }
 }
