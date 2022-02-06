@@ -24,12 +24,16 @@ import kotlin.Function as Function1001
  *  postValue方法没有限制。
  *  如果想在LiveData对象分发给观察者之前，修改其中的数据，可以使用Transformations.map()方法和
  *  Transformations.switchMap().
- *  
+ *
  */
 class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "MainActivity"
     }
+
+    lateinit var mLiveData1: MutableLiveData<String>
+    lateinit var mLiveData2: MutableLiveData<String>
+    lateinit var mLiveData3: MutableLiveData<Boolean>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,5 +58,29 @@ class MainActivity : AppCompatActivity() {
 
         liveData.postValue("Android Jetpack architecture component: LiveData")
 
+        // Transformations.switchMap
+        mLiveData1 = MutableLiveData()
+        mLiveData2 = MutableLiveData()
+        mLiveData3 = MutableLiveData()
+        val switchMapLiveData =
+            Transformations.switchMap(mLiveData3, object : Function<Boolean, LiveData<String>> {
+                override fun apply(input: Boolean?): LiveData<String> {
+                    input?.let {
+                        if (it) {
+                            return mLiveData1
+                        } else return mLiveData2
+                    } ?: return mLiveData1
+                }
+
+            })
+        switchMapLiveData.observe(this, object : Observer<String> {
+            override fun onChanged(t: String?) {
+                Log.d(TAG, "onChanged: wyj t:$t")
+            }
+
+        })
+        mLiveData3.postValue(false)
+        mLiveData1.postValue("Android Jetpack architecture component: LiveData 1")
+        mLiveData2.postValue("Android Jetpack architecture component: LiveData 2")
     }
 }
