@@ -1,5 +1,5 @@
 to study list
-	1 Android lifecycle
-	https://www.jianshu.com/p/722a9e899c95
-	http://liuwangshu.cn/application/jetpack/2-lifecycle-use.html
+	
 	2 UML类图，《大话设计模式》
+	3 LiveData
+	http://liuwangshu.cn/application/jetpack/4-livedata-use.html
