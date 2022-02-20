@@ -1,8 +1,10 @@
 package com.jie.viewmodel
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +17,15 @@ import androidx.lifecycle.ViewModelProvider
  *  1 ViewModel的生命周期
  *      当旋转屏幕的时候，Activity会被销毁并重新创建，但是ViewModel的声明周期不会变化。
  *  2 ViewModel的初始化
+ *
+ *  3 ViewModel概览
+ *      ViewModel以感知生命周期的方式存储和管理界面数据，它可以使得数据在界面配置发生变化的时候
+ *  得以留存。
+ *      当Activity/Fragment被系统销毁的时候，就要重新创建Activity/Fragment，这时候就涉及到了数据
+ *      保存和恢复。通常使用onSaveInstanceState和onRestoreSaveState来处理数据的保存与恢复。但是
+ *  这两个方法只能处理数据较小，且数据是序列化的情况。当遇到数据较大，需要用到ViewModel，另外ViewModel
+ *  可以将业务逻辑从Activity/Fragment中分离出来。
+ *
  *
  *
  *
@@ -35,6 +46,12 @@ class MainActivity : AppCompatActivity() {
 
         })
         initViewModel()
+
+        findViewById<Button>(R.id.btn_view_model_share).setOnClickListener { v ->
+            Intent(this@MainActivity, ViewModleShareActivity::class.java).run {
+                startActivity(this)
+            }
+        }
     }
 
     private fun initViewModel() {
@@ -67,6 +84,13 @@ class MainActivity : AppCompatActivity() {
             CustomSimpleViewModelFactory(application, "自定义简单ViewModel 工厂，获取ViewModel实例")
         ).get(CustomSimpleViewModel::class.java)
         customSimpleViewModel.print()
+
+        val simpleViewModel2 = ViewModelProvider(this).get(CustomSimpleViewModel::class.java)
+        Log.d(
+            TAG, "initViewModel: wyj ViewModelProvider一个参数的构造方法，获取ViewModelProvider的实例" +
+                    "， 进而获取ViewModel的实例"
+        )
+        simpleViewModel2.print()
 
         // 5 google官方提供了activity-ktx库，使用它，我们可以利用委托机制获取ViewModel的实例。
         val enTrustViewModel: EnTrustViewModel by viewModels<EnTrustViewModel> {
