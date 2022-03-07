@@ -6,11 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.jie.databinding.extention.getViewBinding
+import com.jie.viewmodel2.request.ViewModelUtils
 
-abstract class BaseFragment<VB : ViewDataBinding> : Fragment(), BaseBinding<VB> {
+abstract class BaseFragment<VB : ViewDataBinding, VM : ViewModel>(
+    private val mShareViewModel: Boolean = false,
+    private val mFactory: ViewModelProvider.Factory? = null
+) : Fragment(), BaseBinding<VB> {
     protected lateinit var mBinding: VB
         private set
+    protected lateinit var mViewModel: VM
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -18,6 +25,8 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment(), BaseBinding<VB> 
         savedInstanceState: Bundle?
     ): View? {
         mBinding = getViewBinding(inflater, container)
+        mViewModel = if (mShareViewModel) ViewModelUtils.createActivityViewModel(this, mFactory, 1)
+        else ViewModelUtils.createViewModel(this, mFactory, 1)
         return mBinding.root
     }
 
