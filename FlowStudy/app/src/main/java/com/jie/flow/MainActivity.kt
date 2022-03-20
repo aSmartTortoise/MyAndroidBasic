@@ -5,12 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import kotlin.coroutines.coroutineContext
 
 /**
  *  flow学习
@@ -36,7 +33,52 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
 //            flowBuildStudy()
 //            asFlowBuildStudy()
-            flowOfBuildStudy()
+//            flowOfBuildStudy()
+//            flowBuildStudy02()
+            flowOnStudy()
+
+        }
+    }
+
+    /**
+     *  flowOn可以将流的上下文改成指定的上下文。
+     *  flowOn可以进行组合使用。
+     *  flowOn只影响前面没有上下文的操作符。已经有上下文的操作符不会受到后面flowOn的影响。
+     *  无论flowOn如何切换线程，collect代码块始终运行在协程调度器所关联的线程上。
+     */
+    private suspend fun flowOnStudy() {
+        flow<Int> {
+            for (i in 1..3) {
+                Log.d(TAG, "flowOnStudy: wyj flow context:${currentCoroutineContext()}")
+                delay(100L)
+                emit(i)
+            }
+        }.flowOn(Dispatchers.IO)
+            .map {
+                Log.d(TAG, "flowOnStudy: wyj map context:${currentCoroutineContext()}")
+                it * 2
+            }
+            .flowOn(Dispatchers.Default)
+            .collect { value ->
+            Log.d(TAG,
+                "flowOnStudy: wyj collect context:${currentCoroutineContext()}, value:$value")
+        }
+    }
+
+    /**
+     *  lifecycleScope launch的协程是在主线程上执行的。
+     */
+    private suspend fun flowBuildStudy02() {
+        flow<Int> {
+            for (i in 1..3) {
+                Log.d(TAG, "flowBuildStudy02: wyj context:${currentCoroutineContext()}")
+                delay(100L)
+                emit(i)
+            }
+        }.collect { value ->
+            Log.d(TAG,
+                "flowBuildStudy02: wyj context:${currentCoroutineContext()} value:$value"
+            )
         }
     }
 
@@ -57,6 +99,7 @@ class MainActivity : AppCompatActivity() {
     /**
      *  通过扩展函数flow构建一个冷数据流Flow，通过emit函数来发射数据，通过collect函数来收集这些
      *  数据，因为collect函数是挂起函数，所以需要在协程中操作。
+     *  Flow没有提供取消的操作，Flow的取消可以依赖协程的取消，
      */
     private suspend fun flowBuildStudy() {
         flow<Int> {
@@ -72,5 +115,10 @@ class MainActivity : AppCompatActivity() {
             Thread.sleep(100L)
             yield(i)
         }
+    }
+
+    override fun onDestroy() {
+        lifecycleScope.cancel()
+        super.onDestroy()
     }
 }
