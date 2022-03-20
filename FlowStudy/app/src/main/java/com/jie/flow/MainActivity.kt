@@ -129,8 +129,52 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
 //            startEachCompletionOperator()
 //            flowExceptionStudy()
-            flowCatchStudy()
+//            flowCatchStudy()
+//            transformOperatorStudy()
+//            mapOperatorStudy()
+//            filterOperatorStudy()
+            zipOperatorStudy()
         }
+    }
+
+    private suspend fun zipOperatorStudy() {
+        val flow1 = (0..3).asFlow()
+        val flow2 = flowOf("zero", "one", "two")
+        flow1.zip(flow2) { value1, value2 ->
+            "[$value1:$value2]"
+        }.collect { Log.d(TAG, "operatorStudy: wyj value:$it") }
+    }
+
+    /**
+     *  filterNot与filter相反，它取得是不满足条件的值
+     */
+    private suspend fun filterOperatorStudy() {
+        (1..5).asFlow().filter {
+            it % 2 == 0
+        }.collect {
+            Log.d(TAG, "filterOperatorStudy: wyj it:$it")
+        }
+    }
+
+    private suspend fun mapOperatorStudy() {
+        flow<Int> {
+            emit(1)
+        }.map {
+            Log.d(TAG, "operatorStudy: map 第一次map转换")
+            it * 5
+        }.map {
+            Log.d(TAG, "operatorStudy: wyj 第一次map转换后的值$it")
+            Log.d(TAG, "operatorStudy: wyj 第二次map转换")
+            "map $it"
+        }.collect {
+            Log.d(TAG, "operatorStudy: wyj 最后的值$it")
+        }
+    }
+
+    private suspend fun transformOperatorStudy() {
+        (1..3).asFlow().transform { value ->
+            emit("transform $value")
+        }.collect { value -> Log.d(TAG, "operatorStudy: wyj collect value:$value") }
     }
 
     /**
@@ -154,7 +198,7 @@ class MainActivity : AppCompatActivity() {
             it * 2
             throw NullPointerException("新的空指针")
         }.onCompletion { cause ->
-                Log.d(TAG, "flowCatchStudy: wyj onCompletion cause:$cause")
+            Log.d(TAG, "flowCatchStudy: wyj onCompletion cause:$cause")
         }.collect { value -> Log.d(TAG, "flowCatchStudy: wyj collect value:$value") }
     }
 
