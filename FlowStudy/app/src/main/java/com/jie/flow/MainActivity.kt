@@ -133,8 +133,36 @@ class MainActivity : AppCompatActivity() {
 //            transformOperatorStudy()
 //            mapOperatorStudy()
 //            filterOperatorStudy()
-            zipOperatorStudy()
+//            zipOperatorStudy()
+//            takeOperatorStudy()
+//            takeWhileOperatorStudy()
+            dropOperatorStudy()
         }
+    }
+
+    /**
+     *  drop操作符原始流中忽略前count个元素，剩下的元素组成新的流返回
+     */
+    private suspend fun dropOperatorStudy() {
+        flowOf(0, 1, 2, 3, 5).drop(3).collect { Log.d(TAG, "dropOperatorStudy: wyj value:$it") }
+    }
+
+    /**
+     * 从流中的第一个元素开始根据指定的条件检查，如果元素不符合指定的条件则取消
+     */
+    private suspend fun takeWhileOperatorStudy() {
+        flowOf(1, 2, 3, 2, 1, 4, 2).takeWhile { it <= 3 }.onCompletion { cause ->
+            Log.d(TAG, "takeWhileOperatorStudy: wy cause:$cause")
+        }.collect {
+            Log.d(TAG, "operatorStudy: wyj value:$it")
+        }
+    }
+
+    /**
+     *  take操作符，返回原始流中第一批count个元素组成的流
+     */
+    private suspend fun takeOperatorStudy() {
+        (1..3).asFlow().take(2).collect { Log.d(TAG, "takeOperatorStudy: wyj it:$it") }
     }
 
     private suspend fun zipOperatorStudy() {
