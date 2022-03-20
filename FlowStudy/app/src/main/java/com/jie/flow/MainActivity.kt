@@ -7,6 +7,7 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.lang.NullPointerException
 import kotlin.coroutines.coroutineContext
 
 /**
@@ -23,6 +24,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         findViewById<View>(R.id.btn_sequence).setOnClickListener {
             test()
+        }
+
+        findViewById<View>(R.id.btn_flow_operator).setOnClickListener {
+            operatorStudy()
         }
 
     }
@@ -60,9 +65,11 @@ class MainActivity : AppCompatActivity() {
             }
             .flowOn(Dispatchers.Default)
             .collect { value ->
-            Log.d(TAG,
-                "flowOnStudy: wyj collect context:${currentCoroutineContext()}, value:$value")
-        }
+                Log.d(
+                    TAG,
+                    "flowOnStudy: wyj collect context:${currentCoroutineContext()}, value:$value"
+                )
+            }
     }
 
     /**
@@ -76,7 +83,8 @@ class MainActivity : AppCompatActivity() {
                 emit(i)
             }
         }.collect { value ->
-            Log.d(TAG,
+            Log.d(
+                TAG,
                 "flowBuildStudy02: wyj context:${currentCoroutineContext()} value:$value"
             )
         }
@@ -115,6 +123,70 @@ class MainActivity : AppCompatActivity() {
             Thread.sleep(100L)
             yield(i)
         }
+    }
+
+    private fun operatorStudy() {
+        lifecycleScope.launch {
+//            startEachCompletionOperator()
+//            flowExceptionStudy()
+            flowCatchStudy()
+        }
+    }
+
+    /**
+     *  catch操作符只能捕获上游流的异常，onCompletion中没有捕获到异常。
+     *  如果该操作符下游的流出现异常时捕获不到的。但是如果异常出现在onCollect末端流操作符中，那么只能使用
+     *  try/catch获取协程上下文的CoroutineExceptionHandler进行处理，否则会crash。
+     */
+    private suspend fun flowCatchStudy() {
+        flow<Int> {
+            Log.d(TAG, "flowCatchStudy: wyj flow emit")
+            emit(1)
+        }.onStart {
+            Log.d(TAG, "flowCatchStudy: wyj onStart")
+        }.onEach {
+            Log.d(TAG, "flowCatchStudy: wyj onEach")
+            throw NullPointerException("空指针")
+        }.catch { cause ->
+            Log.d(TAG, "flowCatchStudy: wyj cause:$cause")
+            emit(2)
+        }.map {
+            it * 2
+            throw NullPointerException("新的空指针")
+        }.onCompletion { cause ->
+                Log.d(TAG, "flowCatchStudy: wyj onCompletion cause:$cause")
+        }.collect { value -> Log.d(TAG, "flowCatchStudy: wyj collect value:$value") }
+    }
+
+    private suspend fun flowExceptionStudy() {
+        flow<Int> {
+            Log.d(TAG, "flowExceptionStudy: wyj flow emit")
+            emit(1)
+        }.onStart {
+            Log.d(TAG, "flowExceptionStudy: wyj onStart")
+        }.onEach {
+            Log.d(TAG, "flowExceptionStudy: wyj onEach")
+            throw NullPointerException("空指针")
+        }.onCompletion { cause ->
+            Log.d(TAG, "flowExceptionStudy: wyj onCompletion cause:$cause")
+        }.collect { value -> Log.d(TAG, "flowExceptionStudy: wyj collect value:$value") }
+    }
+
+    /**
+     *  onStart、onEach、onCompletion操作符，
+     *  执行顺序是onStart、flow emit、onEach、collect、onCompletion
+     */
+    private suspend fun startEachCompletionOperator() {
+        flow<Int> {
+            Log.d(TAG, "startEachCompletionOperator: wyj flow emit")
+            emit(1)
+        }.onStart {
+            Log.d(TAG, "startEachCompletionOperator: wyj start")
+        }.onEach {
+            Log.d(TAG, "startEachCompletionOperator: wyj each")
+        }.onCompletion {
+            Log.d(TAG, "startEachCompletionOperator: wyj completion")
+        }.collect { value -> Log.d(TAG, "startEachCompletionOperator: wyj collect value:$value") }
     }
 
     override fun onDestroy() {
