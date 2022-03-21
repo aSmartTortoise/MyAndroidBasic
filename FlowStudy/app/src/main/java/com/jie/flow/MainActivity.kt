@@ -9,6 +9,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.lang.NullPointerException
 import kotlin.coroutines.coroutineContext
+import kotlin.system.measureTimeMillis
 
 /**
  *  flow学习
@@ -28,6 +29,10 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btn_flow_operator).setOnClickListener {
             operatorStudy()
+        }
+
+        findViewById<View>(R.id.btn_flow_buffer).setOnClickListener {
+            bufferStudy()
         }
 
     }
@@ -259,6 +264,49 @@ class MainActivity : AppCompatActivity() {
         }.onCompletion {
             Log.d(TAG, "startEachCompletionOperator: wyj completion")
         }.collect { value -> Log.d(TAG, "startEachCompletionOperator: wyj collect value:$value") }
+    }
+
+    private fun bufferStudy() {
+        lifecycleScope.launch {
+//            measureFlowTime()
+            measureFlowBufferTime()
+        }
+    }
+
+    /**
+     *  花费的时间为等待发射第一个数字等待的100MS+ 搜集每个元素等待的300MS
+     */
+    private suspend fun measureFlowBufferTime() {
+        val time = measureTimeMillis {
+            flow<Int> {
+                for (i in 1..3) {
+                    delay(100L)
+                    emit(i)
+                }
+            }.buffer().collect { value ->
+                delay(300L)
+                Log.d(TAG, "measureFlowBufferTime: wyj value:$value")
+            }
+        }
+        Log.d(TAG, "measureFlowBufferTime: wyj time:$time")
+    }
+
+    /**
+     *  花费的时间为等待发射每个数字等待的100MS+ 搜集每个元素等待的300MS
+     */
+    private suspend fun measureFlowTime() {
+        val time = measureTimeMillis {
+            flow<Int> {
+                for (i in 1..3) {
+                    delay(100L)
+                    emit(i)
+                }
+            }.collect { value ->
+                delay(300L)
+                Log.d(TAG, "measureFlowTime: wyj value:$value")
+            }
+        }
+        Log.d(TAG, "measureFlowTime: wyj time:$time")
     }
 
     override fun onDestroy() {

@@ -28,4 +28,15 @@
         app:layout_constraintLeft_toRightOf="@id/btn_sequence"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btn_flow_buffer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:text="缓冲"
+        app:layout_constraintLeft_toRightOf="@id/btn_flow_operator"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
