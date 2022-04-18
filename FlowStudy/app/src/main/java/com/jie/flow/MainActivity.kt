@@ -6,14 +6,19 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import java.lang.NullPointerException
-import kotlin.coroutines.coroutineContext
+import java.text.BreakIterator
 import kotlin.system.measureTimeMillis
 
 /**
  *  flow学习
- *  https://juejin.cn/post/7034381227025465375/#heading-4
+ *  1 https://juejin.cn/post/7034381227025465375/#heading-4
+ *  2 https://juejin.cn/post/7046155761948295175/
+ *  Flow每次收集完后就会销毁。后续也不能发射新的值到流中。
+ *  2.1 Channel通道
+ *      Channel是个热数据流。
  */
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -33,6 +38,12 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btn_flow_buffer).setOnClickListener {
             bufferStudy()
+        }
+
+        findViewById<View>(R.id.btn_channel01).setOnClickListener {
+//            channelStudy01()
+//            channelStudy02()
+            channelStudy03()
         }
 
     }
@@ -307,6 +318,86 @@ class MainActivity : AppCompatActivity() {
             }
         }
         Log.d(TAG, "measureFlowTime: wyj time:$time")
+    }
+
+    /**
+     *  channel提供了一种在流中传输值的方法。我们在使用Channel的时候，发送和接收运行在不同的协程中。
+     */
+    private fun channelStudy01() {
+        lifecycleScope.launch {
+            val channel = Channel<Int>()
+            launch {
+                for (x in 1..5) channel.send(x)
+            }
+            launch {
+                delay(1000L)
+                channel.send(666)
+                channel.send(999)
+            }
+
+            repeat(Int.MAX_VALUE) {
+                Log.d(TAG, "channelStudy01: wyj receive:${channel.receive()}")
+            }
+
+            Log.d(TAG, "channelStudy01: wyj done")
+        }
+    }
+
+    /**
+     *  Channel关闭之后，继续调用receive方法，导致协程异常结束。
+     */
+    private fun channelStudy02() {
+        lifecycleScope.launch {
+            val channel = Channel<Int>()
+            launch {
+                for (x in 1..5) channel.send(x)
+                channel.close()
+            }
+            launch {
+                delay(1000L)
+                channel.send(666)
+                channel.send(999)
+            }
+
+            repeat(Int.MAX_VALUE) {
+                Log.d(TAG, "channelStudy02: wyj receive:${channel.receive()}")
+            }
+
+            Log.d(TAG, "channelStudy02: wyj done")
+        }
+    }
+
+    /**
+     *  通过判断isClosedForSend 来控制是否send和receive来规避异常。
+     */
+    @ExperimentalCoroutinesApi
+    private fun channelStudy03() {
+        lifecycleScope.launch {
+            val channel = Channel<Int>()
+            launch {
+                if (!channel.isClosedForSend) {
+                    for (x in 1..5) channel.send(x)
+                    channel.close()
+                }
+            }
+            launch {
+                delay(1000L)
+                if (!channel.isClosedForSend) {
+                    channel.send(666)
+                    channel.send(999)
+                }
+            }
+
+            while(true) {
+                if (!channel.isClosedForSend) {
+                    Log.d(TAG, "channelStudy03: wyj receive:${channel.receive()}")
+                } else {
+                    break
+                }
+            }
+
+            Log.d(TAG, "channelStudy03: wyj done")
+        }
     }
 
     override fun onDestroy() {
