@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.lang.RuntimeException
 
-class HotFlowStudyActivity : AppCompatActivity() {
+class StateFlowStudyActivity : AppCompatActivity() {
     companion object {
         const val TAG = "HotFlowStudyActivity"
     }
@@ -37,7 +37,7 @@ class HotFlowStudyActivity : AppCompatActivity() {
                 Log.d(TAG, "onCreate: wyj name:$it")
             }
         }
-        viewModel.download()
+        viewModel.downloadByStateFlow()
     }
 
     override fun onDestroy() {

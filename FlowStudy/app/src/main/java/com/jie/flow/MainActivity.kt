@@ -12,7 +12,6 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.*
 import java.lang.NullPointerException
-import java.text.BreakIterator
 import kotlin.system.measureTimeMillis
 
 /**
@@ -53,11 +52,19 @@ class MainActivity : AppCompatActivity() {
             produceStudy()
         }
 
-        findViewById<View>(R.id.btn_hot_flow).setOnClickListener {
-            Intent(this@MainActivity, HotFlowStudyActivity::class.java).apply {
+        findViewById<View>(R.id.btn_state_flow).setOnClickListener {
+            Intent(this@MainActivity, StateFlowStudyActivity::class.java).apply {
                 this@MainActivity.startActivity(this)
             }
         }
+
+        findViewById<View>(R.id.btn_share_flow).setOnClickListener {
+            Intent(this@MainActivity, SharedFlowActivity::class.java).apply {
+                this@MainActivity.startActivity(this)
+            }
+        }
+
+
     }
 
     private fun test() {

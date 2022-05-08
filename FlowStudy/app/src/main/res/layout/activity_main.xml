@@ -58,11 +58,20 @@
         app:layout_constraintStart_toEndOf="@id/btn_channel01" />
 
     <Button
-        android:id="@+id/btn_hot_flow"
+        android:id="@+id/btn_state_flow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="hot flow study"
+        android:text="StateFlow study"
         app:layout_constraintStart_toStartOf="@id/btn_channel01"
         app:layout_constraintTop_toBottomOf="@id/btn_channel01" />
+
+    <Button
+        android:layout_marginStart="10dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_state_flow"
+        app:layout_constraintStart_toEndOf="@id/btn_state_flow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_share_flow"
+        android:text="SharedFlowS tudy"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
