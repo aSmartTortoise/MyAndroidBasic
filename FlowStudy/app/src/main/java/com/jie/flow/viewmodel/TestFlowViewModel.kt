@@ -12,12 +12,15 @@ class TestFlowViewModel : ViewModel() {
     private val _state: MutableStateFlow<Int> = MutableStateFlow(0)
     val mState: StateFlow<Int>
         get() = _state
+    private val _name: MutableStateFlow<String> = MutableStateFlow("第二个StateFlow")
+    val mName: MutableStateFlow<String>
+        get() = _name
 
     fun download() {
-        for (state in 0..5) {
+        for (element in 0..5) {
             viewModelScope.launch(Dispatchers.IO) {
-                delay(200L * state)
-                _state.value = state
+                delay(200L * element)
+                _state.value = element
             }
         }
     }
