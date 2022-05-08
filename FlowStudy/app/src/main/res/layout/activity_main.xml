@@ -41,11 +41,28 @@
 
     <Button
         android:id="@+id/btn_channel01"
-        android:text="channel01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/btn_sequence"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/btn_sequence"/>
+        android:text="channel01"
+        app:layout_constraintStart_toStartOf="@id/btn_sequence"
+        app:layout_constraintTop_toBottomOf="@id/btn_sequence" />
 
+    <Button
+        android:id="@+id/btn_produce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="produce"
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_channel01"
+        app:layout_constraintStart_toEndOf="@id/btn_channel01" />
+
+    <Button
+        android:id="@+id/btn_hot_flow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="hot flow study"
+        app:layout_constraintStart_toStartOf="@id/btn_channel01"
+        app:layout_constraintTop_toBottomOf="@id/btn_channel01" />
 </androidx.constraintlayout.widget.ConstraintLayout>

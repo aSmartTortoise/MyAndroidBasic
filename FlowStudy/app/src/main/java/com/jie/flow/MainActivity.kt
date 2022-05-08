@@ -1,5 +1,6 @@
 package com.jie.flow
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,8 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.*
 import java.lang.NullPointerException
 import java.text.BreakIterator
@@ -46,6 +49,15 @@ class MainActivity : AppCompatActivity() {
             channelStudy03()
         }
 
+        findViewById<View>(R.id.btn_produce).setOnClickListener {
+            produceStudy()
+        }
+
+        findViewById<View>(R.id.btn_hot_flow).setOnClickListener {
+            Intent(this@MainActivity, HotFlowStudyActivity::class.java).apply {
+                this@MainActivity.startActivity(this)
+            }
+        }
     }
 
     private fun test() {
@@ -397,6 +409,17 @@ class MainActivity : AppCompatActivity() {
             }
 
             Log.d(TAG, "channelStudy03: wyj done")
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun produceStudy() {
+        lifecycleScope.launch {
+            val square = produce {
+                for (x in 1..5) send(x)
+            }
+            square.consumeEach { Log.d(TAG, "produceStudy: wyj it:$it") }
+            Log.d(TAG, "produceStudy: wyj done")
         }
     }
 
