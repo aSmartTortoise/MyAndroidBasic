@@ -4,12 +4,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.jie.flow.viewmodel.TestFlowViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 class SharedFlowActivity : AppCompatActivity() {
@@ -22,10 +27,38 @@ class SharedFlowActivity : AppCompatActivity() {
         setContentView(R.layout.activity_shared_flow)
         lifecycleScope.launch {
 //            sharedFlowImpReplayStudy()
-            sharedFlowReplayCacheStudy()
+//            sharedFlowReplayCacheStudy()
+//            shareInFunction()
+            repeatOnLifecycleFunction()
 
         }
         viewModel.downloadBySharedFlow()
+    }
+
+    /**
+     *  通过使用repeatOnLifecycle方法来避免在使用StateFlow或SharedFlow的时候引起的内存泄漏问题。
+     *  repeatOnLifecycle是通过观察指定组件的声明周期方法来避免内存泄漏。
+     */
+    private suspend fun AppCompatActivity.repeatOnLifecycleFunction() {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.mShareFlow.collect {
+                Log.d(
+                    TAG,
+                    "onCreate: wyj element:$it, replayCache:${viewModel.mShareFlow.replayCache}"
+                )
+            }
+        }
+    }
+
+    /**
+     *  Flow通过扩展函数shareIn转化为SharedFlow
+     */
+    private suspend fun CoroutineScope.shareInFunction() {
+        val sharedFlow =
+            mutableListOf(0, 1, 2, 3).asFlow().shareIn(this, SharingStarted.Eagerly, 3)
+        sharedFlow.collect {
+            Log.d(TAG, "onCreate: wyj element:$it, replayCache:${sharedFlow.replayCache}")
+        }
     }
 
     /**
