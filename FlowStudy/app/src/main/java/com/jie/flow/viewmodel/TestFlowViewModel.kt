@@ -17,7 +17,7 @@ class TestFlowViewModel : ViewModel() {
     private val _name: MutableStateFlow<String> = MutableStateFlow("第二个StateFlow")
     val mName: MutableStateFlow<String>
         get() = _name
-    private val _shared: MutableSharedFlow<Int> = MutableSharedFlow()
+    private val _shared: MutableSharedFlow<Int> = MutableSharedFlow(2)
     val mShareFlow: SharedFlow<Int>
         get() = _shared
 

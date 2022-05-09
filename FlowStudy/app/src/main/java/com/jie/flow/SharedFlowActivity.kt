@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.jie.flow.viewmodel.TestFlowViewModel
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -19,9 +20,19 @@ class SharedFlowActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shared_flow)
         lifecycleScope.launch {
-            viewModel.mShareFlow.collect {
-                Log.d(TAG, "onCreate: wyj shared element:$it")
+            launch {
+                viewModel.mShareFlow.collect {
+                    Log.d(TAG, "onCreate: wyj shared first launch element:$it")
+                }
             }
+
+            launch {
+                delay(3000L)
+                viewModel.mShareFlow.collect {
+                    Log.d(TAG, "onCreate: wyj shared second launch element:$it")
+                }
+            }
+
         }
         viewModel.downloadBySharedFlow()
     }
