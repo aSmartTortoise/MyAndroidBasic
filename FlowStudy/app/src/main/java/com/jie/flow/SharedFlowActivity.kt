@@ -17,6 +17,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
+/**
+ *  https://juejin.cn/post/7046156485407014920/
+ */
 class SharedFlowActivity : AppCompatActivity() {
     companion object {
         const val TAG = "SharedFlowActivity"
