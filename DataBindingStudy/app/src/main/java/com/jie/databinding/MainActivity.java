@@ -16,6 +16,9 @@ import java.lang.ref.WeakReference;
  *
  *  1 单向数据绑定
  *      实现数据变化自动驱动UI刷新的方式有：BaseObservable、ObservableField、ObservableCollection。
+ *      一个Model类的对象数据变化之后，并不会让UI自动刷新，通过ViewDataBinding类关联了Model和layout之后，
+ *  每当Modle发生变化，自然希望对应的View能刷新。Observable就是为此而生的。
+ *
  *  2 双向绑定
  *      当数据改变时驱动UI刷新，当UI改变时候，驱动数据改变。
  *  3 事件绑定
