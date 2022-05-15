@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.jie.databinding.model.ObservableGoods"/>
-        <import type="com.jie.databinding.ObservableFieldActivity.DataHandler"/>
+        <import type="com.jie.databinding.model.ObservableGoodsEntity"/>
+        <import type="com.jie.databinding.ui.activity.ObservableFieldActivity.DataHandler"/>
         <variable
             name="goods"
-            type="ObservableGoods" />
+            type="ObservableGoodsEntity" />
         <variable
             name="dataHandler"
             type="DataHandler" />

@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.jie.databinding.databinding.ActivityMainBinding;
 import com.jie.databinding.model.User;
+import com.jie.databinding.ui.activity.ObservableFieldActivity;
 
 import java.lang.ref.WeakReference;
 
