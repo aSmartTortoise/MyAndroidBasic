@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(
+                this, R.layout.activity_main);
         mUser = new User("frankie", "123456");
         activityMainBinding.setUserInfo(mUser);
         activityMainBinding.setDataHandler(new DataHandler(this));
@@ -71,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
         public void toObservableCollection() {
             if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, ObservableCollectionActivity.class));
+//                MainActivity activity = mReference.get();
+//                activity.startActivity(new Intent(activity, ObservableCollectionActivity2.class));
             }
         }
 

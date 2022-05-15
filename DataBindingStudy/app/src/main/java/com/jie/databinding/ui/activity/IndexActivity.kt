@@ -30,5 +30,11 @@ class IndexActivity : AppCompatActivity() {
                 startActivity(Intent(this, ObservableFieldActivity::class.java))
             }
         }
+
+        fun toObservableCollection() {
+            reference?.get()?.run {
+                startActivity(Intent(this, ObservableCollectionActivity::class.java))
+            }
+        }
     }
 }

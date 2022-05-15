@@ -12,10 +12,13 @@ class ObservableFieldActivity : AppCompatActivity() {
     private lateinit var goods: ObservableGoodsEntity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val fieldBinding = DataBindingUtil.setContentView<ActivityObservableFieldBinding>(this, R.layout.activity_observable_field)
+        val fieldBinding = DataBindingUtil.setContentView<ActivityObservableFieldBinding>(
+            this,
+            R.layout.activity_observable_field)
         goods = ObservableGoodsEntity("dogeCoin yeah", "wa, wonderfull coin", 0.15F)
         fieldBinding.goods = goods
         fieldBinding.dataHandler = DataHandler(this)
+        title = "ObservableField study"
     }
 
     inner class DataHandler(activity: ObservableFieldActivity) {
@@ -31,7 +34,8 @@ class ObservableFieldActivity : AppCompatActivity() {
         }
 
         fun changeGoodsDetails() {
-            mReference?.get()?.goods?.details?.set("In 2022, Elon Musk said: DogeCoin can by some Tesla Belonings. ${(0..100).random()}")
+            mReference?.get()?.goods?.details?.set(
+                "In 2022, Elon Musk said: DogeCoin can by some Tesla Belonings. ${(0..100).random()}")
         }
     }
 }
