@@ -5,17 +5,17 @@
 
     <data>
 
-        <import type="com.jie.databinding.model.Goods" />
+        <import type="com.jie.databinding.model.GoodsEntity" />
 
-        <import type="com.jie.databinding.BaseObservableActivity" />
+        <import type="com.jie.databinding.ui.activity.BaseObservableActivity.GoodsHandler" />
 
         <variable
             name="goods"
-            type="com.jie.databinding.model.Goods" />
+            type="GoodsEntity" />
 
         <variable
             name="goodsHandler"
-            type="com.jie.databinding.BaseObservableActivity.GoodsHandler" />
+            type="GoodsHandler" />
     </data>
 
 
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:text="@{goods.mName, default=doge}"
+            android:text="@{goods.name, default=doge}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:text="@{goods.details, default=hollyshit}"
+            android:text="@{goods.detail, default=hollyshit}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_goods_name" />
 
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:onClick="@{() -> goodsHandler.changeGoodDetails()}"
+            android:onClick="@{() -> goodsHandler.changeGoodsDetails()}"
             android:text="改变属性details"
             app:layout_constraintStart_toEndOf="@id/btn_change_name"
             app:layout_constraintTop_toBottomOf="@id/tv_goods_detail" />

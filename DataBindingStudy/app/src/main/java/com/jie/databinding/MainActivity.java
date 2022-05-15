@@ -59,10 +59,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void toBaseObservalbe() {
-            if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, BaseObservableActivity.class));
-            }
         }
 
         public void toObservableField() {

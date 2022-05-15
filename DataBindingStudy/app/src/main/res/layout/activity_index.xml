@@ -7,9 +7,13 @@
 
         <import type="com.jie.databinding.model.UserEntity" />
 
+        <import type="com.jie.databinding.ui.activity.IndexActivity.DataHandler"/>
         <variable
             name="userInfo"
             type="UserEntity" />
+        <variable
+            name="dataHandler"
+            type="DataHandler" />
 
     </data>
 
@@ -23,19 +27,29 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginTop="10dp"
-            android:text="@{userInfo.name, default=xxhello}"
+            android:text="@{userInfo.component1(), default=xxhello}"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="姓名" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/tv_user_pwd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
-            android:text="@{userInfo.pwd, default=123456}"
+            android:text="@{userInfo.component2(), default=123456}"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_user_name"
             app:layout_constraintStart_toEndOf="@id/tv_user_name" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_base_observalbe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="@{() -> dataHandler.toBaseObservable()}"
+            android:text="study BaseObservable"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_user_name" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

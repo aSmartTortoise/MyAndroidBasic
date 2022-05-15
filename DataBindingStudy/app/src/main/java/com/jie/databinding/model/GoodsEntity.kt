@@ -19,5 +19,5 @@ class GoodsEntity : BaseObservable() {
             notifyChange()
         }
 
-    var price: Float? = 0.0f
+    var price: Float = 0.0f
 }
