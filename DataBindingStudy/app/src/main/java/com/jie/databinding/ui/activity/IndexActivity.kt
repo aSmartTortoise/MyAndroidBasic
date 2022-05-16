@@ -36,5 +36,11 @@ class IndexActivity : AppCompatActivity() {
                 startActivity(Intent(this, ObservableCollectionActivity::class.java))
             }
         }
+
+        fun toBothWayBinding() {
+            reference?.get()?.run {
+                startActivity(Intent(this, BothWayBindingActivity::class.java))
+            }
+        }
     }
 }

@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DataBindingStudy">
         <activity
+            android:name=".ui.activity.BothWayBindingActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activity.ObservableCollectionActivity"
             android:exported="false" />
         <activity

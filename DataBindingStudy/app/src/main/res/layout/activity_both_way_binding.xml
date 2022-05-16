@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.jie.databinding.model.ObservableGoods" />
+        <import type="com.jie.databinding.model.ObservableGoodsEntity" />
 
         <variable
             name="goods"
-            type="ObservableGoods" />
+            type="ObservableGoodsEntity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:text="@{goods.name}"
+            android:text="@{goods.name, default=eth}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

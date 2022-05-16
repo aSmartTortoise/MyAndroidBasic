@@ -78,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void toBothWayBinding() {
-            if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, BothWayBindingActivity.class));
-            }
+//            if (mReference != null) {
+//                MainActivity activity = mReference.get();
+//                activity.startActivity(new Intent(activity, BothWayBindingActivity.class));
+//            }
         }
 
         public void toEventBinding() {
