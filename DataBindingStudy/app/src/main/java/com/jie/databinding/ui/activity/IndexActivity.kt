@@ -42,5 +42,11 @@ class IndexActivity : AppCompatActivity() {
                 startActivity(Intent(this, BothWayBindingActivity::class.java))
             }
         }
+
+        fun toEventBinding() {
+            reference?.get()?.run {
+                startActivity(Intent(this, EventBindingActivity::class.java))
+            }
+        }
     }
 }

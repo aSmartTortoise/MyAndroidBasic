@@ -7,10 +7,12 @@
 
         <import type="com.jie.databinding.model.UserEntity" />
 
-        <import type="com.jie.databinding.ui.activity.IndexActivity.DataHandler"/>
+        <import type="com.jie.databinding.ui.activity.IndexActivity.DataHandler" />
+
         <variable
             name="userInfo"
             type="UserEntity" />
+
         <variable
             name="dataHandler"
             type="DataHandler" />
@@ -29,7 +31,7 @@
             android:layout_marginTop="10dp"
             android:text="@{userInfo.component1(), default=xxhello}"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_user_pwd"
@@ -83,6 +85,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_obserable_collection" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_event_binding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="@{() -> dataHandler.toEventBinding()}"
+            android:text="study event binding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_both_way_binding" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

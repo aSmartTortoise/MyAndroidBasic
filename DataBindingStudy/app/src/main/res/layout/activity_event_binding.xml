@@ -5,13 +5,13 @@
 
     <data>
 
-        <import type="com.jie.databinding.model.User" />
+        <import type="com.jie.databinding.model.UserEntity" />
 
-        <import type="com.jie.databinding.EventBindingActivity.UserPresenter" />
+        <import type="com.jie.databinding.ui.activity.EventBindingActivity.UserPresenter" />
 
         <variable
             name="userInfo"
-            type="User" />
+            type="UserEntity" />
 
         <variable
             name="userPresenter"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:onClick="@{() -> userPresenter.onUserNameClick(userInfo)}"
-            android:text="@{userInfo.name, default=Jacie}"
+            android:text="@{userInfo.component1(), default=Jacie}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:text="@{userInfo.pwd, default=123456}"
+            android:text="@{userInfo.component2(), default=123456}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_user_name" />

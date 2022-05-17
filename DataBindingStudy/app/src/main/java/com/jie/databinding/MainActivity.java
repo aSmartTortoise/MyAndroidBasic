@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
         public void toEventBinding() {
             if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, EventBindingActivity.class));
+//                MainActivity activity = mReference.get();
+//                activity.startActivity(new Intent(activity, EventBindingActivity.class));
             }
         }
 
