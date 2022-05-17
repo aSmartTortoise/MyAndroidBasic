@@ -54,5 +54,9 @@ class IndexActivity : AppCompatActivity() {
                 startActivity(Intent(this, ClassMethodActivity::class.java))
             }
         }
+
+        fun toOperator() {
+            reference?.get()?.run { startActivity(Intent(this, OperatorActivity::class.java)) }
+        }
     }
 }

@@ -100,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
 
         public void toOperator() {
             if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, OperatorActivity.class));
+//                MainActivity activity = mReference.get();
+//                activity.startActivity(new Intent(activity, OperatorActivity.class));
             }
         }
 

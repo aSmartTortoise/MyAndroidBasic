@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.jie.databinding.model.User"/>
+        <import type="com.jie.databinding.model.UserEntity"/>
         <variable
             name="userInfo"
-            type="User" />
+            type="UserEntity" />
 
     </data>
 
@@ -23,7 +23,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="20dp"
-            android:text="@{userInfo.name + ':' + userInfo.pwd}"
+            android:text="@{userInfo.name ?? userInfo.pwd}"
             android:layout_height="wrap_content"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
