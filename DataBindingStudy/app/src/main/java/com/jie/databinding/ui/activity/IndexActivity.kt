@@ -48,5 +48,11 @@ class IndexActivity : AppCompatActivity() {
                 startActivity(Intent(this, EventBindingActivity::class.java))
             }
         }
+
+        fun toClassMethod() {
+            reference?.get()?.run {
+                startActivity(Intent(this, ClassMethodActivity::class.java))
+            }
+        }
     }
 }

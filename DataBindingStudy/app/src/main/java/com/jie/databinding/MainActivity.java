@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         public void toClassMethod() {
             if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, ClassMethodActivity.class));
+//                MainActivity activity = mReference.get();
+//                activity.startActivity(new Intent(activity, ClassMethodActivity.class));
             }
         }
 
