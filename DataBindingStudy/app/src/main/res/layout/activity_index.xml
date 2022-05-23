@@ -120,5 +120,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_class_method" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_inclue_viewstub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:onClick="@{() -> dataHandler.toIncludeViewStub()}"
+            android:text="study inclue viewStub"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_operator" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_viewstub2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:onClick="@{() -> dataHandler.toViewStubInflate()}"
+            android:text="study viewStub2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_inclue_viewstub" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

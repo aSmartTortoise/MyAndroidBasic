@@ -106,17 +106,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void toIncludeViewStub() {
-            if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, InclueViewStubActivity.class));
-            }
+//            if (mReference != null) {
+//                MainActivity activity = mReference.get();
+//                activity.startActivity(new Intent(activity, InclueViewStubActivity.class));
+//            }
         }
 
         public void toViewStub2() {
-            if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, ViewStubActivity2.class));
-            }
+//            if (mReference != null) {
+//                MainActivity activity = mReference.get();
+//                activity.startActivity(new Intent(activity, ViewStubActivity2.class));
+//            }
         }
 
         public void toBindingAdapter() {

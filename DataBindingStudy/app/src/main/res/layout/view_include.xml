@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="com.jie.databinding.model.User"/>
+        <import type="com.jie.databinding.model.UserEntity"/>
         <variable
             name="userInfo"
-            type="User" />
+            type="UserEntity" />
 
     </data>
 
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="20dp"
-            android:text="@{userInfo.name, default=jackie}"
+            android:text="@{userInfo.component1(), default=jackie}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

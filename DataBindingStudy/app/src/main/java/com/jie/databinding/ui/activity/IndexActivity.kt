@@ -58,5 +58,15 @@ class IndexActivity : AppCompatActivity() {
         fun toOperator() {
             reference?.get()?.run { startActivity(Intent(this, OperatorActivity::class.java)) }
         }
+
+        fun toIncludeViewStub() {
+            reference?.get()?.run { startActivity(Intent(this, IncludeViewStubActivity::class.java)) }
+        }
+
+        fun toViewStubInflate() {
+            reference?.get()?.run {
+                startActivity(Intent(this, ViewStubInflateActivity::class.java))
+            }
+        }
     }
 }

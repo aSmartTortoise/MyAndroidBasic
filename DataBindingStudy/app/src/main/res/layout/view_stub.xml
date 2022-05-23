@@ -3,11 +3,11 @@
 
     <data>
 
-        <import type="com.jie.databinding.model.User" />
+        <import type="com.jie.databinding.model.UserEntity" />
 
         <variable
             name="userInfo"
-            type="User" />
+            type="UserEntity" />
 
     </data>
 

@@ -6,13 +6,13 @@
 
     <data>
 
-        <import type="com.jie.databinding.model.User" />
+        <import type="com.jie.databinding.model.UserEntity" />
 
-        <import type="com.jie.databinding.InclueViewStubActivity.Presenter" />
+        <import type="com.jie.databinding.ui.activity.IncludeViewStubActivity.Presenter" />
 
         <variable
             name="useInfo"
-            type="User" />
+            type="UserEntity" />
 
         <variable
             name="presenter"
