@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DataBindingStudy">
         <activity
+            android:name=".ui.activity.BindingAdapterConversionActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activity.ViewStubInflateActivity"
             android:exported="false" />
         <activity

@@ -68,5 +68,11 @@ class IndexActivity : AppCompatActivity() {
                 startActivity(Intent(this, ViewStubInflateActivity::class.java))
             }
         }
+
+        fun toBindingAdapter() {
+            reference?.get()?.run {
+                startActivity(Intent(this, BindingAdapterConversionActivity::class.java))
+            }
+        }
     }
 }

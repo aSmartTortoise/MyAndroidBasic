@@ -120,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void toBindingAdapter() {
-            if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, BindingAdapterConversionActivity.class));
-            }
+//            if (mReference != null) {
+//                MainActivity activity = mReference.get();
+//                activity.startActivity(new Intent(activity, BindingAdapterConversionActivity.class));
+//            }
         }
 
         public void toCollection() {

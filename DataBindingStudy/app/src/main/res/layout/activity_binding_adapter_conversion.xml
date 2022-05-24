@@ -6,13 +6,13 @@
 
     <data>
 
-        <import type="com.jie.databinding.model.Image" />
+        <import type="com.jie.databinding.model.ImageEntity" />
 
-        <import type="com.jie.databinding.BindingAdapterConversionActivity.Presenter" />
+        <import type="com.jie.databinding.ui.activity.BindingAdapterConversionActivity.Presenter" />
 
         <variable
             name="imageInfo"
-            type="Image" />
+            type="ImageEntity" />
 
         <variable
             name="presenter"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:src="@drawable/ic_launcher_background"
-            bind:url="@{imageInfo.url}" />
+            bind:url="@{imageInfo.urlField}" />
 
         <Button
             android:id="@+id/btn"
