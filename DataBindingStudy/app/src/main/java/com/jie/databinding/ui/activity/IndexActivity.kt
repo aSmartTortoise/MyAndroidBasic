@@ -80,5 +80,11 @@ class IndexActivity : AppCompatActivity() {
                 startActivity(Intent(this, CollectionActivity::class.java))
             }
         }
+
+        fun toRecyclerView() {
+            reference?.get()?.run {
+                startActivity(Intent(this, RecyclerViewActivity::class.java))
+            }
+        }
     }
 }
