@@ -128,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
         public void toCollection() {
             if (mReference != null) {
-                MainActivity activity = mReference.get();
-                activity.startActivity(new Intent(activity, CollectionActivity.class));
+//                MainActivity activity = mReference.get();
+//                activity.startActivity(new Intent(activity, CollectionActivity.class));
             }
         }
 

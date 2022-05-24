@@ -74,5 +74,11 @@ class IndexActivity : AppCompatActivity() {
                 startActivity(Intent(this, BindingAdapterConversionActivity::class.java))
             }
         }
+
+        fun toCollection() {
+            reference?.get()?.run {
+                startActivity(Intent(this, CollectionActivity::class.java))
+            }
+        }
     }
 }
