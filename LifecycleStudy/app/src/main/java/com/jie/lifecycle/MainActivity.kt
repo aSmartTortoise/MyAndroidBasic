@@ -30,40 +30,70 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d(TAG, "onCreate: wyj add observer")
+        Log.d(TAG, "onCreate: wyj state:${lifecycle.currentState}")
         lifecycle.addObserver(MyLifecyclerObserver())
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: wyj state:${lifecycle.currentState}")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume: wyj state:${lifecycle.currentState}")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause: wyj state:${lifecycle.currentState}")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop: wyj state:${lifecycle.currentState}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy: wyj state:${lifecycle.currentState}")
+    }
+
+    /**
+     *  观察到Activity声明周期状态变化关联的Lifecycle的Event事件。
+     *  其中 ON_CREATE、ON_START、ON_RESUME等事件在对应的回调方法执行之后被分发。其中ON_PAUSE、ON_STOP、
+     *  ON_DESTROY等事件在对应的回调方法之前被分发。
+     */
     class MyLifecyclerObserver : DefaultLifecycleObserver {
 
         override fun onCreate(owner: LifecycleOwner) {
             super.onCreate(owner)
-            Log.d(TAG, "onCreate: wyj")
+            Log.d("MyLifecyclerObserver", "onCreate: wyj state:${owner.lifecycle.currentState}" )
         }
 
         override fun onStart(owner: LifecycleOwner) {
             super.onStart(owner)
-            Log.d(TAG, "onStart: wyj")
+            Log.d("MyLifecyclerObserver", "onStart: wyj state:${owner.lifecycle.currentState}")
         }
 
         override fun onResume(owner: LifecycleOwner) {
             super.onResume(owner)
-            Log.d(TAG, "onResume: wyj")
+            Log.d("MyLifecyclerObserver", "onResume: wyj state:${owner.lifecycle.currentState}")
         }
 
         override fun onPause(owner: LifecycleOwner) {
             super.onPause(owner)
-            Log.d(TAG, "onPause: wyj")
+            Log.d("MyLifecyclerObserver", "onPause: wyj state:${owner.lifecycle.currentState}")
         }
 
         override fun onStop(owner: LifecycleOwner) {
             super.onStop(owner)
-            Log.d(TAG, "onStop: wyj")
+            Log.d("MyLifecyclerObserver", "onStop: wyj state:${owner.lifecycle.currentState}")
         }
 
         override fun onDestroy(owner: LifecycleOwner) {
             super.onDestroy(owner)
-            Log.d(TAG, "onDestroy: wyj")
+            Log.d("MyLifecyclerObserver", "onDestroy: wyj state:${owner.lifecycle.currentState}")
         }
     }
 }
