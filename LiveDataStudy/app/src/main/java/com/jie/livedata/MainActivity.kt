@@ -1,10 +1,12 @@
 package com.jie.livedata
 
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.arch.core.util.Function
@@ -13,6 +15,9 @@ import kotlin.Function as Function1001
 
 /**
  *  http://liuwangshu.cn/application/jetpack/4-livedata-use.html
+ *
+ *  https://developer.android.com/topic/libraries/architecture/livedata?hl=zh-cn
+ *
  *  LiveData是一个可被观察的数据持有者。LiveData可以关联LifecycleOwner和Observer。
  *  当数据发生变化，且LifecycleOwner处于active的时候，observer会被通知到。
  *  当LifecyclerOwner处于Lifecycler.State.STARTED或者是Lifecycle.State.RESUMED的时候
@@ -32,6 +37,10 @@ import kotlin.Function as Function1001
  *  当LiveData关联的处于ACTIVE的观察者数量由0变为1的时候会回调onActive方法；当LiveData关联的处于ACTIVE
  *  状态的观察者数量由1变为0的时候会回调onInactive方法。
  *
+ *  https://juejin.cn/post/6955726530911666190
+ *  5 LiveData先设置数据，然后Observer订阅LiveData，Observer可以观察到订阅之前LiveData设置的值，即
+ *  Observer和LiveData这种订阅关系间的消息是粘性的。
+ *
  *
  */
 class MainActivity : AppCompatActivity() {
@@ -47,6 +56,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val liveData: MutableLiveData<String> = MutableLiveData()
+        liveData.postValue("Android Jetpack architecture component: LiveData")
+
         liveData.observe(this, object : Observer<String> {
             override fun onChanged(t: String?) {
                 Log.d(TAG, "onChanged: wyj t:$t")
@@ -63,8 +74,6 @@ class MainActivity : AppCompatActivity() {
 
         mapLiveData.observe(this,
             { t -> Log.d(TAG, "onChanged: wyj mapLiveData t:${t.toString()}") })
-
-        liveData.postValue("Android Jetpack architecture component: LiveData")
 
         // Transformations.switchMap
         mLiveData1 = MutableLiveData()
@@ -92,6 +101,11 @@ class MainActivity : AppCompatActivity() {
         mLiveData2.postValue("Android Jetpack architecture component: LiveData 2")
 
         findViewById<Button>(R.id.btn_mediator).setOnClickListener { v -> mediatorStudy() }
+        findViewById<View>(R.id.btn_coutdown).setOnClickListener {
+            Intent(this, CountDownActivity::class.java).apply {
+                this@MainActivity.startActivity(this)
+            }
+        }
     }
 
     private fun mediatorStudy() {

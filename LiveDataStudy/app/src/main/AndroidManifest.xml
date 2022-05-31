@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LiveDataStudy">
         <activity
+            android:name=".CountDownActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
