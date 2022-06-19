@@ -11,6 +11,7 @@ import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.arch.core.util.Function
 import androidx.lifecycle.*
+import com.jie.livedata.global.NotifyLiveDataActivity
 import kotlin.Function as Function1001
 
 /**
@@ -40,6 +41,8 @@ import kotlin.Function as Function1001
  *  https://juejin.cn/post/6955726530911666190
  *  5 LiveData先设置数据，然后Observer订阅LiveData，Observer可以观察到订阅之前LiveData设置的值，即
  *  Observer和LiveData这种订阅关系间的消息是粘性的。
+ *
+ *
  *
  *
  */
@@ -103,6 +106,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_mediator).setOnClickListener { v -> mediatorStudy() }
         findViewById<View>(R.id.btn_coutdown).setOnClickListener {
             Intent(this, CountDownActivity::class.java).apply {
+                this@MainActivity.startActivity(this)
+            }
+        }
+
+        findViewById<View>(R.id.btn_global_live_data).setOnClickListener {
+            Intent(this, NotifyLiveDataActivity::class.java).apply {
                 this@MainActivity.startActivity(this)
             }
         }

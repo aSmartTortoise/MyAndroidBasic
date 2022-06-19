@@ -28,4 +28,11 @@
         android:layout_marginTop="20dp"
         android:text="liveData study" />
 
+    <Button
+        android:id="@+id/btn_global_live_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="global live data" />
+
 </LinearLayout>
