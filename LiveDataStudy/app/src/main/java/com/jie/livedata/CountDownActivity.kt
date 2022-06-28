@@ -7,6 +7,9 @@ import androidx.activity.viewModels
 
 /**
  *  https://juejin.cn/post/6975689084173811743
+ *
+ *  observeForever也是LifecycleOwner订阅LiveData的方法，当处于inactive状态的时候，也会收到
+ *  数据变化的通知。
  */
 class CountDownActivity : AppCompatActivity() {
     val countDownModel by viewModels<CountDownModel>()

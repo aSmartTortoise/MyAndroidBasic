@@ -11,6 +11,7 @@ import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.arch.core.util.Function
 import androidx.lifecycle.*
+import com.jie.livedata.coroutine.CoroutineLiveDataActivity
 import com.jie.livedata.global.NotifyLiveDataActivity
 import kotlin.Function as Function1001
 
@@ -19,11 +20,10 @@ import kotlin.Function as Function1001
  *
  *  https://developer.android.com/topic/libraries/architecture/livedata?hl=zh-cn
  *
- *  LiveData是一个可被观察的数据持有者。LiveData可以关联LifecycleOwner和Observer。
- *  当数据发生变化，且LifecycleOwner处于active的时候，observer会被通知到。
+ *  LiveData是一个可被观察的数据持有者。LiveData通过observe方法实现LifecycleOwner对
+ *  LiveData的订阅关系。当数据发生变化，且LifecycleOwner处于active的时候，LifecycleOwner会被通知到。
  *  当LifecyclerOwner处于Lifecycler.State.STARTED或者是Lifecycle.State.RESUMED的时候
- *  即为active。当LiveData通过observe关联LifecycleOwner和Observer的时候，这样Observer就订阅了
- *  LiveData，当LifecycleOwner的状态处于Lifecycle.State.DESTROYED的时候，不需要手动unsubscribe
+ *  即为active。当LifecycleOwner的状态处于Lifecycle.State.DESTROYED的时候，不需要手动unsubscribe
  *  取消订阅这种观察被观察关系。
  *  MutableLiveData是LiveData的实现类。有postValue和setValue方法，setValue方法只能在主线程调用。
  *  postValue方法没有限制。
@@ -112,6 +112,12 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btn_global_live_data).setOnClickListener {
             Intent(this, NotifyLiveDataActivity::class.java).apply {
+                this@MainActivity.startActivity(this)
+            }
+        }
+
+        findViewById<View>(R.id.btn_coroutine_live_data).setOnClickListener {
+            Intent(this, CoroutineLiveDataActivity::class.java).apply {
                 this@MainActivity.startActivity(this)
             }
         }

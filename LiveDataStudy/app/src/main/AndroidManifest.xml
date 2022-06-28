@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LiveDataStudy">
         <activity
+            android:name=".coroutine.CoroutineLiveDataActivity"
+            android:exported="false" />
+        <activity
             android:name=".global.NotifyLiveDataActivity"
             android:exported="false" />
         <activity
