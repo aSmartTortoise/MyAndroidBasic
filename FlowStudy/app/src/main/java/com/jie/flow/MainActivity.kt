@@ -3,6 +3,7 @@ package com.jie.flow
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +17,16 @@ import kotlin.system.measureTimeMillis
 
 /**
  *  flow学习
- *  1 https://juejin.cn/post/7034381227025465375/#heading-4
+ *  1 https://juejin.cn/post/7034381227025465375/
+ *      1.1 RestrictsSuspension注解
+ *          被RestrictsSuspension注解的类在用作挂起的扩展函数的接收器时有限制，在扩展函数内部只能使用该接收器类定义的挂起函数，而不能
+ *      调用任意的挂起函数。
+ *      1.2 Flow
+ *          Flow是一个异步数据流，它按照顺序发出值。通常说的Flow是值的冷流，即流可以重复收集，并在每次收集的时候触发相同的代码。而SharedFlow
+ *      指的是热流，
+ *          1.2.1 取消Flow
+ *              Flow的执行是依赖于collect的，而collect需要在协程中调用，取消Flow的执行可以通过取消它所在的协程完成。
+ *
  *  2 https://juejin.cn/post/7046155761948295175/
  *  Flow每次收集完后就会销毁。后续也不能发射新的值到流中。
  *  2.1 Channel通道
@@ -69,13 +79,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun test() {
 //        simple().forEach { value -> Log.d(TAG, "test: wyj value:$value") }
-
+//        cancelFlow()
         lifecycleScope.launch {
 //            flowBuildStudy()
 //            asFlowBuildStudy()
 //            flowOfBuildStudy()
 //            flowBuildStudy02()
-            flowOnStudy()
+//            flowOnStudy()
 
         }
     }
@@ -130,6 +140,21 @@ class MainActivity : AppCompatActivity() {
      */
     private suspend fun flowOfBuildStudy() {
         flowOf(1, 2, 3, 4).collect { value -> Log.d(TAG, "flowOfBuildStudy: wyj value:$value") }
+    }
+
+    /**
+     *  通过取消协程，来取消Flow的执行。
+     */
+    private fun cancelFlow() {
+        val job = lifecycleScope.launch {
+            flow<Int> {
+                for (element in 1..3) {
+                    delay(100L)
+                    emit(element)
+                }
+            }.collect { value -> Log.d(TAG, "cancelFlow: wyj value:$value") }
+        }
+        Handler().postDelayed({ job.cancel() }, 200L )
     }
 
     /**
