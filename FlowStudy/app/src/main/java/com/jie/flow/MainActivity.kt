@@ -22,10 +22,15 @@ import kotlin.system.measureTimeMillis
  *          被RestrictsSuspension注解的类在用作挂起的扩展函数的接收器时有限制，在扩展函数内部只能使用该接收器类定义的挂起函数，而不能
  *      调用任意的挂起函数。
  *      1.2 Flow
- *          Flow是一个异步数据流，它按照顺序发出值。通常说的Flow是值的冷流，即流可以重复收集，并在每次收集的时候触发相同的代码。而SharedFlow
+ *          Flow是一个异步数据流，它按照顺序发出值。通常说的Flow是指的冷流，即流可以重复收集，并在每次收集的时候触发相同的代码。而SharedFlow
  *      指的是热流，
  *          1.2.1 取消Flow
  *              Flow的执行是依赖于collect的，而collect需要在协程中调用，取消Flow的执行可以通过取消它所在的协程完成。
+ *          1.2.2 为了保证Flow上下文的一致性，禁止在Flow的上游流emit代码中切换线程。但是在下游流的collect操作符函数中是可以切换线程的。
+ *          1.2.3 Flow中线程的切换
+ *              通过Flow的扩展函数flowOn(CoroutineContext)，设置流的执行上下文，该操作符只作用于前面没有相同上下文的操作符或构建器；
+ *          该操作符中的上下文不会泄漏到下游流中。不管flowOn如何的切换线程，collect始终运行在调用它的协程的调度器线程上。
+ *
  *
  *  2 https://juejin.cn/post/7046155761948295175/
  *  Flow每次收集完后就会销毁。后续也不能发射新的值到流中。
@@ -85,7 +90,8 @@ class MainActivity : AppCompatActivity() {
 //            asFlowBuildStudy()
 //            flowOfBuildStudy()
 //            flowBuildStudy02()
-//            flowOnStudy()
+//            flowBuilderSwitchContext()
+            flowOnStudy()
 
         }
     }
@@ -118,6 +124,51 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     *  为了保证flow上下文的一致性，在flow builder中不能切换线程。
+     */
+    private suspend fun flowBuilderSwitchContext() {
+        flow {
+            for (element in 1..3) {
+                delay(100L)
+                // 为了保证Flow上下文的一致性，在Flow的上游流中切换线程会抛出异常
+                // java.lang.IllegalStateException: Flow invariant is violated:
+                if (element == 2) {
+                    withContext(Dispatchers.IO) {
+                        emit(element)
+                    }
+                } else {
+                    emit(element)
+                }
+            }
+        }.collect { value -> Log.d(TAG, "flowBuilderSwitchContext: wyj value:$value") }
+
+        (1..3).asFlow().collect { value ->
+            if (value == 2) {
+                withContext(Dispatchers.IO) {
+                    Log.d(TAG, "flowBuilderSwitchContext: wyj value:$value")
+                }
+            } else {
+                Log.d(TAG, "flowBuilderSwitchContext: wyj value:$value")
+            }
+        }
+
+        flow {
+            for (element in 1..3) {
+                delay(100L)
+                emit(element)
+            }
+        }.collect { value ->
+            if (value == 2) {
+                withContext(Dispatchers.IO) {
+                    Log.d(TAG, "flowBuilderSwitchContext: wyj value:$value")
+                }
+            } else {
+                Log.d(TAG, "flowBuilderSwitchContext: wyj value:$value")
+            }
+        }
+    }
+
+    /**
      *  lifecycleScope launch的协程是在主线程上执行的。
      */
     private suspend fun flowBuildStudy02() {
@@ -134,6 +185,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
 
     /**
      *  flowOf构建器函数接受单个参数或者可变参数，其实质也是调用flow构建器函数
@@ -154,7 +206,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }.collect { value -> Log.d(TAG, "cancelFlow: wyj value:$value") }
         }
-        Handler().postDelayed({ job.cancel() }, 200L )
+        Handler().postDelayed({ job.cancel() }, 200L)
     }
 
     /**
@@ -432,7 +484,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            while(true) {
+            while (true) {
                 if (!channel.isClosedForSend) {
                     Log.d(TAG, "channelStudy03: wyj receive:${channel.receive()}")
                 } else {
