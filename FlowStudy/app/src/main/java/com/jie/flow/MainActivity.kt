@@ -68,6 +68,32 @@ import kotlin.system.measureTimeMillis
  *          通常流是顺序执行的，各个操作符的代码是运行在同一个协程的，Flow执行的总时间是各个操作
  *          符代码执行时间的总和。Flow应用buffer操作符可以为流的执行创建单独的协程。在buffer操作符的上游流的执行创建一个协程，buffer
  *          操作符的下游流的执行创建一个协程。可以减少流的总执行时间。
+ *  2 https://juejin.cn/post/7046155761948295175/
+ *      2.1 Channel的概念
+ *          Channel是用于发送者和接收者之间通信的非阻塞原语（primitive），这里的发送者指的是SendChannel、接收者指的是
+ *      ReceiveChannel。
+ *          原语（primitive）指的是有机器指令编写的完成特定功能的程序，执行过程中不允许中断。
+ *          Channel实现了SendChannel和ReceiveChannel。
+ *      2.2 SendChannel
+ *          定义发送者的接口。
+ *          2.2 send
+ *              将指定的元素发送到该通道。如果通道的缓冲区已满或者没有缓冲区则挂起调用方。如果通道已关闭，调用该方法会抛出异常。
+ *          2.3 trySend
+ *              将指定的元素添加到该通道，如果该通道的缓冲区没有满，则返回success result，否则返回failed或者closed result。
+ *          当返回非成功的result时候，该元素不会传递到消费者，并且不会调用onUndeliveredElement函数。
+ *          2.4 close
+ *              关闭SendChannel，在概念上调用该函数会向该通道发送一个特殊的关闭令牌。在调用此函数后，SendChannel一侧的
+ *          isClosedForSend为true；但是在ReceiveChannel一侧，当先前发送的元素都被接收后，isClosedForReceive是
+ *          true。
+ *              关闭时没有指定cause的通道，在尝试send时候会抛出CloseSendChannelException。在尝试receive时会抛出
+ *          CloseReceiveChannelException。如果cause不为空，则通道为失败通道，在失败的通道send、receive会抛出指定
+ *          的cause异常。
+ *      2.3 ReceiveChannel
+ *          定义接收者的接口。
+ *          2.3.1 receive
+ *              如果通道不为空，则获取并移除通道中的一个元素；如果通道为空，则挂起调用者。如果通道已关闭则抛出
+ *          CloseReceiveChannelException。如果通道因异常而关闭，调用该函数，则会抛出指定关闭通道的异常。
+ *
  *
  *
  *
@@ -102,9 +128,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btn_channel01).setOnClickListener {
-//            channelStudy01()
+            channelStudy01()
 //            channelStudy02()
-            channelStudy03()
+//            channelStudy03()
         }
 
         findViewById<View>(R.id.btn_produce).setOnClickListener {
