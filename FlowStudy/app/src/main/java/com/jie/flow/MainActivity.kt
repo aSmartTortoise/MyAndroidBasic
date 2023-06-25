@@ -30,6 +30,21 @@ import kotlin.system.measureTimeMillis
  *          1.2.3 Flow中线程的切换
  *              通过Flow的扩展函数flowOn(CoroutineContext)，设置流的执行上下文，该操作符只作用于前面没有相同上下文的操作符或构建器；
  *          该操作符中的上下文不会泄漏到下游流中。不管flowOn如何的切换线程，collect始终运行在调用它的协程的调度器线程上。
+ *      1.3 Flow的操作符
+ *          以下对Flow操作符的分类不来自于官方。
+ *          1.3.1 过渡（流）操作符
+ *              过渡操作符用来区分流执行到某一阶段。比如onStart/onEach/onCompletion。
+ *              onStart作用于上游流，在上游流执行之前onStart操作先调用。因为入参是挂载的FlowCollector接收器的扩展函数，所以可以
+ *          在onStart操作中发送数据。当onStart应用在SharedFlow时，不能保证onStart操作符中的操作发送的只或者上游流发送的值都能被收集。
+ *              onEach下游流中每个值收集之前调用onEach的操作。
+ *              onCompletion在流完成或者取消的时候调用onCompletion操作，可以报告上游和下游发生的异常，也可以观察到取消的异常，当流完成的
+ *          时候异常为空。如果通过取消流所在的协程的方式取消流的执行，且Job#cancel的扩展方法中没有指定CancellationException，则流的
+ *          onCompletion会观察到默认的JobCancellationException。
+ *          1.3.2 异常操作符
+ *              catch操作符可以捕获它的上游流中发生的异常。如果它的下游流中出现了未捕获的异常，则程序会crash；可以继续添加一个catch操作符
+ *          来捕获，或者通过try-catch捕获整个流的异常，或者通过协程上下文的CoroutineExceptionHandler来处理。
+ *
+ *
  *
  *
  *  2 https://juejin.cn/post/7046155761948295175/
@@ -238,17 +253,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun operatorStudy() {
+        /**
+         *  通过取消流所在的协程的方式取消流的执行，onCompletion操作中可以观察到取消异常。
+         */
+//        val job = lifecycleScope.launch {
+//            flow {
+//                for (element in 1..3) {
+//                    delay(100L)
+//                    Log.d(TAG, "operatorStudy: wyj emit element:${element}")
+//                    emit(element)
+//                }
+//            }.onCompletion { cause ->
+//                Log.d(TAG, "operatorStudy: wyj onCompletion cause:$cause")
+//            }.collect { value ->
+//                Log.d(TAG, "operatorStudy: wyj collect value:$value")
+//            }
+//        }
+//        Handler().postDelayed(
+//            {
+//                job.cancel()
+//            }, 200L
+//        )
         lifecycleScope.launch {
 //            startEachCompletionOperator()
 //            flowExceptionStudy()
-//            flowCatchStudy()
+            catchOperatorStudy()
 //            transformOperatorStudy()
 //            mapOperatorStudy()
 //            filterOperatorStudy()
 //            zipOperatorStudy()
 //            takeOperatorStudy()
 //            takeWhileOperatorStudy()
-            dropOperatorStudy()
+//            dropOperatorStudy()
         }
     }
 
@@ -318,11 +354,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     *  catch操作符只能捕获上游流的异常，onCompletion中没有捕获到异常。
-     *  如果该操作符下游的流出现异常时捕获不到的。但是如果异常出现在onCollect末端流操作符中，那么只能使用
+     *  catch操作符只能捕获上游流的异常。
+     *  如果该操作符下游的流出现未捕获的异常，则会crash。但是如果异常出现在onCollect末端流操作符中，那么只能使用
      *  try/catch获取协程上下文的CoroutineExceptionHandler进行处理，否则会crash。
      */
-    private suspend fun flowCatchStudy() {
+    private suspend fun catchOperatorStudy() {
         flow<Int> {
             Log.d(TAG, "flowCatchStudy: wyj flow emit")
             emit(1)
@@ -332,11 +368,11 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "flowCatchStudy: wyj onEach")
             throw NullPointerException("空指针")
         }.catch { cause ->
-            Log.d(TAG, "flowCatchStudy: wyj cause:$cause")
+            Log.d(TAG, "flowCatchStudy: wyj catch cause:$cause")
             emit(2)
-        }.map {
-            it * 2
-            throw NullPointerException("新的空指针")
+        }.map { value ->
+            value * 2
+            throw IllegalStateException("map operator throw exception.")
         }.onCompletion { cause ->
             Log.d(TAG, "flowCatchStudy: wyj onCompletion cause:$cause")
         }.collect { value -> Log.d(TAG, "flowCatchStudy: wyj collect value:$value") }
@@ -363,7 +399,9 @@ class MainActivity : AppCompatActivity() {
     private suspend fun startEachCompletionOperator() {
         flow<Int> {
             Log.d(TAG, "startEachCompletionOperator: wyj flow emit")
-            emit(1)
+            for (element in 1..3) {
+                emit(element)
+            }
         }.onStart {
             Log.d(TAG, "startEachCompletionOperator: wyj start")
         }.onEach {
