@@ -12,7 +12,7 @@ import androidx.activity.viewModels
  *  数据变化的通知。
  */
 class CountDownActivity : AppCompatActivity() {
-    val countDownModel by viewModels<CountDownModel>()
+    private val countDownModel by viewModels<CountDownModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_count_down)

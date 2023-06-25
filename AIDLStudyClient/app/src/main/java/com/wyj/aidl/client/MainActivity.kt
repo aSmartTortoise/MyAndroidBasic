@@ -24,15 +24,16 @@ class MainActivity : AppCompatActivity() {
     private val receiveMsgListener = object : IReceiveMsgListener.Stub() {
         override fun onReceive(msg: Msg?) {
             Log.d(TAG, "onReceive: wyj msg:$msg")
-            tvDisplay?.text = msg?.msg
+            runOnUiThread {
+                tvDisplay?.text = msg?.msg
+            }
         }
     }
 
     private val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             Log.d(TAG, "onServiceConnected: wyj name:$name")
-            Log.d(
-                TAG,
+            Log.d(TAG,
                 "onServiceConnected: wyj service instance of IMsgManager.proxy:${service is IMsgManager.Stub}")
             iMsgManager = IMsgManager.Stub.asInterface(service).apply {
                 asBinder().linkToDeath(deathRecipient, 0)

@@ -310,6 +310,8 @@ class MainActivity : AppCompatActivity() {
 //            takeOperatorStudy()
 //            takeWhileOperatorStudy()
             dropOperatorStudy()
+            takeWhileOperatorStudy()
+//            dropOperatorStudy()
         }
     }
 

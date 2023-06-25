@@ -8,7 +8,7 @@ import com.jie.livedata.R
 import com.jie.livedata.databinding.ActivityCoroutineLiveDataBinding
 
 class CoroutineLiveDataActivity : AppCompatActivity() {
-    val model: CoroutineLiveDataViewModel by viewModels()
+    private val model: CoroutineLiveDataViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val coroutineLiveDataBinding = DataBindingUtil.setContentView<ActivityCoroutineLiveDataBinding>(

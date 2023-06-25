@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.wyj.viewsysterm.TestConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/test_cl_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    tools:ignore="MissingConstraints">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_click"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="click"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.wyj.viewsysterm.TestButton
+        android:id="@+id/test_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="test click"
+        app:layout_constraintStart_toStartOf="@id/btn_click"
+        app:layout_constraintTop_toBottomOf="@id/btn_click" />
+
+</com.wyj.viewsysterm.TestConstraintLayout>
