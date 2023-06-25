@@ -54,6 +54,14 @@ import kotlin.system.measureTimeMillis
  *              filterNotNull操作符，接受上游流的值，返回非null值构成的流。
  *              zip操作符，使用指定的转换函数，将当前流与指定的流进行合并，每一对value应用转换函数，返回新的流。当其中的一个流
  *              完成并且剩余流调用了取消之后新的流立即完成。
+ *          1.3.4 限制操作符
+ *              take操作符，接收一个int类型的参数，获取上游流中按顺序发出的指定数目的value，返回这些value构成的新流。如果
+ *              count大于等于上游流的size，则返回整个上游流。
+ *              takeWhile操作符，接收一个谓词函数，获取上游流中按顺序发出的满足谓词函数的value，返回这些value构成的新
+ *              流。
+ *              drop操作符，接收一个int类型的参数，丢弃掉上游流中按顺序发出的指定数目的value，返回剩下的value构成的新流。
+ *              如果count大于等于流的size，则丢弃整个流。
+ *
  *
  *
  *
@@ -298,10 +306,10 @@ class MainActivity : AppCompatActivity() {
 //            filterNotOperator()
 //            filterIsInstanceOperator()
 //            filterNotNullOperator()
-            zipOperatorStudy()
+//            zipOperatorStudy()
 //            takeOperatorStudy()
 //            takeWhileOperatorStudy()
-//            dropOperatorStudy()
+            dropOperatorStudy()
         }
     }
 
@@ -309,7 +317,10 @@ class MainActivity : AppCompatActivity() {
      *  drop操作符原始流中忽略前count个元素，剩下的元素组成新的流返回
      */
     private suspend fun dropOperatorStudy() {
-        flowOf(0, 1, 2, 3, 5).drop(3).collect { Log.d(TAG, "dropOperatorStudy: wyj value:$it") }
+        flowOf(0, 1, 2, 3, 5)
+            .drop(6)
+            .onCompletion { cause -> Log.d(TAG, "dropOperatorStudy: wyj cause:$cause") }
+            .collect { Log.d(TAG, "dropOperatorStudy: wyj value:$it") }
     }
 
     /**
@@ -327,7 +338,10 @@ class MainActivity : AppCompatActivity() {
      *  take操作符，返回原始流中第一批count个元素组成的流
      */
     private suspend fun takeOperatorStudy() {
-        (1..3).asFlow().take(2).collect { Log.d(TAG, "takeOperatorStudy: wyj it:$it") }
+        (1..3).asFlow()
+            .take(5)
+            .onCompletion { cause -> Log.d(TAG, "takeOperatorStudy: wyj cause:$cause") }
+            .collect { Log.d(TAG, "takeOperatorStudy: wyj it:$it") }
     }
 
     private suspend fun zipOperatorStudy() {
