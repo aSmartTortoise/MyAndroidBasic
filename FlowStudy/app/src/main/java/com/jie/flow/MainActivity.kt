@@ -43,6 +43,19 @@ import kotlin.system.measureTimeMillis
  *          1.3.2 异常操作符
  *              catch操作符可以捕获它的上游流中发生的异常。如果它的下游流中出现了未捕获的异常，则程序会crash；可以继续添加一个catch操作符
  *          来捕获，或者通过try-catch捕获整个流的异常，或者通过协程上下文的CoroutineExceptionHandler来处理。
+ *          1.3.3 转换操作符
+ *              transform操作符，该操作符的操作可以拿到流中的值并对其进行转换，该操作是一个以FlowCollect为接收器的挂载函数。操作中需要调用
+ *          emit函数。
+ *              map操作符，操作符的操作可以获取流中的值并对其进行转换，得到一个转换之后的流。
+ *              mapNotNull操作符，过滤掉上游流中为null的值，并对其他值进行转换，得到转换后的流。
+ *              filter操作符，接受上游流中的值，返回满足给定谓词函数的值构成的流。
+ *              filterNot操作符，接受上游流的值，返回不满足指定谓词函数的值构成的流。
+ *              filterIsInstance操作符，接受上游流的值，返回指定数据类型的值构成的流。
+ *              filterNotNull操作符，接受上游流的值，返回非null值构成的流。
+ *              zip操作符，使用指定的转换函数，将当前流与指定的流进行合并，每一对value应用转换函数，返回新的流。当其中的一个流
+ *              完成并且剩余流调用了取消之后新的流立即完成。
+ *
+ *
  *
  *
  *
@@ -277,11 +290,15 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
 //            startEachCompletionOperator()
 //            flowExceptionStudy()
-            catchOperatorStudy()
+//            catchOperatorStudy()
 //            transformOperatorStudy()
 //            mapOperatorStudy()
+//            mapNotNullOperator()
 //            filterOperatorStudy()
-//            zipOperatorStudy()
+//            filterNotOperator()
+//            filterIsInstanceOperator()
+//            filterNotNullOperator()
+            zipOperatorStudy()
 //            takeOperatorStudy()
 //            takeWhileOperatorStudy()
 //            dropOperatorStudy()
@@ -314,11 +331,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun zipOperatorStudy() {
-        val flow1 = (0..3).asFlow()
+        val flow1 = (0..4).asFlow()
         val flow2 = flowOf("zero", "one", "two")
         flow1.zip(flow2) { value1, value2 ->
             "[$value1:$value2]"
         }.collect { Log.d(TAG, "operatorStudy: wyj value:$it") }
+    }
+
+    private suspend fun filterNotNullOperator() {
+        flowOf(0, null, 1, 2)
+            .filterNotNull()
+            .collect { value -> Log.d(TAG, "filterNotNull: wyj value:$value") }
+    }
+
+    private suspend fun filterIsInstanceOperator() {
+        flowOf(0, null, 1, 2)
+            .filterIsInstance<Int>()
+            .collect { value ->
+                Log.d(TAG, "filterInstanceOperator: wyj value:$value")
+            }
+    }
+
+    private suspend fun filterNotOperator() {
+        (1 .. 5).asFlow()
+            .filterNot {
+                it % 2 == 0
+            }.collect { value ->
+                Log.d(TAG, "filterNotOperator: wyj value:$value")
+            }
     }
 
     /**
@@ -332,6 +372,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private suspend fun mapNotNullOperator() {
+        flowOf("one", "two", null, "four").mapNotNull {
+            it
+        }.collect { value -> Log.d(TAG, "mapNotNull: wyj value:$value") }
+    }
+
     private suspend fun mapOperatorStudy() {
         flow<Int> {
             emit(1)
@@ -343,7 +389,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "operatorStudy: wyj 第二次map转换")
             "map $it"
         }.collect {
-            Log.d(TAG, "operatorStudy: wyj 最后的值$it")
+            Log.d(TAG, "operatorStudy: wyj collect 最后的值:$it")
         }
     }
 
