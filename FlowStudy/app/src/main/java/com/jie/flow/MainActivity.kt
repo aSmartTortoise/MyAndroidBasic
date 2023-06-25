@@ -61,6 +61,9 @@ import kotlin.system.measureTimeMillis
  *              流。
  *              drop操作符，接收一个int类型的参数，丢弃掉上游流中按顺序发出的指定数目的value，返回剩下的value构成的新流。
  *              如果count大于等于流的size，则丢弃整个流。
+ *          1.3.5 末端流操作符
+ *              collect操作符，收集流的value。
+ *              toList操作符，将流转换成List。
  *
  *
  *
@@ -309,10 +312,14 @@ class MainActivity : AppCompatActivity() {
 //            zipOperatorStudy()
 //            takeOperatorStudy()
 //            takeWhileOperatorStudy()
-            dropOperatorStudy()
-            takeWhileOperatorStudy()
+//            takeWhileOperatorStudy()
 //            dropOperatorStudy()
+            toListOperator()
         }
+    }
+
+    private suspend fun toListOperator() {
+        val list = (1..3).asFlow().toList()
     }
 
     /**
