@@ -64,6 +64,11 @@ import kotlin.system.measureTimeMillis
  *          1.3.5 末端流操作符
  *              collect操作符，收集流的value。
  *              toList操作符，将流转换成List。
+ *      1.4 Flow的缓冲
+ *          通常流是顺序执行的，各个操作符的代码是运行在同一个协程的，Flow执行的总时间是各个操作
+ *          符代码执行时间的总和。Flow应用buffer操作符可以为流的执行创建单独的协程。在buffer操作符的上游流的执行创建一个协程，buffer
+ *          操作符的下游流的执行创建一个协程。可以减少流的总执行时间。
+ *
  *
  *
  *
@@ -492,15 +497,31 @@ class MainActivity : AppCompatActivity() {
      */
     private suspend fun measureFlowBufferTime() {
         val time = measureTimeMillis {
-            flow<Int> {
+            flow {
                 for (i in 1..3) {
                     delay(100L)
+                    Log.d(
+                        TAG,
+                        "measureFlowBufferTime: wyj emit value:$i, context:${currentCoroutineContext()}"
+                    )
                     emit(i)
                 }
-            }.buffer().collect { value ->
-                delay(300L)
-                Log.d(TAG, "measureFlowBufferTime: wyj value:$value")
-            }
+            }.onEach {
+                Log.d(
+                    TAG,
+                    "measureFlowBufferTime: wyj each $it context:${currentCoroutineContext()}"
+                )
+            }.buffer()
+                .onCompletion {
+                    Log.d(TAG, "measureFlowBufferTime: wyj context:${currentCoroutineContext()}")
+                }
+                .collect { value ->
+                    delay(300L)
+                    Log.d(
+                        TAG,
+                        "measureFlowBufferTime: wyj collect value:$value context:${currentCoroutineContext()}"
+                    )
+                }
         }
         Log.d(TAG, "measureFlowBufferTime: wyj time:$time")
     }
