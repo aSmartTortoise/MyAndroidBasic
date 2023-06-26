@@ -113,15 +113,50 @@ import kotlin.system.measureTimeMillis
  *          返回的ReceiveChannel可以通过扩展函数consumeEach来接收通道中的元素，函数调用完之后会取消接收者通道，并取消协程。
  *  3 StateFlow
  *      https://www.jianshu.com/p/29585473ff65
- *      StateFlow是热数据流，并且是只读的，只能接收数据，不能发送数据，是一个可观察的数据流。它的实例和它的收集器无关，可以通过value属性访问当前值。
+ *      StateFlow是热数据流，并且是只读的，只能接收数据，不能发送数据，是一个可观察的数据流。
  *      通过Flow#collect即获得流的收集器，通常这个收集器的执行永远不会完成，并挂起调用者，收集器也被视作订阅者。
- *      StateFlow始终具有一个value，不缓冲之前发出的值，保留最后发出的值，它的接收器接收的是最后发出的值。
+ *      StateFlow始终具有一个value，不缓冲之前发出的值，保留最后发出的值，它的接收器接收的是最新发出的值。
  *      3.1 MutableStateFlow
  *          MutableStateFlow是可读写的StateFlow，可以发送、接收数据，该接口继承了StateFlow和MutableSharedFlow。
  *          3.1.1 compareAndSet(expect: T, update: T)
- *              将当前值与expect比较，如果相等，则设置当前value未update，返回true；否则不修改当前值，返回false。
+ *              将当前值与expect比较，如果相等，则设置当前value未update，返回true；否则不修改当前值，返回false。函数是
+ *          线程安全的。
  *      3.2 Flow#stateIn(scope: CoroutineScope)
  *          Flow的扩展函数，且是一个挂起函数，调用该函数会挂起所在的协程，直到发出第一个值为止。返回一个StateFlow。
+ *  4 SharedFlow
+ *      也是一种热流，也是只读的。通过广播的方式在它的所有收集器之间共享发送的value。通过Flow#collect的操作符获取流的收集器，也被视为
+ *  订阅者，通常收集器操作永远不会完成，它会挂起调用者协程。
+ *      在SharedFlow上应用末端流操作符，比如toList，对应的操作也是不会完成的。
+ *      SharedFlow可以用在应用中向发送广播这样的场景。
+ *      replayCache，流中重新向新的订阅者发送的value的集合。
+ *      4.1 MutableSharedFlow
+ *          一个可读写的热数据流，可以向流中发送value。emit、tryEmit方法是线程安全的。
+ *          4.1.1 MutableSharedFlow的构造函数
+ *              replay - 重新向新的订阅者发送的value的数量；
+ *              extraBufferCapacity - 除了replay之外，缓冲的值的数量；
+ *              onBufferOverFlow - 当向流中发送value，缓冲区溢出时的处理策略，
+ *                  SUSPEND - 当缓冲区满时，上游流的执行会挂起
+ *                  DROP_OLDEST - 当缓冲区满时，丢弃最旧值，将新值添加到缓冲区，不挂起。
+ *                  DROP_LATEST - 当缓冲区满时，丢弃正在添加到缓冲区的新值，不挂起。
+ *              MutableSharedFlow缓冲容量是replay + extraBufferCapacity
+ *          4.1.2 emit(value: T)
+ *              是个挂载函数，向流中发送指定的value；当缓冲满时，且使用的是BufferOverflow.SUSPEND,则挂起所在的协程。该函数是
+ *          线程安全的。
+ *          4.1.3 tryEmit(value: T)
+ *              尝试向流中发送指定的值，不会挂起所在的协程，如果返回值为true，则表明发送成功了，否则发送失败。如果配置参数onBufferOverflow
+ *          为BufferOverflow.DROP_OLDEST或者BufferOverflow.DROP_LATEST则始终返回true。
+ *      4.2 Flow#shareIn
+ *          将一个冷流转换成一个只读的SharedFlow。流的执行策略受replay和SharingStarted共同影响。
+ *          4.2.1 SharingStarted
+ *              有三种默认的模式。
+ *              eagerly - 上游流在第一个订阅者出现旧开始运行，当缓冲满时，丢弃replay个最早发送的value。
+ *              lazily - 上游流在第一个订阅者出现才开始运行，第一个订阅者获取所有的value。后续的订阅者只能获取replay个缓冲区的value；
+ *              WhileSubscribed - 上游流在第一个订阅者出现时开始运行，在最后一个订阅者消失时停止，
+ *  5 冷流与热流
+ *      Flow是冷流，上有流发送value的执行和收集器有关，每一个收集器收集上游流的value的时候都会触发上游流发送value。
+ *      StateFlow、SharedFlow是热流，上游流发送数据和它的收集器没有关系。
+ *
+ *
  *
  *
  *
@@ -174,6 +209,10 @@ class MainActivity : AppCompatActivity() {
             stateFlowStudy()
         }
 
+        findViewById<View>(R.id.btn_shared_flow01).setOnClickListener {
+            sharedFlowStudy()
+        }
+
         findViewById<View>(R.id.btn_state_flow).setOnClickListener {
             Intent(this@MainActivity, StateFlowStudyActivity::class.java).apply {
                 this@MainActivity.startActivity(this)
@@ -189,12 +228,126 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun sharedFlowStudy() {
+//        mutableSharedFlowEmit()
+//        mutableSharedFlowTryEmit()
+//        mutableSharedFlowEmitSuspend()
+//        shareInEagerly()
+//        shareInLazily()
+        shareInWhileSubscribed()
+    }
+
+    private fun shareInWhileSubscribed() {
+        lifecycleScope.launch {
+            flowOf(0, 1, 2, 3)
+                .onEach { Log.d(TAG, "shareInWhileSubscribed: wyj each it:$it") }
+                .onCompletion { Log.d(TAG, "shareInWhileSubscribed: wyj onCompletion") }
+                .shareIn(this, SharingStarted.WhileSubscribed())
+        }
+    }
+
+    private fun shareInLazily() {
+        lifecycleScope.launch {
+            val sharedFlow = flowOf(1, 2, 3, 4)
+                .onEach { Log.d(TAG, "shareInLazily: wyj each it:$it") }
+                .shareIn(this, SharingStarted.Lazily, replay = 2)
+            launch {
+                sharedFlow.collect { value1 -> Log.d(TAG, "shareInLazily: wyj collect value1:$value1") }
+            }
+
+            delay(10L)
+            launch {
+                sharedFlow.collect { value2 -> Log.d(TAG, "shareInLazily: wyj collect value2:$value2") }
+            }
+        }
+
+    }
+
+    private fun shareInEagerly() {
+        lifecycleScope.launch {
+            val sharedFlow = flowOf(1, 2, 3, 4)
+                .onEach { Log.d(TAG, "shareInOperator: wyj each it:$it") }
+                .shareIn(this, SharingStarted.Eagerly, replay = 2).onCompletion {
+                    Log.d(TAG, "shareInOperator: wyj onCompletion")
+                }
+            launch {
+                sharedFlow.collect { value -> Log.d(TAG, "shareInOperator: wyj collect value:$value") }
+            }
+        }
+    }
+
+    private fun mutableSharedFlowEmitSuspend() {
+        val shareFlow = MutableSharedFlow<Int>(4, 3)
+        lifecycleScope.launch {
+            launch {
+                shareFlow.collect { value -> Log.d(TAG, "mutableSharedFlowEmitSuspend: wyj collect value:$value") }
+            }
+            launch {
+                (1 .. 10).forEach {
+                    shareFlow.emit(it)
+                    Log.d(TAG, "mutableSharedFlowEmitSuspend: wyj emit it:$it")
+                }
+            }
+            delay(200)
+            val list = shareFlow.replayCache
+            Log.d(TAG, "mutableSharedFlowEmitSuspend: wyj list:$list")
+            launch {
+                shareFlow.collect { value2 -> Log.d(TAG, "mutableSharedFlowEmitSuspend: wyj collect value2:$value2") }
+            }
+        }
+    }
+
+    private fun mutableSharedFlowTryEmit() {
+        val shareFlow = MutableSharedFlow<Int>(4, 3)
+        lifecycleScope.launch {
+            launch {
+                shareFlow.collect { value -> Log.d(TAG, "mutableSharedFlowTryEmit: wyj collect value:$value") }
+            }
+            launch {
+                (1 .. 10).forEach {
+                    val result = shareFlow.tryEmit(it)
+                    Log.d(TAG, "mutableSharedFlowTryEmit: wyj emit it:$it, result:$result")
+                    delay(100L)
+                }
+                Log.d(TAG, "mutableSharedFlowTryEmit: wyj not suspend.")
+            }
+            delay(900L)
+            launch {
+                shareFlow.collect { value2 -> Log.d(TAG, "mutableSharedFlowTryEmit: wyj collect value2:$value2") }
+            }
+        }
+    }
+
+    private fun mutableSharedFlowEmit() {
+        val shareFlow = MutableSharedFlow<Int>(4, 3)
+        lifecycleScope.launch {
+            launch {
+                shareFlow.collect {
+                    Log.d(TAG, "mutableSharedFlowEmit: wyj collect it:$it")
+                }
+            }
+            val emitJob = launch {
+                (1..10).forEach {
+                    Log.d(TAG, "mutableSharedFlowEmit: wyj emit it:$it")
+                    shareFlow.emit(it)
+                    delay(100L)
+                }
+                Log.d(TAG, "mutableSharedFlowEmit: wyj emitJob not suspend")
+            }
+
+            delay(900)
+            launch {
+                shareFlow.collect { value2 -> Log.d(TAG, "sharedFlowStudy: wyj value2:$value2") }
+            }
+        }
+    }
+
     private fun stateFlowStudy() {
 //        stateFlowCollector()
-//        stateFlowCollectValue()
+        stateFlowCollectValue()
 //        stateInOperator()
 //        stateFlowNoBuffer()
-        compareAndSet()
+//        compareAndSet()
     }
 
     private fun compareAndSet() {
@@ -265,6 +418,10 @@ class MainActivity : AppCompatActivity() {
             launch {
                 Log.d(TAG, "stateFlowCollectValue: wyj set value")
                 stateFlow.emit(3)
+            }
+
+            launch {
+                stateFlow.collect { value2 -> Log.d(TAG, "stateFlowCollectValue: wyj collect value2:$value2") }
             }
             delay(200L)
             Log.d(TAG, "stateFlowCollectValue: wyj collectJob isCompleted:${collectJob.isCompleted}")
@@ -424,12 +581,15 @@ class MainActivity : AppCompatActivity() {
      *  Flow没有提供取消的操作，Flow的取消可以依赖协程的取消，
      */
     private suspend fun flowBuildStudy() {
-        flow<Int> {
+        val flow = flow<Int> {
             for (i in 1..3) {
                 delay(100L)
+                Log.d(TAG, "flowBuildStudy: wyj emit value:$i")
                 emit(i)
             }
-        }.collect { value -> Log.d(TAG, "flowBuildStudy: wyj value:$value") }
+        }
+        flow.collect { value -> Log.d(TAG, "flowBuildStudy: wyj collect value:$value") }
+        flow.collect { value2 -> Log.d(TAG, "flowBuildStudy: wyj collect value2:$value2") }
     }
 
     private fun simple(): Sequence<Int> = sequence {
