@@ -111,6 +111,20 @@ import kotlin.system.measureTimeMillis
  *      也是Channel。produce方法返回值是ReceiveChannel类型，引用是ProducerCoroutine。
  *          协程完成时，通道关闭。当接收者通道取消，协程取消。协程中任何未捕获的异常都会导致关闭通道。
  *          返回的ReceiveChannel可以通过扩展函数consumeEach来接收通道中的元素，函数调用完之后会取消接收者通道，并取消协程。
+ *  3 StateFlow
+ *      https://www.jianshu.com/p/29585473ff65
+ *      StateFlow是热数据流，并且是只读的，只能接收数据，不能发送数据，是一个可观察的数据流。它的实例和它的收集器无关，可以通过value属性访问当前值。
+ *      通过Flow#collect即获得流的收集器，通常这个收集器的执行永远不会完成，并挂起调用者，收集器也被视作订阅者。
+ *      StateFlow始终具有一个value，不缓冲之前发出的值，保留最后发出的值，它的接收器接收的是最后发出的值。
+ *      3.1 MutableStateFlow
+ *          MutableStateFlow是可读写的StateFlow，可以发送、接收数据，该接口继承了StateFlow和MutableSharedFlow。
+ *          3.1.1 compareAndSet(expect: T, update: T)
+ *              将当前值与expect比较，如果相等，则设置当前value未update，返回true；否则不修改当前值，返回false。
+ *      3.2 Flow#stateIn(scope: CoroutineScope)
+ *          Flow的扩展函数，且是一个挂起函数，调用该函数会挂起所在的协程，直到发出第一个值为止。返回一个StateFlow。
+ *
+ *
+ *
  *
  *
  *
@@ -156,6 +170,10 @@ class MainActivity : AppCompatActivity() {
             produceStudy()
         }
 
+        findViewById<View>(R.id.btn_state_flow01).setOnClickListener {
+            stateFlowStudy()
+        }
+
         findViewById<View>(R.id.btn_state_flow).setOnClickListener {
             Intent(this@MainActivity, StateFlowStudyActivity::class.java).apply {
                 this@MainActivity.startActivity(this)
@@ -171,16 +189,111 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun stateFlowStudy() {
+//        stateFlowCollector()
+//        stateFlowCollectValue()
+//        stateInOperator()
+//        stateFlowNoBuffer()
+        compareAndSet()
+    }
+
+    private fun compareAndSet() {
+        lifecycleScope.launch {
+            val stateFlow = MutableStateFlow(1)
+            launch {
+                for (value in 1 .. 5) {
+                    delay(100L)
+                    stateFlow.emit(value)
+                }
+            }
+
+            launch {
+                stateFlow.collect { value ->
+                    Log.d(TAG, "compareAndSet: wyj collect value:$value")
+                    stateFlow.compareAndSet(3, 300)
+                }
+            }
+
+            launch {
+                stateFlow.collect { value2 -> Log.d(TAG, "compareAndSet: wyj collect value2:$value2") }
+            }
+        }
+
+    }
+
+    private fun stateFlowNoBuffer() {
+        lifecycleScope.launch {
+            val stateFlow = flow {
+                for (value in 1 .. 5) {
+                    Log.d(TAG, "stateFlowNoBuffer: wyj emit value:$value")
+                    emit(value)
+                }
+            }.stateIn(this)
+
+            launch {
+                stateFlow.collect { value ->
+                    Log.d(TAG, "stateFlowNoBuffer: wyj collect value:$value") }
+            }
+        }
+    }
+
+    private fun stateInOperator() {
+        lifecycleScope.launch {
+            val stateFlow = flow {
+                for (element in 0 .. 3) {
+                    emit(element)
+                    delay(100)
+                }
+            }.stateIn(this)
+            launch {
+                stateFlow.collect { value ->
+                    Log.d(TAG, "stateInOperator: wyj collect value:$value")
+                }
+            }
+        }
+    }
+
+    private fun stateFlowCollectValue() {
+        val stateFlow = MutableStateFlow(0)
+        lifecycleScope.launch {
+            val collectJob = launch {
+                stateFlow.collect { value ->
+                    Log.d(TAG, "stateFlowCollectValue: wyj collect value:$value")
+                }
+            }
+
+            launch {
+                Log.d(TAG, "stateFlowCollectValue: wyj set value")
+                stateFlow.emit(3)
+            }
+            delay(200L)
+            Log.d(TAG, "stateFlowCollectValue: wyj collectJob isCompleted:${collectJob.isCompleted}")
+        }
+    }
+
+    /**
+     *  通常StateFlow的收集器执行永不会完成，挂起了调用者，这样所在的协程也不会完成。
+     */
+    private fun stateFlowCollector() {
+        val stateFlow = MutableStateFlow(0)
+        lifecycleScope.launch {
+            stateFlow.collect { value ->
+                Log.d(TAG, "stateFlowCollector: wyj collect value:$value")
+            }
+            Log.d(TAG, "stateFlowCollector: wyj done!")
+        }
+    }
+
     private fun test() {
 //        simple().forEach { value -> Log.d(TAG, "test: wyj value:$value") }
 //        cancelFlow()
         lifecycleScope.launch {
-//            flowBuildStudy()
+            flowBuildStudy()
 //            asFlowBuildStudy()
 //            flowOfBuildStudy()
 //            flowBuildStudy02()
 //            flowBuilderSwitchContext()
-            flowOnStudy()
+//            flowOnStudy()
 
         }
     }
@@ -192,7 +305,7 @@ class MainActivity : AppCompatActivity() {
      *  无论flowOn如何切换线程，collect代码块始终运行在协程调度器所关联的线程上。
      */
     private suspend fun flowOnStudy() {
-        flow<Int> {
+        val flow = flow<Int> {
             for (i in 1..3) {
                 Log.d(TAG, "flowOnStudy: wyj flow context:${currentCoroutineContext()}")
                 delay(100L)

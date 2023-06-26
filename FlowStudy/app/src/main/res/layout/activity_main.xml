@@ -58,13 +58,32 @@
         app:layout_constraintStart_toEndOf="@id/btn_channel01" />
 
     <Button
+        android:id="@+id/btn_state_flow01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="state flow"
+        app:layout_constraintStart_toStartOf="@id/btn_sequence"
+        app:layout_constraintTop_toBottomOf="@id/btn_channel01" />
+
+    <Button
+        android:id="@+id/btn_share_flow01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="produce"
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_state_flow01"
+        app:layout_constraintStart_toEndOf="@id/btn_channel01" />
+
+
+    <Button
         android:id="@+id/btn_state_flow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="StateFlow study"
         app:layout_constraintStart_toStartOf="@id/btn_channel01"
-        app:layout_constraintTop_toBottomOf="@id/btn_channel01" />
+        app:layout_constraintTop_toBottomOf="@id/btn_state_flow01" />
 
     <Button
         android:layout_marginStart="10dp"

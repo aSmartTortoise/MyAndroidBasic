@@ -1,5 +1,6 @@
 package com.jie.flow.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -11,6 +12,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class TestFlowViewModel : ViewModel() {
+    companion object {
+        private const val TAG = "TestFlowViewModel"
+    }
     private val _state: MutableStateFlow<Int> = MutableStateFlow(0)
     val mState: StateFlow<Int>
         get() = _state
@@ -25,6 +29,7 @@ class TestFlowViewModel : ViewModel() {
         for (element in 0..5) {
             viewModelScope.launch(Dispatchers.IO) {
                 delay(200L * element)
+                Log.d(TAG, "downloadByStateFlow: wyj element:$element")
                 _state.value = element
             }
         }
