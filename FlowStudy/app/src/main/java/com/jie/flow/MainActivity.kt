@@ -73,26 +73,45 @@ import kotlin.system.measureTimeMillis
  *          Channel是用于发送者和接收者之间通信的非阻塞原语（primitive），这里的发送者指的是SendChannel、接收者指的是
  *      ReceiveChannel。
  *          原语（primitive）指的是有机器指令编写的完成特定功能的程序，执行过程中不允许中断。
- *          Channel实现了SendChannel和ReceiveChannel。
+ *          Channel实现了SendChannel和ReceiveChannel。Channel是基于生产者-消费者模式设计的，SendChannel是生产者，
+ *      ReceiveChannel是消费者。
  *      2.2 SendChannel
  *          定义发送者的接口。
- *          2.2 send
+ *          2.2.1 send
  *              将指定的元素发送到该通道。如果通道的缓冲区已满或者没有缓冲区则挂起调用方。如果通道已关闭，调用该方法会抛出异常。
- *          2.3 trySend
+ *          2.2.2 trySend
  *              将指定的元素添加到该通道，如果该通道的缓冲区没有满，则返回success result，否则返回failed或者closed result。
  *          当返回非成功的result时候，该元素不会传递到消费者，并且不会调用onUndeliveredElement函数。
- *          2.4 close
+ *          2..2.3 close
  *              关闭SendChannel，在概念上调用该函数会向该通道发送一个特殊的关闭令牌。在调用此函数后，SendChannel一侧的
  *          isClosedForSend为true；但是在ReceiveChannel一侧，当先前发送的元素都被接收后，isClosedForReceive是
  *          true。
  *              关闭时没有指定cause的通道，在尝试send时候会抛出CloseSendChannelException。在尝试receive时会抛出
  *          CloseReceiveChannelException。如果cause不为空，则通道为失败通道，在失败的通道send、receive会抛出指定
  *          的cause异常。
+ *          2.2.4 isClosedForSend
+ *          如果通道调用了close函数，则为true。使用该属性可以在调用send和receive(ReceiveChannel一侧)来判断通道是否已关闭。
+ *
  *      2.3 ReceiveChannel
  *          定义接收者的接口。
  *          2.3.1 receive
  *              如果通道不为空，则获取并移除通道中的一个元素；如果通道为空，则挂起调用者。如果通道已关闭则抛出
  *          CloseReceiveChannelException。如果通道因异常而关闭，调用该函数，则会抛出指定关闭通道的异常。
+ *          2.3.2 tryReceive
+ *              如果通道不为空，则移除通道中的一个元素，返回success result；如果通道为空，返回failed result；如果通道
+ *          关闭返回closed result。
+ *          2.3.3 cancel(cause CancellationException? = null)
+ *              取消从该通道接收剩余的元素；该函数会关闭通道，并移除通道中所有的已缓冲的已发送的元素；如果没有指定原因，则
+ *          会创建一个带有默认消息的CancellationException的实例来关闭通道；调用该函数后，isClosedForReceive为true，
+ *          SendChannel一侧的isClosedForSend为true。调用该函数之后，任何向该通道发送或接收元素都会抛出异常。
+ *      2.4 CoroutineScope#produce构建器构建channel
+ *          CoroutineScope的扩展方法produce会启动一个协程，在协程内部通过向通道发送值生成一个value流；该协程是
+ *      ProducerCoroutine。ProducerCoroutine是继承ProducerScope和ChannelCoroutine的；而ProducerScope是实现CoroutineScope和
+ *      SendChannel的；ChannelCoroutine是继承AbstractCoroutine并实现Channel的。所以ProducerCoroutine即是CoroutineScope
+ *      也是Channel。produce方法返回值是ReceiveChannel类型，引用是ProducerCoroutine。
+ *          协程完成时，通道关闭。当接收者通道取消，协程取消。协程中任何未捕获的异常都会导致关闭通道。
+ *          返回的ReceiveChannel可以通过扩展函数consumeEach来接收通道中的元素，函数调用完之后会取消接收者通道，并取消协程。
+ *
  *
  *
  *
@@ -128,9 +147,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btn_channel01).setOnClickListener {
-            channelStudy01()
+//            channelStudy01()
 //            channelStudy02()
-//            channelStudy03()
+            channelStudy03()
         }
 
         findViewById<View>(R.id.btn_produce).setOnClickListener {
@@ -626,7 +645,10 @@ class MainActivity : AppCompatActivity() {
             val channel = Channel<Int>()
             launch {
                 if (!channel.isClosedForSend) {
-                    for (x in 1..5) channel.send(x)
+                    for (x in 1..5) {
+                        Log.d(TAG, "channelStudy03: wyj send x:$x")
+                        channel.send(x)
+                    }
                     channel.close()
                 }
             }
@@ -657,6 +679,7 @@ class MainActivity : AppCompatActivity() {
                 for (x in 1..5) send(x)
             }
             square.consumeEach { Log.d(TAG, "produceStudy: wyj it:$it") }
+            Log.d(TAG, "produceStudy: wyj isClosedForReceive:${square.isClosedForReceive}")
             Log.d(TAG, "produceStudy: wyj done")
         }
     }
