@@ -9,6 +9,7 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.*
@@ -78,7 +79,7 @@ import kotlin.system.measureTimeMillis
  *      2.2 SendChannel
  *          定义发送者的接口。
  *          2.2.1 send
- *              将指定的元素发送到该通道。如果通道的缓冲区已满或者没有缓冲区则挂起调用方。如果通道已关闭，调用该方法会抛出异常。
+ *              将指定的元素发送到该通道。如果通道的缓冲区已满或者没有缓冲区则挂它的调用方。如果通道已关闭，调用该方法会抛出异常。
  *          2.2.2 trySend
  *              将指定的元素添加到该通道，如果该通道的缓冲区没有满，则返回success result，否则返回failed或者closed result。
  *          当返回非成功的result时候，该元素不会传递到消费者，并且不会调用onUndeliveredElement函数。
@@ -140,7 +141,7 @@ import kotlin.system.measureTimeMillis
  *                  DROP_LATEST - 当缓冲区满时，丢弃正在添加到缓冲区的新值，不挂起。
  *              MutableSharedFlow缓冲容量是replay + extraBufferCapacity
  *          4.1.2 emit(value: T)
- *              是个挂载函数，向流中发送指定的value；当缓冲满时，且使用的是BufferOverflow.SUSPEND,则挂起所在的协程。该函数是
+ *              是个挂起函数，向流中发送指定的value；当缓冲满时，且使用的是BufferOverflow.SUSPEND,则挂起所在的协程。该函数是
  *          线程安全的。
  *          4.1.3 tryEmit(value: T)
  *              尝试向流中发送指定的值，不会挂起所在的协程，如果返回值为true，则表明发送成功了，否则发送失败。如果配置参数onBufferOverflow
@@ -148,10 +149,22 @@ import kotlin.system.measureTimeMillis
  *      4.2 Flow#shareIn
  *          将一个冷流转换成一个只读的SharedFlow。流的执行策略受replay和SharingStarted共同影响。
  *          4.2.1 SharingStarted
- *              有三种默认的模式。
+ *              启动和停止上游流的策略。内置了三种策略，也可以通过实现command函数自定义策略。
+ *              通过发出命令来控制上游流的运行，连续发出相同的命令不会有效果。这些命令对应SharingCommand枚举类，有START、
+ *          STOP、STOP_RESET_REPLAY_CACHE.
+ *              START - 启动上游流
+ *              STOP - 停止上游流
+ *              STOP_RESET_REPLAY_CACHE - 停止上游流并重置SharedFlow#replayCache为初始值；
+ *              初始状态下上游流处在停止，且replayCache为初始值，所在在初始状态发出STOP或STOP_RESET_REPLAY_CACHE没有
+ *          效果。
  *              eagerly - 上游流在第一个订阅者出现旧开始运行，当缓冲满时，丢弃replay个最早发送的value。
  *              lazily - 上游流在第一个订阅者出现才开始运行，第一个订阅者获取所有的value。后续的订阅者只能获取replay个缓冲区的value；
- *              WhileSubscribed - 上游流在第一个订阅者出现时开始运行，在最后一个订阅者消失时停止，
+ *              WhileSubscribed - 上游流在第一个订阅者出现时开始运行，在最后一个订阅者消失时停止。永久保留replayCache。
+ *                  WhileSubscribed(stopTimeoutMillis: Long = 0, replayExpirationMillis: Long = Long.MAX_VALUE)函数
+ *                  中的配置参数。
+ *                  stopTimeoutMillis - 最后一个订阅者消失和停止上游流运行的延迟时间。
+ *                  replayExpirationMillis - 停止上游流运行和重置replayCache之间的延迟时间，默认是Long.MAX_VALUE，即永久
+ *              不重置replayCache。
  *  5 冷流与热流
  *      Flow是冷流，上有流发送value的执行和收集器有关，每一个收集器收集上游流的value的时候都会触发上游流发送value。
  *      StateFlow、SharedFlow是热流，上游流发送数据和它的收集器没有关系。
@@ -344,8 +357,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun stateFlowStudy() {
 //        stateFlowCollector()
-        stateFlowCollectValue()
-//        stateInOperator()
+//        stateFlowCollectValue()
+        stateInOperator()
 //        stateFlowNoBuffer()
 //        compareAndSet()
     }
@@ -948,11 +961,17 @@ class MainActivity : AppCompatActivity() {
     @ExperimentalCoroutinesApi
     private fun produceStudy() {
         lifecycleScope.launch {
-            val square = produce {
-                for (x in 1..5) send(x)
+            val receiveChannel = produce {
+                for (x in 1..5) {
+                    Log.d(TAG, "produceStudy: wyj send x:$x")
+                    send(x)
+                }
             }
-            square.consumeEach { Log.d(TAG, "produceStudy: wyj it:$it") }
-            Log.d(TAG, "produceStudy: wyj isClosedForReceive:${square.isClosedForReceive}")
+            receiveChannel.consumeEach { Log.d(TAG, "produceStudy: wyj it:$it") }
+            Log.d(TAG, "produceStudy: wyj isClosedForReceive:${receiveChannel.isClosedForReceive}")
+            if (receiveChannel is CoroutineScope) {
+                Log.d(TAG, "produceStudy: isCancelled:${(receiveChannel as CoroutineScope).isActive}")
+            }
             Log.d(TAG, "produceStudy: wyj done")
         }
     }
