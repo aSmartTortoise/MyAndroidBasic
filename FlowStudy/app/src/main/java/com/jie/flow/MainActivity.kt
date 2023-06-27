@@ -9,7 +9,6 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.*
@@ -18,13 +17,20 @@ import kotlin.system.measureTimeMillis
 
 /**
  *  flow学习
+ *  https://juejin.cn/post/7034379406730592269
+ *  https://xuyisheng.top/flow_basic/
  *  1 https://juejin.cn/post/7034381227025465375/
  *      1.1 RestrictsSuspension注解
  *          被RestrictsSuspension注解的类在用作挂起的扩展函数的接收器时有限制，在扩展函数内部只能使用该接收器类定义的挂起函数，而不能
  *      调用任意的挂起函数。
- *      1.2 Flow
- *          Flow是一个异步数据流，它按照顺序发出值。通常说的Flow是指的冷流，即流可以重复收集，并在每次收集的时候触发相同的代码。而SharedFlow
- *      指的是热流，
+ *      1.2 Flow （冷流与热流）
+ *          Flow是一个异步数据流，它按照顺序发出值。
+ *          一个异步数据流通常包含三个部分
+ *          .上游流
+ *          .操作符
+ *          .下游流
+ *          冷流指的时下游流没有消费行为时，上游流不会生产数据；热流指的是无论下游流是否有消费行为，上游流都会生产数据。
+ *          通常说的Flow是指的冷流，而SharedFlow指的是热流，
  *          1.2.1 取消Flow
  *              Flow的执行是依赖于collect的，而collect需要在协程中调用，取消Flow的执行可以通过取消它所在的协程完成。
  *          1.2.2 为了保证Flow上下文的一致性，禁止在Flow的上游流emit代码中切换线程。但是在下游流的collect操作符函数中是可以切换线程的。
@@ -168,6 +174,8 @@ import kotlin.system.measureTimeMillis
  *  5 冷流与热流
  *      Flow是冷流，上有流发送value的执行和收集器有关，每一个收集器收集上游流的value的时候都会触发上游流发送value。
  *      StateFlow、SharedFlow是热流，上游流发送数据和它的收集器没有关系。
+ *  6 Flow在开发中的使用
+ *      https://juejin.cn/post/6989032238079803429
  *
  *
  *
@@ -242,7 +250,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sharedFlowStudy() {
-//        mutableSharedFlowEmit()
+        mutableSharedFlowEmit()
 //        mutableSharedFlowTryEmit()
 //        mutableSharedFlowEmitSuspend()
 //        shareInEagerly()
@@ -252,12 +260,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun shareInWhileSubscribed() {
         lifecycleScope.launch {
-            flowOf(0, 1, 2, 3)
-                .onEach { Log.d(TAG, "shareInWhileSubscribed: wyj each it:$it") }
-                .onCompletion { Log.d(TAG, "shareInWhileSubscribed: wyj onCompletion") }
-                .shareIn(this, SharingStarted.WhileSubscribed())
+            var start = 0L
+            val sharedFlow = (1 .. 10).asFlow()
+                .onStart { start = currentTime() }
+                .onEach { Log.d(TAG, "shareInWhileSubscribed: wyj each it:$it, ${currentTime() - start}")
+                    delay(100L)
+                }
+                .onCompletion { Log.d(TAG, "shareInWhileSubscribed: wyj onCompletion ${currentTime() - start}") }
+                .shareIn(this,
+                    SharingStarted.WhileSubscribed(100L, 200L),
+                    replay = 2)
+            val job = launch {
+                Log.d(TAG, "shareInWhileSubscribed: wyj current time")
+                sharedFlow.collect {
+                    Log.d(TAG, "shareInWhileSubscribed: wyj collect it:$it, ${currentTime() - start}")
+                }
+            }
+            launch {
+                delay(1000L)
+                job.cancel()
+                delay(110L)
+                sharedFlow.collect {
+                    Log.d(TAG, "shareInWhileSubscribed: wyj again collect it:$it, ${currentTime() - start}")
+                }
+                Log.d(TAG, "shareInWhileSubscribed: wyj sharedFlow has stop")
+            }
         }
     }
+
+    private fun currentTime() = System.currentTimeMillis()
 
     private fun shareInLazily() {
         lifecycleScope.launch {
