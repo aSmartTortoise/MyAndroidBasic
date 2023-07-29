@@ -29,7 +29,8 @@ import kotlin.system.measureTimeMillis
  *          .上游流
  *          .操作符
  *          .下游流
- *          冷流指的时下游流没有消费行为时，上游流不会生产数据；热流指的是无论下游流是否有消费行为，上游流都会生产数据。
+ *          冷流指的时下游流没有消费行为时，上游流不会生产数据，上游流和下游流是一对一的关系；
+ *          热流指的是无论下游流是否有消费行为，上游流都会生产数据，上游流和下游流是一对多的关系。
  *          通常说的Flow是指的冷流，而SharedFlow指的是热流，
  *          1.2.1 取消Flow
  *              Flow的执行是依赖于collect的，而collect需要在协程中调用，取消Flow的执行可以通过取消它所在的协程完成。
@@ -171,10 +172,7 @@ import kotlin.system.measureTimeMillis
  *                  stopTimeoutMillis - 最后一个订阅者消失和停止上游流运行的延迟时间。
  *                  replayExpirationMillis - 停止上游流运行和重置replayCache之间的延迟时间，默认是Long.MAX_VALUE，即永久
  *              不重置replayCache。
- *  5 冷流与热流
- *      Flow是冷流，上有流发送value的执行和收集器有关，每一个收集器收集上游流的value的时候都会触发上游流发送value。
- *      StateFlow、SharedFlow是热流，上游流发送数据和它的收集器没有关系。
- *  6 Flow在开发中的使用
+ *  5 Flow在开发中的使用
  *      https://juejin.cn/post/6989032238079803429
  *
  *
@@ -242,6 +240,12 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btn_share_flow).setOnClickListener {
             Intent(this@MainActivity, SharedFlowActivity::class.java).apply {
+                this@MainActivity.startActivity(this)
+            }
+        }
+
+        findViewById<View>(R.id.btn_flow_practise).setOnClickListener {
+            Intent(this@MainActivity, FlowPractiseActivity::class.java).apply {
                 this@MainActivity.startActivity(this)
             }
         }
@@ -666,7 +670,7 @@ class MainActivity : AppCompatActivity() {
 //            }, 200L
 //        )
         lifecycleScope.launch {
-//            startEachCompletionOperator()
+            startEachCompletionOperator()
 //            flowExceptionStudy()
 //            catchOperatorStudy()
 //            transformOperatorStudy()
@@ -681,7 +685,7 @@ class MainActivity : AppCompatActivity() {
 //            takeWhileOperatorStudy()
 //            takeWhileOperatorStudy()
 //            dropOperatorStudy()
-            toListOperator()
+//            toListOperator()
         }
     }
 

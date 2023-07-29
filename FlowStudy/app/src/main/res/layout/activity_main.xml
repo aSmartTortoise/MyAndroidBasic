@@ -92,5 +92,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btn_share_flow"
-        android:text="SharedFlowS tudy"/>
+        android:text="SharedFlow"/>
+
+    <Button
+        android:id="@+id/btn_flow_practise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Flow practise"
+        app:layout_constraintStart_toStartOf="@id/btn_channel01"
+        app:layout_constraintTop_toBottomOf="@id/btn_state_flow" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
