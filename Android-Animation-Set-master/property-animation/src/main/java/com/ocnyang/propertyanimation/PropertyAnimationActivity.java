@@ -20,6 +20,10 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import java.util.ArrayList;
 
+/**
+ *  translationX 以View左上角顶点为原点，水平方向上将View平移translationX距离。> 0向右平移， < 0 向左平移。
+ *  translationY，以View的左上角为远点，垂直方向上平移translationY距离，> 0向下平移，< 0 向上平移。
+ */
 public class PropertyAnimationActivity extends AppCompatActivity {
 
     private View mPuppet;
