@@ -52,6 +52,12 @@ class MainActivity : AppCompatActivity() {
                 startActivity(this)
             }
         }
+
+        findViewById<Button>(R.id.btn_view_model_state).setOnClickListener { v ->
+            Intent(this@MainActivity, ViewModelStateActivity::class.java).run {
+                startActivity(this)
+            }
+        }
     }
 
     private fun initViewModel() {
@@ -97,9 +103,5 @@ class MainActivity : AppCompatActivity() {
             ViewModelProvider.NewInstanceFactory()
         }
         enTrustViewModel.print()
-
-
     }
-
-
 }
