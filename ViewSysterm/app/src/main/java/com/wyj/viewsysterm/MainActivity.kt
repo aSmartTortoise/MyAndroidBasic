@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.ActionBarContextView
@@ -24,6 +25,10 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener, View.OnClickList
         val btn = findViewById<Button>(R.id.btn_click)
         findViewById<TestButton>(R.id.test_btn).apply {
             setOnTouchListener(this@MainActivity)
+            Log.d(TAG, "onCreate: wyj clickable:${isClickable}, isLongClickable:$isLongClickable")
+//            setOnClickListener(this@MainActivity)
+        }
+        findViewById<View>(R.id.v1).apply {
             setOnClickListener(this@MainActivity)
         }
         val clContent = findViewById<ConstraintLayout>(R.id.test_cl_content)
@@ -31,6 +36,9 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener, View.OnClickList
         btn.setOnClickListener(this)
         clContent.setOnTouchListener(this)
         clContent.setOnClickListener(this)
+        val longPressTimeout = ViewConfiguration.getLongPressTimeout()
+        val pressedStateDuration = ViewConfiguration.getPressedStateDuration()
+        Log.d(TAG, "onCreate: longPressTimeout:$longPressTimeout, pressedStateDuration:$pressedStateDuration")
 
     }
 

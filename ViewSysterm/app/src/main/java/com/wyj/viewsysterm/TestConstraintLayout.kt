@@ -33,7 +33,8 @@ class TestConstraintLayout : ConstraintLayout {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Log.d(TAG, "onTouchEvent: action:${event?.action}")
-        return super.onTouchEvent(event)
+        val result = super.onTouchEvent(event)
+        Log.d(TAG, "onTouchEvent: action:${event?.action}, result:$result")
+        return result
     }
 }
