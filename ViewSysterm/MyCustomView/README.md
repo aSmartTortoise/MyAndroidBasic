@@ -1,3 +1,5 @@
-# TimeAxle_View
+# 时间轴
 自定义View实践:时间轴
-源码解析  & 使用请看文章 ：http://www.jianshu.com/p/655ea359e3db
+https://blog.csdn.net/carson_ho/article/details/75005994
+
+https://juejin.cn/post/6844903958515810311

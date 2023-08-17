@@ -11,6 +11,11 @@ import java.util.List;
 
 import com.wyj.view.R;
 
+/**
+ *  参考文章：
+ *  https://blog.csdn.net/carson_ho/article/details/75005994
+ *  https://juejin.cn/post/6844903958515810311
+ */
 public class MainActivity extends AppCompatActivity {
     private RecyclerView Rv;
     private LogisticsAdapter myAdapter;
