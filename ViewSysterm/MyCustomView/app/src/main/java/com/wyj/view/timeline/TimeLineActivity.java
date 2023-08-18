@@ -16,14 +16,14 @@ import com.wyj.view.R;
  *  https://blog.csdn.net/carson_ho/article/details/75005994
  *  https://juejin.cn/post/6844903958515810311
  */
-public class MainActivity extends AppCompatActivity {
+public class TimeLineActivity extends AppCompatActivity {
     private RecyclerView Rv;
     private LogisticsAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_timeline);
         initData();
     }
 
