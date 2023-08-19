@@ -4,13 +4,19 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:hardwareAccelerated="false"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".base.PathStudyActivity"/>
+            android:name=".bezier.BezierCurveActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity android:name=".base.PathStudyActivity" />
         <activity android:name=".MainActivity">
             <meta-data
                 android:name="android.app.lib_name"
