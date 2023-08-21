@@ -7,15 +7,17 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 public class HeartView extends View {
+    private static final String TAG = "HeartView";
     private static final float C = 0.551915024494f;     // 一个常量，用来计算绘制圆形贝塞尔曲线控制点的位置
 
     private Paint mPaint;
     private int mCenterX, mCenterY;
 
-    private PointF mCenter = new PointF(0,0);
+    private PointF mCenter = new PointF(0, 0);
     private float mCircleRadius = 200;                  // 圆的半径
     private float mDifference = mCircleRadius * C;        // 圆形的控制点与数据点的差值
 
@@ -25,7 +27,8 @@ public class HeartView extends View {
     private float mDuration = 1000;                     // 变化总时长
     private float mCurrent = 0;                         // 当前已进行时长
     private float mCount = 100;                         // 将时长总共划分多少份
-    private float mPiece = mDuration/mCount;            // 每一份的时长
+    private float mPiece = mDuration / mCount;            // 每一份的时长
+    private int totalCount;
 
 
     public HeartView(Context context) {
@@ -58,20 +61,20 @@ public class HeartView extends View {
 
         // 初始化控制点
 
-        mCtrl[0]  = mData[0] + mDifference;
-        mCtrl[1]  = mData[1];
+        mCtrl[0] = mData[0] + mDifference;
+        mCtrl[1] = mData[1];
 
-        mCtrl[2]  = mData[2];
-        mCtrl[3]  = mData[3] + mDifference;
+        mCtrl[2] = mData[2];
+        mCtrl[3] = mData[3] + mDifference;
 
-        mCtrl[4]  = mData[2];
-        mCtrl[5]  = mData[3] - mDifference;
+        mCtrl[4] = mData[2];
+        mCtrl[5] = mData[3] - mDifference;
 
-        mCtrl[6]  = mData[4] + mDifference;
-        mCtrl[7]  = mData[5];
+        mCtrl[6] = mData[4] + mDifference;
+        mCtrl[7] = mData[5];
 
-        mCtrl[8]  = mData[4] - mDifference;
-        mCtrl[9]  = mData[5];
+        mCtrl[8] = mData[4] - mDifference;
+        mCtrl[9] = mData[5];
 
         mCtrl[10] = mData[6];
         mCtrl[11] = mData[7] - mDifference;
@@ -81,6 +84,8 @@ public class HeartView extends View {
 
         mCtrl[14] = mData[0] - mDifference;
         mCtrl[15] = mData[1];
+
+//        gradualChangeData(false);
     }
 
 
@@ -110,24 +115,38 @@ public class HeartView extends View {
         Path path = new Path();
         path.moveTo(mData[0], mData[1]);
 
-        path.cubicTo(mCtrl[0],  mCtrl[1],  mCtrl[2],  mCtrl[3],     mData[2], mData[3]);
-        path.cubicTo(mCtrl[4],  mCtrl[5],  mCtrl[6],  mCtrl[7],     mData[4], mData[5]);
-        path.cubicTo(mCtrl[8],  mCtrl[9],  mCtrl[10], mCtrl[11],    mData[6], mData[7]);
-        path.cubicTo(mCtrl[12], mCtrl[13], mCtrl[14], mCtrl[15],    mData[0], mData[1]);
+        path.cubicTo(mCtrl[0], mCtrl[1], mCtrl[2], mCtrl[3], mData[2], mData[3]);
+        path.cubicTo(mCtrl[4], mCtrl[5], mCtrl[6], mCtrl[7], mData[4], mData[5]);
+        path.cubicTo(mCtrl[8], mCtrl[9], mCtrl[10], mCtrl[11], mData[6], mData[7]);
+        path.cubicTo(mCtrl[12], mCtrl[13], mCtrl[14], mCtrl[15], mData[0], mData[1]);
 
         canvas.drawPath(path, mPaint);
 
-        mCurrent += mPiece;
-        if (mCurrent < mDuration){
+        gradualChangeData(true);
+    }
 
-            mData[1] -= 120/mCount;
-            mCtrl[7] += 80/mCount;
-            mCtrl[9] += 80/mCount;
+    // 逐渐改变第一个数据点的纵坐标、第三个控制点的横坐标、第四个控制点的纵坐标、第五个点的纵坐标、第六个点的横坐标
+    // 然后绘制四个三阶贝塞尔曲线来绘制心形。
+    private void gradualChangeData(boolean gradualChange) {
+        if (gradualChange) {
+            mCurrent += mPiece;
+            if (mCurrent < mDuration) {
 
-            mCtrl[4] -= 20/mCount;
-            mCtrl[10] += 20/mCount;
+                mData[1] -= 120/mCount;
+                mCtrl[7] += 80/mCount;
+                mCtrl[9] += 80/mCount;
 
-            postInvalidateDelayed((long) mPiece);
+                mCtrl[4] -= 20/mCount;
+                mCtrl[10] += 20/mCount;
+
+                postInvalidateDelayed((long) mPiece);
+            }
+        } else {
+            mData[1] -= 99 * 120/mCount;
+            mCtrl[4] -= 99 * 20/mCount;
+            mCtrl[7] += 99 * 80/mCount;
+            mCtrl[9] += 99 * 80/mCount;
+            mCtrl[10] += 99 * 20/mCount;
         }
     }
 
@@ -137,24 +156,24 @@ public class HeartView extends View {
         mPaint.setColor(Color.GRAY);
         mPaint.setStrokeWidth(20);
 
-        for (int i=0; i<8; i+=2){
-            canvas.drawPoint(mData[i],mData[i+1], mPaint);
+        for (int i = 0; i < 8; i += 2) {
+            canvas.drawPoint(mData[i], mData[i + 1], mPaint);
         }
 
-        for (int i=0; i<16; i+=2){
-            canvas.drawPoint(mCtrl[i], mCtrl[i+1], mPaint);
+        for (int i = 0; i < 16; i += 2) {
+            canvas.drawPoint(mCtrl[i], mCtrl[i + 1], mPaint);
         }
 
 
         // 绘制辅助线
         mPaint.setStrokeWidth(4);
 
-        for (int i=2, j=2; i<8; i+=2, j+=4){
-            canvas.drawLine(mData[i],mData[i+1],mCtrl[j],mCtrl[j+1],mPaint);
-            canvas.drawLine(mData[i],mData[i+1],mCtrl[j+2],mCtrl[j+3],mPaint);
+        for (int i = 2, j = 2; i < 8; i += 2, j += 4) {
+            canvas.drawLine(mData[i], mData[i + 1], mCtrl[j], mCtrl[j + 1], mPaint);
+            canvas.drawLine(mData[i], mData[i + 1], mCtrl[j + 2], mCtrl[j + 3], mPaint);
         }
-        canvas.drawLine(mData[0],mData[1],mCtrl[0],mCtrl[1],mPaint);
-        canvas.drawLine(mData[0],mData[1],mCtrl[14],mCtrl[15],mPaint);
+        canvas.drawLine(mData[0], mData[1], mCtrl[0], mCtrl[1], mPaint);
+        canvas.drawLine(mData[0], mData[1], mCtrl[14], mCtrl[15], mPaint);
     }
 
     // 绘制坐标系
@@ -162,7 +181,7 @@ public class HeartView extends View {
         canvas.save();                      // 绘制做坐标系
 
         canvas.translate(mCenterX, mCenterY); // 将坐标系移动到画布中央
-        canvas.scale(1,-1);                 // 翻转Y轴
+        canvas.scale(1, -1);                 // 翻转Y轴
 
         Paint fuzhuPaint = new Paint();
         fuzhuPaint.setColor(Color.RED);
