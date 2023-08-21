@@ -58,51 +58,57 @@ public class PathApiView extends View {
         canvas.translate(mWidth/2, mHeight/2);//移动坐标系到屏幕中心
         Path path = new Path();
 
-//        moveTo(path);
-//        setLastPoint(path);
-//        close(path);
-
-//        addRect(path);
-//        direction(path);
-
+//        moveTo(canvas, path);
+//        setLastPoint(canvas, path);
+//        close(canvas, path);
+//
+//        addRect(canvas, path);
+//        direction(canvas, path);
+//
 //        addPath(canvas, path);
-
+//
 //        addArc(canvas, path);
 //        arcTo(canvas, path);
 //        arcToForceMoveTo(canvas, path);
-
-//        isEmpty(path);
-//        isRec(path);
+//
+//        isEmpty(canvas, path);
+//        isRec(canvas, path);
 //        setPath(canvas, path);
-        offset(canvas, path);
-        canvas.drawPath(path, mPaint);
+//        offset(canvas, path);
+//
+//        rLineTo(canvas, path);
+        computeBounds(canvas, path);
     }
 
 
-    private void moveTo(Path path) {
+    private void moveTo(Canvas canvas, Path path) {
         path.lineTo(200, 200);
 
         path.moveTo(200, 100);//移动下一次操作的起点
 
         path.lineTo(200, 0);
+        canvas.drawPath(path,mPaint);
     }
 
-    private void setLastPoint(Path path) {
+    private void setLastPoint(Canvas canvas, Path path) {
         path.lineTo(200, 200);
 
         path.setLastPoint(200, 100);//设置之前操作的最后一个点的位置。
 
         path.lineTo(200, 0);
+        canvas.drawPath(path,mPaint);
     }
 
-    private void close(Path path) {
+    private void close(Canvas canvas, Path path) {
         path.lineTo(200, 200);
         path.lineTo(200, 0);
         path.close();//直线连接当前路径的最后一个点和第一个点（如果两个点不重合的化），形成一个闭合路径。
+        canvas.drawPath(path,mPaint);
     }
 
-    private void addRect(Path path) {
+    private void addRect(Canvas canvas, Path path) {
         path.addRect(-200, -200, 200, 200, Path.Direction.CCW);
+        canvas.drawPath(path,mPaint);
     }
 
     /**
@@ -111,10 +117,11 @@ public class PathApiView extends View {
      *  作用有：
      *      在添加形状时，指定闭合顺序（记录构成形状的点的顺序 顺时针或者逆时针）
      */
-    private void direction(Path path) {
+    private void direction(Canvas canvas, Path path) {
 //        path.addRect(-200, -200, 200, 200, Path.Direction.CW);
         path.addRect(-200, -200, 200, 200, Path.Direction.CCW);
         path.setLastPoint(-300, 300);
+        canvas.drawPath(path,mPaint);
     }
 
     /**
@@ -128,6 +135,7 @@ public class PathApiView extends View {
         Path src = new Path();
         src.addCircle(0, 0, 100, Path.Direction.CW);
         path.addPath(src, 0, 200);
+        canvas.drawPath(path,mPaint);
     }
 
     /**
@@ -140,6 +148,7 @@ public class PathApiView extends View {
         path.lineTo(100, 100);
         RectF oval = new RectF(0, 0, 300, 300);// 圆弧的外切矩形，该矩形确定了圆弧的半径
         path.addArc(oval, 0, 345);// startAngle- 开始的角度；sweepAngel- 扫过的角度[-360, 360)
+        canvas.drawPath(path,mPaint);
     }
 
     /**
@@ -150,6 +159,7 @@ public class PathApiView extends View {
         path.lineTo(100, 100);
         RectF oval = new RectF(0, 0, 300, 300);
         path.arcTo(oval, 0, 345);// startAngle- 开始的角度；sweepAngel- 扫过的角度[-360, 360)
+        canvas.drawPath(path,mPaint);
     }
 
     /**
@@ -161,20 +171,23 @@ public class PathApiView extends View {
         RectF oval = new RectF(0, 0, 300, 300);
         path.arcTo(oval, 0, 345, true);// startAngle- 开始的角度；sweepAngel- 扫过的角度[-360, 360);
         // forceMoveTo - 是否连接圆弧的起点和Path最后操作的点。
+        canvas.drawPath(path,mPaint);
     }
 
-    private void isEmpty(Path path) {
+    private void isEmpty(Canvas canvas, Path path) {
         Log.d(TAG, "isEmpty: " + path.isEmpty());
         path.lineTo(100, 100);
         Log.d(TAG, "isEmpty: " + path.isEmpty());
+        canvas.drawPath(path,mPaint);
     }
 
     // 判断Path是否时矩形，如果是，则将矩形的信息拷贝到参数rect中
-    private void isRec(Path path) {
+    private void isRec(Canvas canvas, Path path) {
         path.addRect(-200, -200, 200, 200, Path.Direction.CW);
         RectF rect = new RectF();
         boolean isRect = path.isRect(rect);
         Log.d(TAG, "isRec:" + isRect + "| left:"+rect.left+"| top:"+rect.top+"| right:"+rect.right+"| bottom:"+rect.bottom);
+        canvas.drawPath(path,mPaint);
     }
 
     private void setPath(Canvas canvas, Path path) {
@@ -183,6 +196,7 @@ public class PathApiView extends View {
         Path src = new Path();
         src.addCircle(0, 0, 100, Path.Direction.CW);
         path.set(src);
+        canvas.drawPath(path,mPaint);
     }
 
     /**
@@ -203,5 +217,30 @@ public class PathApiView extends View {
         mPaint.setColor(Color.BLUE);
 
         canvas.drawPath(dst, mPaint);
+    }
+
+    private void rLineTo(Canvas canvas, Path path) {
+        canvas.restore();
+        path.moveTo(200, 100);//移动下一次操作的起点
+        path.rLineTo(200, 200); // 连接当前Point和相对当前Point偏移指定坐标的Point
+        canvas.drawPath(path,mPaint);
+    }
+
+    private void computeBounds(Canvas canvas, Path path) {
+        mPaint.setStrokeWidth(6);
+        RectF rect1 = new RectF();
+        mPaint.setColor(Color.BLACK);
+
+        path.lineTo(100,-50);
+        path.lineTo(100,50);
+        path.close();
+        path.addCircle(-100,0,100, Path.Direction.CW);
+
+        path.computeBounds(rect1,true);         // 测量Path
+
+        canvas.drawPath(path,mPaint);    // 绘制Path
+
+        mPaint.setColor(Color.RED);
+        canvas.drawRect(rect1,mPaint);   // 绘制边界
     }
 }

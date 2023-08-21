@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".base.PathApiActivity">
+    tools:context=".base.PathFillTypeActivity">
 
-    <com.wyj.view.base.PathApiView
-        android:id="@+id/path_view"
+    <com.wyj.view.base.PathFillTypeView
+        android:id="@+id/path_fill_type_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -5,11 +5,11 @@ import android.os.Bundle;
 
 import com.wyj.view.R;
 
-public class PathStudyActivity extends AppCompatActivity {
+public class PathOpActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_path_study);
+        setContentView(R.layout.activity_path_op);
     }
 }

@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.wyj.view.base.PathStudyActivity;
+import com.wyj.view.base.PathApiActivity;
+import com.wyj.view.base.PathFillTypeActivity;
+import com.wyj.view.base.PathOpActivity;
 import com.wyj.view.bezier.BezierCurveActivity;
 import com.wyj.view.timeline.TimeLineActivity;
 
@@ -19,11 +21,19 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.startActivity(intent);
         });
         findViewById(R.id.btn_path).setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, PathStudyActivity.class);
+            Intent intent = new Intent(MainActivity.this, PathApiActivity.class);
             MainActivity.this.startActivity(intent);
         });
         findViewById(R.id.btn_bezier).setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, BezierCurveActivity.class);
+            MainActivity.this.startActivity(intent);
+        });
+        findViewById(R.id.btn_fill_type).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, PathFillTypeActivity.class);
+            MainActivity.this.startActivity(intent);
+        });
+        findViewById(R.id.btn_op).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, PathOpActivity.class);
             MainActivity.this.startActivity(intent);
         });
     }
