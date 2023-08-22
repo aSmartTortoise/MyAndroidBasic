@@ -67,7 +67,7 @@ public class PathApiView extends View {
 //
 //        addPath(canvas, path);
 //
-//        addArc(canvas, path);
+        addArc(canvas, path);
 //        arcTo(canvas, path);
 //        arcToForceMoveTo(canvas, path);
 //
@@ -77,7 +77,7 @@ public class PathApiView extends View {
 //        offset(canvas, path);
 //
 //        rLineTo(canvas, path);
-        computeBounds(canvas, path);
+//        computeBounds(canvas, path);
     }
 
 
@@ -144,11 +144,11 @@ public class PathApiView extends View {
      *
      */
     private void addArc(Canvas canvas, Path path) {
-        canvas.scale(1, -1);
+//        canvas.scale(1, -1);
         path.lineTo(100, 100);
         RectF oval = new RectF(0, 0, 300, 300);// 圆弧的外切矩形，该矩形确定了圆弧的半径
-        path.addArc(oval, 0, 345);// startAngle- 开始的角度；sweepAngel- 扫过的角度[-360, 360)
-        canvas.drawPath(path,mPaint);
+        path.addArc(oval, 45, 180);// startAngle- 开始的角度；sweepAngel- 扫过的角度[-360, 360)
+        canvas.drawPath(path, mPaint);
     }
 
     /**

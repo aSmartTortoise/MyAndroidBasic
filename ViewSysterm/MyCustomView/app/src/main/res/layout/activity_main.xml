@@ -52,4 +52,13 @@
         app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
         app:layout_constraintTop_toBottomOf="@id/btn_fill_type" />
 
+    <Button
+        android:id="@+id/btn_pathMeasure_api"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="学习PathMeasure api"
+        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
+        app:layout_constraintTop_toBottomOf="@id/btn_op" />
+
 </android.support.constraint.ConstraintLayout>

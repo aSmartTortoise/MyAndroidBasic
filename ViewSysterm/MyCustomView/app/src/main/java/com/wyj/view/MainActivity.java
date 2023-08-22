@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.wyj.view.base.PathApiActivity;
 import com.wyj.view.base.PathFillTypeActivity;
+import com.wyj.view.base.PathMeasureApiActivity;
 import com.wyj.view.base.PathOpActivity;
 import com.wyj.view.bezier.BezierCurveActivity;
 import com.wyj.view.timeline.TimeLineActivity;
@@ -34,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.btn_op).setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, PathOpActivity.class);
+            MainActivity.this.startActivity(intent);
+        });
+        findViewById(R.id.btn_pathMeasure_api).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, PathMeasureApiActivity.class);
             MainActivity.this.startActivity(intent);
         });
     }
