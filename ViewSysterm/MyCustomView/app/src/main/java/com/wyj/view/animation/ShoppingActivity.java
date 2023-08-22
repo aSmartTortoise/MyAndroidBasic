@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.wyj.view.R;
 
-public class ShoppingActivity extends AppCompatActivity implements ShoppingView.AnimatorListener {
+public class ShoppingActivity extends AppCompatActivity implements GoodsView.AnimatorListener {
     private static final String TAG = "ShippingActivity";
 
     private ImageView mIvGoods;
@@ -44,14 +44,14 @@ public class ShoppingActivity extends AppCompatActivity implements ShoppingView.
         mTvAdd.setOnClickListener(view -> {
             PointF startPoint = getPointOnScreen(mIvGoods);
             PointF endPoint = getPointOnScreen(mIvShoppingCar);
-            ShoppingView shoppingView = new ShoppingView(ShoppingActivity.this);
-            shoppingView.setListener(this);
-            shoppingView.setImageDrawable(mIvGoods.getDrawable());
+            GoodsView goodsView = new GoodsView(ShoppingActivity.this);
+            goodsView.setListener(this);
+            goodsView.setImageDrawable(mIvGoods.getDrawable());
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(mIvGoods.getWidth(),
                     mIvGoods.getHeight());
             ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
-            decorView.addView(shoppingView, layoutParams);
-            shoppingView.start(startPoint, endPoint);
+            decorView.addView(goodsView, layoutParams);
+            goodsView.start(startPoint, endPoint);
         });
     }
 

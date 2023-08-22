@@ -19,7 +19,7 @@ import com.wyj.view.utils.BezierUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShoppingView extends android.support.v7.widget.AppCompatImageView {
+public class GoodsView extends android.support.v7.widget.AppCompatImageView {
     private static final String TAG = "ShoppingView";
     private AnimatorSet mAnimatorSet;
     // 缩放动画
@@ -30,15 +30,15 @@ public class ShoppingView extends android.support.v7.widget.AppCompatImageView {
     // 移动动画
     private ObjectAnimator mTranslateAnimator;
     private AnimatorListener mListener;
-    public ShoppingView(Context context) {
+    public GoodsView(Context context) {
         this(context, null);
     }
 
-    public ShoppingView(Context context, @Nullable AttributeSet attrs) {
+    public GoodsView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ShoppingView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public GoodsView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -105,9 +105,9 @@ public class ShoppingView extends android.support.v7.widget.AppCompatImageView {
                 }
 
                 // 将自己移除
-                ViewGroup parent = (ViewGroup) ShoppingView.this.getParent();
+                ViewGroup parent = (ViewGroup) GoodsView.this.getParent();
                 if (parent != null && parent instanceof ViewGroup) {
-                    parent.removeView(ShoppingView.this);
+                    parent.removeView(GoodsView.this);
                 }
 
             }
