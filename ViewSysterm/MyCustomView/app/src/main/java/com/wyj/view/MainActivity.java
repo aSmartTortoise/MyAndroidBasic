@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.wyj.view.animation.ShoppingActivity;
 import com.wyj.view.base.PathApiActivity;
 import com.wyj.view.base.PathFillTypeActivity;
 import com.wyj.view.base.PathMeasureApiActivity;
@@ -39,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.btn_pathMeasure_api).setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, PathMeasureApiActivity.class);
+            MainActivity.this.startActivity(intent);
+        });
+        findViewById(R.id.btn_shopping).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ShoppingActivity.class);
             MainActivity.this.startActivity(intent);
         });
     }
