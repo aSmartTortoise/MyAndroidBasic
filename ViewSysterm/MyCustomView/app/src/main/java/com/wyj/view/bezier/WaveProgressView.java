@@ -17,6 +17,7 @@ import com.wyj.view.R;
 
 /**
  *  https://juejin.cn/post/6844903750750978055
+ *  https://wslaimin.github.io/2019/07/10/%E6%B0%B4%E6%B3%A2%E7%BA%B9%E8%BF%9B%E5%BA%A6%E6%9D%A1/
  */
 
 public class WaveProgressView extends View {
