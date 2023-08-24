@@ -10,6 +10,7 @@ import com.wyj.view.base.PathFillTypeActivity;
 import com.wyj.view.base.PathMeasureApiActivity;
 import com.wyj.view.base.PathOpActivity;
 import com.wyj.view.bezier.BezierCurveActivity;
+import com.wyj.view.bezier.WaveProgressActivity;
 import com.wyj.view.timeline.TimeLineActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.btn_shopping).setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, ShoppingActivity.class);
+            MainActivity.this.startActivity(intent);
+        });
+        findViewById(R.id.btn_wave_progress).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, WaveProgressActivity.class);
             MainActivity.this.startActivity(intent);
         });
     }
