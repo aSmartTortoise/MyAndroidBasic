@@ -13,9 +13,7 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         app:color="#ffff69b4"
-        app:start_offsetX="0"
-        app:total_duration="6000"
-        app:wave_length="400" />
+        app:total_duration="6000"/>
 
     <Button
         android:id="@+id/btn_begin"
@@ -23,12 +21,5 @@
         android:layout_height="wrap_content"
         android:onClick="onClick"
         android:text="begin" />
-
-    <Button
-        android:id="@+id/btn_reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClick"
-        android:text="reset" />
 
 </LinearLayout>

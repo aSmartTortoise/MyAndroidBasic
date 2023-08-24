@@ -18,11 +18,8 @@ public class WaveProgressActivity extends AppCompatActivity {
         WaveProgressView waveView=(WaveProgressView)findViewById(R.id.wave);
         switch (view.getId()){
             case R.id.btn_begin:
-                waveView.setMyProgress(1f);
+                waveView.setMyProgress(0.5f);
                 waveView.startAnim();
-                break;
-            case R.id.btn_reset:
-                waveView.reset();
                 break;
             default:
                 break;

@@ -21,10 +21,6 @@ import com.wyj.view.R;
 
 public class WaveProgressView extends View {
     private static final String TAG = "WaveView";
-    //默认波长
-    private final static int DEFAULT_WAVE_LENGTH = 600;
-    //默认波峰
-    private final static int DEFAULT_PEAK = 60;
     //默认画笔颜色
     private final static int DEFAULT_COLOR = 0xFFFF0000;
     //从0%到100%进度默认动画时长
@@ -35,8 +31,6 @@ public class WaveProgressView extends View {
     private float mXVelocity;
     //波长
     private float mWaveLength;
-    //startPoint X方向开始偏移量
-    private float mStartOffsetX;
     //波峰
     private float mPeak;
     //0%到100%进度动画时长
@@ -70,15 +64,9 @@ public class WaveProgressView extends View {
         super(context, attrs);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.WaveView);
-        mWaveLength = a.getFloat(R.styleable.WaveView_wave_length, DEFAULT_WAVE_LENGTH);
-        mPeak = a.getFloat(R.styleable.WaveView_peak, DEFAULT_PEAK);
-        mStartOffsetX = a.getFloat(R.styleable.WaveView_start_offsetX, 0);
         mXVelocity = a.getFloat(R.styleable.WaveView_x_velocity, DEFAULT_X_VELOCITY);
         mTotalDuration = a.getInt(R.styleable.WaveView_total_duration, DEFAULT_TOTAL_DURATION);
 
-        if (mStartOffsetX > 0) {
-            throw new RuntimeException("startOffsetX不能为正数");
-        }
 
         mColor = a.getColor(R.styleable.WaveView_color, DEFAULT_COLOR);
         a.recycle();
@@ -123,7 +111,7 @@ public class WaveProgressView extends View {
                     lastProgress = nowProgress;
                     mTotalOffsetX += mXVelocity;
                     mTotalOffsetX %= mWaveLength;
-                    mStartPoint.x = -mWaveLength + mStartOffsetX + mTotalOffsetX;
+                    mStartPoint.x = -mWaveLength + mTotalOffsetX;
                     mStartPoint.y = mProgressBottom - 2 * mRadius * nowProgress / 100f;
                     invalidate();
                 }
@@ -145,7 +133,7 @@ public class WaveProgressView extends View {
         mProgress=0;
         mAnimationDelay=0;
         mTotalOffsetX=0;
-        mStartPoint.x=-mWaveLength + mStartOffsetX;
+        mStartPoint.x=-mWaveLength;
         mStartPoint.y=mProgressBottom;
         invalidate();
     }
@@ -161,7 +149,7 @@ public class WaveProgressView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int currentValue = (int) animation.getAnimatedValue();
-                mStartPoint.x = mWaveLength * currentValue / 100 + (mStartOffsetX - mWaveLength);
+                mStartPoint.x = mWaveLength * currentValue / 100  - mWaveLength;
                 postInvalidate();
             }
         });
@@ -179,15 +167,6 @@ public class WaveProgressView extends View {
 
     public void setWaveLength(float waveLength) {
         this.mWaveLength = waveLength;
-        invalidate();
-    }
-
-    public float getStartOffsetX() {
-        return mStartOffsetX;
-    }
-
-    public void setStartOffsetX(float startOffsetX) {
-        this.mStartOffsetX = startOffsetX;
         invalidate();
     }
 
@@ -222,36 +201,18 @@ public class WaveProgressView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         mRadius = w < h ? w / 2f : h / 2f;
         mClipPath.addCircle(w / 2f, h / 2f, mRadius, Path.Direction.CCW);
-        getWaveHeight();
-
+        mWaveLength = mRadius;
+        mPeak = mWaveLength / 8;
         //初始化StartPoint,左边预留出一个周期的移动长度
         mStartPoint.x = -mWaveLength;
         setMyProgress(0);
-    }
-
-    private void getWaveHeight() {
-        PointF startPoint = new PointF();
-        startPoint.x = 0;
-        startPoint.y = 0;
-        PointF controlPoint = new PointF();
-        controlPoint.x = 1/4 * mWaveLength;
-        PointF endPoint = new PointF();
-        endPoint.x = 1/2 * mWaveLength;
-        endPoint.y = 0;
-
+        postInvalidate();
     }
 
     public void setMyProgress(float progress) {
         int h = getMeasuredHeight();
         float gap = (h - 2 * mRadius) / 2f;
-
-        mProgressBottom = h - gap + mPeak - progress * h;
-
-        if (progress >= 1f) {
-            //防止波谷露出
-            mProgressBottom = h - gap + mPeak - progress * h - 2 * mPeak;
-        }
-
+        mProgressBottom = h - gap + mPeak - progress * (h + 2 * mPeak);
         mStartPoint.y = mProgressBottom;
     }
 
