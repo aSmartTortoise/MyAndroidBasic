@@ -7,14 +7,24 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/btn_canvas_api"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:text="学习Canvas api"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
         android:id="@+id/btn_time_line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:text="时间轴"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_canvas_api"
+        app:layout_constraintLeft_toRightOf="@id/btn_canvas_api" />
 
     <Button
         android:id="@+id/btn_path"
@@ -22,8 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="学习Path Api"
-        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
-        app:layout_constraintTop_toBottomOf="@id/btn_time_line" />
+        app:layout_constraintLeft_toLeftOf="@id/btn_canvas_api"
+        app:layout_constraintTop_toBottomOf="@id/btn_canvas_api" />
 
     <Button
         android:id="@+id/btn_bezier"
@@ -31,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="学习贝塞尔曲线"
-        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
+        app:layout_constraintLeft_toLeftOf="@id/btn_canvas_api"
         app:layout_constraintTop_toBottomOf="@id/btn_path" />
 
     <Button

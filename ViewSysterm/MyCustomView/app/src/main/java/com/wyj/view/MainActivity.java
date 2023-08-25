@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.wyj.view.animation.ShoppingActivity;
+import com.wyj.view.base.CanvasApiActivity;
 import com.wyj.view.base.PathApiActivity;
 import com.wyj.view.base.PathFillTypeActivity;
 import com.wyj.view.base.PathMeasureApiActivity;
@@ -49,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.btn_wave_progress).setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, WaveProgressActivity.class);
+            MainActivity.this.startActivity(intent);
+        });
+        findViewById(R.id.btn_canvas_api).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, CanvasApiActivity.class);
             MainActivity.this.startActivity(intent);
         });
     }
