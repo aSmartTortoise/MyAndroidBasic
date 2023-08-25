@@ -44,7 +44,7 @@ public class ArrowMoveView extends View {
         pos = new float[2];
         tan = new float[2];
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 2;       // 缩放图片
+        options.inSampleSize = 1;       // 缩放图片
         mBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.arrow, options);
         mMatrix = new Matrix();
 

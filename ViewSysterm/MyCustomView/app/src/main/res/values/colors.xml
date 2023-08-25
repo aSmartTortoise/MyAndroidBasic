@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="blue">#0082D7</color>
+    <color name="canvas_red_color">#ca2374</color>
+    <color name="canvas_orange_color">#fe9191</color>
 </resources>
