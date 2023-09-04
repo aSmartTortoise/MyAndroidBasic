@@ -17,6 +17,8 @@ class MyService : Service() {
     }
     private val receiveListeners =  RemoteCallbackList<IReceiveMsgListener>()
 
+
+
     override fun onBind(intent: Intent): IBinder {
         Log.d(TAG, "onBind: wyj")
         return MyBinder()
