@@ -9,4 +9,6 @@ interface IMsgManager {
     void registerReceiveListener(IReceiveMsgListener listener);
       	// 客户端取消监听回调
     void unregisterReceiveListener(IReceiveMsgListener listener);
+
+    void sendDelayMessage(in Msg msg, long delayTime);
 }

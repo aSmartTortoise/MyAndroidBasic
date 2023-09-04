@@ -10,6 +10,9 @@ import java.util.*
 
 /**
  *  参考文章：https://juejin.cn/post/7123129439898042376#heading-0
+ *
+ *  当服务器定义的接口和客户端定义的接口不完全相同，比如服务器定义了方法A，而客户端接口没有定义方法A。
+ *      客户端也是能够绑定到服务器的，也是可以通信的。
  */
 class MyService : Service() {
     companion object {
@@ -53,6 +56,10 @@ class MyService : Service() {
             } else {
                 Log.d(TAG, "unregisterReceiveListener: 取消订阅失败")
             }
+        }
+
+        override fun sendDelayMessage(msg: Msg?, delayTime: Long) {
+            Log.d(TAG, "sendDelayMessage: wyj msg:$msg, delayTime:$delayTime")
         }
 
     }
