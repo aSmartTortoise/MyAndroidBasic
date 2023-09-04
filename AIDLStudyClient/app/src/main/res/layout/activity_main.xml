@@ -7,38 +7,13 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/btn_bind_service"
+        android:id="@+id/btn_aidl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="绑定服务"
+        android:text="aidl的客户端"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_send_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="发送消息"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btn_bind_service"
-        app:layout_constraintTop_toTopOf="@id/btn_bind_service" />
-
-    <TextView
-        android:id="@+id/tv_display"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="50dp"
-        android:layout_marginTop="20dp"
-        android:background="#f0f"
-        android:gravity="center"
-        android:padding="10dp"
-        android:textColor="#000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_bind_service"
-        tools:text="hello world" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
