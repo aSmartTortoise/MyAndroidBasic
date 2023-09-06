@@ -4,22 +4,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="16dp"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp"
     android:paddingTop="16dp"
-    tools:context="com.wyj.memory.MainActivity">
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp"
+    tools:context="com.wyj.performance.MainActivity">
 
     <Button
+        android:layout_marginTop="10dp"
         android:id="@+id/btn_handler"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TestActivity" />
+        android:text="非静态的内部类持有外部类" />
 
     <Button
-        android:text="静态属性"
+        android:layout_marginTop="10dp"
         android:id="@+id/btn_static_property"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="静态属性" />
+
+    <Button
+        android:id="@+id/btn_input_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="输入事件超时" />
+
+    <Button
+        android:id="@+id/btn_send_broadcast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="发送广播" />
 
 </LinearLayout>

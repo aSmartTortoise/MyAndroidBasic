@@ -1,4 +1,4 @@
-package com.wyj.memory;
+package com.wyj.performance.memory;
 
 import java.util.ArrayList;
 

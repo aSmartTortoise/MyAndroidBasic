@@ -1,10 +1,11 @@
-package com.wyj.memory
+package com.wyj.performance.memory
 
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.wyj.performance.R
 import java.lang.ref.WeakReference
 
 class TestActivity : AppCompatActivity() {

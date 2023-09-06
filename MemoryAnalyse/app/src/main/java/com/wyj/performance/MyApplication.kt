@@ -1,9 +1,8 @@
-package com.wyj.memory
+package com.wyj.performance
 
 import android.app.Application
 import android.content.pm.PackageManager
 import android.util.Log
-import leakcanary.AppWatcher
 import leakcanary.LeakCanary
 
 class MyApplication : Application() {
