@@ -4,14 +4,19 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Process
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.wyj.performance.anr.AnrBroadcastReceiver
+import com.wyj.performance.anr.AnrService
 import com.wyj.performance.anr.InputEventTimeoutActivity
 import com.wyj.performance.memory.StaticPropertyActivity
 import com.wyj.performance.memory.TestActivity
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        const val TAG = "MainActivity"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -41,6 +46,11 @@ class MainActivity : AppCompatActivity() {
                 addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
             }
             sendBroadcast(intent)
+        }
+
+        findViewById<View>(R.id.btn_start_service).setOnClickListener {
+            Log.d(TAG, "onCreate: start service")
+            startService(Intent(this@MainActivity, AnrService::class.java))
         }
 
         registerReceiver()
