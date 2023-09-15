@@ -1,5 +1,6 @@
 package com.wyj.performance
 
+import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "MainActivity"
     }
+    var broadcastReceiver: BroadcastReceiver? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,6 +42,14 @@ class MainActivity : AppCompatActivity() {
             )
         })
 
+        findViewById<View>(R.id.btn_send_ordered_broadcast).setOnClickListener {
+            val intent = Intent().apply {
+                action = "anr"
+                addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
+            }
+            sendOrderedBroadcast(intent, null)
+        }
+
         findViewById<View>(R.id.btn_send_broadcast).setOnClickListener {
             val intent = Intent().apply {
                 action = "anr"
@@ -58,14 +68,26 @@ class MainActivity : AppCompatActivity() {
 
     /**
      *  动态注册的广播，当收到前台广播后，广播接收器onReceive方法耗时超过5s，在期间点击返回键，也会anr，不一定会
-     *  弹anr的弹窗，会又trace日志。
+     *  弹anr的弹窗，会有trace日志。
      */
     private fun registerReceiver() {
-        val broadcastReceiver = AnrBroadcastReceiver()
-        val intentFilter = IntentFilter().apply {
-            addAction("anr")
+        if (broadcastReceiver == null) {
+            broadcastReceiver  = AnrBroadcastReceiver()
+            val intentFilter = IntentFilter().apply {
+                addAction("anr")
+            }
+
+            Log.d(TAG, "registerReceiver: ")
+            registerReceiver(broadcastReceiver, intentFilter)
         }
 
-        registerReceiver(broadcastReceiver, intentFilter)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        broadcastReceiver?.let {
+            unregisterReceiver(it)
+            broadcastReceiver = null
+        }
     }
 }

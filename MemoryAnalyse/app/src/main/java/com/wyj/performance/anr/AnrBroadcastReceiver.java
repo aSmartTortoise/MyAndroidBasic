@@ -11,7 +11,7 @@ public class AnrBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive: wyj action:" + intent.getAction());
-        SystemClock.sleep(7_010);
+        SystemClock.sleep(10_100);
         Log.d(TAG, "onReceive: sleep end.");
     }
 }

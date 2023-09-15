@@ -32,11 +32,18 @@
         android:text="输入事件超时" />
 
     <Button
+        android:id="@+id/btn_send_ordered_broadcast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="发送有序广播" />
+
+    <Button
         android:id="@+id/btn_send_broadcast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="发送广播" />
+        android:text="发送无序广播" />
 
     <Button
         android:id="@+id/btn_start_service"
