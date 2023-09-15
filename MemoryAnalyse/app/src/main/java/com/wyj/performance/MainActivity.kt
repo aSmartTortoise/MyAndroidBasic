@@ -1,8 +1,10 @@
 package com.wyj.performance
 
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.os.Process
 import android.util.Log
@@ -11,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.wyj.performance.anr.AnrBroadcastReceiver
 import com.wyj.performance.anr.AnrService
 import com.wyj.performance.anr.InputEventTimeoutActivity
+import com.wyj.performance.anr.StaticReceiver
 import com.wyj.performance.memory.StaticPropertyActivity
 import com.wyj.performance.memory.TestActivity
 
@@ -51,9 +54,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btn_send_broadcast).setOnClickListener {
+            Log.d(TAG, "onCreate: wyj send not ordered broadcast.")
             val intent = Intent().apply {
-                action = "anr"
                 addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
+                action = "anr"
+                // Android 8 以后，静态注册的广播接收器如果希望能收到自定义广播，发送广播的意图需要是显示的。
+                // https://blog.csdn.net/u012894808/article/details/88870765
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
+
+                } else {
+                    component = ComponentName(this@MainActivity, StaticReceiver::class.java)
+                }
             }
             sendBroadcast(intent)
         }
