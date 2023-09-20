@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Process
@@ -72,6 +73,11 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.btn_start_service).setOnClickListener {
             Log.d(TAG, "onCreate: start service")
             startService(Intent(this@MainActivity, AnrService::class.java))
+        }
+
+        findViewById<View>(R.id.btn_provider_query).setOnClickListener {
+            val uri: Uri = Uri.parse("content://com.gityuan.articles/android/3")
+            contentResolver.query(uri, null, null, null, null)
         }
 
         registerReceiver()
