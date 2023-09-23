@@ -13,6 +13,8 @@ import com.jie.databinding.interf.ItemClickListener
 /**
  *  封装DataBinding
  *  https://juejin.cn/post/6957608813809795108
+ *
+ *  在布局文件中 ALT + 回车 调出 生成DataBinding java文件的快捷菜单。
  */
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     lateinit var mHomeAdapter: HomeAdapter
