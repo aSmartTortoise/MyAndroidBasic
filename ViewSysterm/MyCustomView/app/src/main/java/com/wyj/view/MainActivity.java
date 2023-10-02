@@ -1,6 +1,7 @@
 package com.wyj.view;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -54,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.btn_canvas_api).setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, CanvasApiActivity.class);
+            MainActivity.this.startActivity(intent);
+        });
+        findViewById(R.id.btn_common).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, CommonActivity.class);
             MainActivity.this.startActivity(intent);
         });
     }

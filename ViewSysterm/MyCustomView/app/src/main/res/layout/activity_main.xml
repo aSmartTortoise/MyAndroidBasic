@@ -89,4 +89,13 @@
         app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
         app:layout_constraintTop_toBottomOf="@id/btn_shopping" />
 
+    <Button
+        android:id="@+id/btn_common"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="下滑返回"
+        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
+        app:layout_constraintTop_toBottomOf="@id/btn_wave_progress" />
+
 </android.support.constraint.ConstraintLayout>

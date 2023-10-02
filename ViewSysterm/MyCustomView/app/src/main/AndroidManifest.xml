@@ -71,6 +71,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".timeline.TimeLineActivity" />
+        <activity android:name=".CommonActivity"
+            android:theme="@style/Theme.MusicPlayer"/>
     </application>
 
 </manifest>
