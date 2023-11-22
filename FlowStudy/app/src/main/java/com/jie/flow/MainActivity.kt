@@ -15,185 +15,7 @@ import kotlinx.coroutines.flow.*
 import java.lang.NullPointerException
 import kotlin.system.measureTimeMillis
 
-/**
- *  flow学习
- *  https://juejin.cn/post/7034379406730592269
- *  https://xuyisheng.top/flow_basic/
- *  1 https://juejin.cn/post/7034381227025465375/
- *      1.1 RestrictsSuspension注解
- *          被RestrictsSuspension注解的类在用作挂起的扩展函数的接收器时有限制，在扩展函数内部只能使用该接收器类定义的挂起函数，而不能
- *      调用任意的挂起函数。
- *      1.2 Flow （冷流与热流）
- *          Flow是一个异步数据流，它按照顺序发出值。
- *          一个异步数据流通常包含三个部分
- *          .上游流
- *          .操作符
- *          .下游流
- *          冷流指的时下游流没有消费行为时，上游流不会生产数据，上游流和下游流是一对一的关系；
- *          热流指的是无论下游流是否有消费行为，上游流都会生产数据，上游流和下游流是一对多的关系。
- *          通常说的Flow是指的冷流，而SharedFlow指的是热流，
- *          1.2.1 取消Flow
- *              Flow的执行是依赖于collect的，而collect需要在协程中调用，取消Flow的执行可以通过取消它所在的协程完成。
- *          1.2.2 为了保证Flow上下文的一致性，禁止在Flow的上游流emit代码中切换线程。但是在下游流的collect操作符函数中是可以切换线程的。
- *          1.2.3 Flow中线程的切换
- *              通过Flow的扩展函数flowOn(CoroutineContext)，设置流的执行上下文，该操作符只作用于前面没有相同上下文的操作符或构建器；
- *          该操作符中的上下文不会泄漏到下游流中。不管flowOn如何的切换线程，collect始终运行在调用它的协程的调度器线程上。
- *      1.3 Flow的操作符
- *          以下对Flow操作符的分类不来自于官方。
- *          1.3.1 过渡（流）操作符
- *              过渡操作符用来区分流执行到某一阶段。比如onStart/onEach/onCompletion。
- *              onStart作用于上游流，在上游流执行之前onStart操作先调用。因为入参是挂载的FlowCollector接收器的扩展函数，所以可以
- *          在onStart操作中发送数据。当onStart应用在SharedFlow时，不能保证onStart操作符中的操作发送的只或者上游流发送的值都能被收集。
- *              onEach下游流中每个值收集之前调用onEach的操作。
- *              onCompletion在流完成或者取消的时候调用onCompletion操作，可以报告上游和下游发生的异常，也可以观察到取消的异常，当流完成的
- *          时候异常为空。如果通过取消流所在的协程的方式取消流的执行，且Job#cancel的扩展方法中没有指定CancellationException，则流的
- *          onCompletion会观察到默认的JobCancellationException。
- *          1.3.2 异常操作符
- *              catch操作符可以捕获它的上游流中发生的异常。如果它的下游流中出现了未捕获的异常，则程序会crash；可以继续添加一个catch操作符
- *          来捕获，或者通过try-catch捕获整个流的异常，或者通过协程上下文的CoroutineExceptionHandler来处理。
- *          1.3.3 转换操作符
- *              transform操作符，该操作符的操作可以拿到流中的值并对其进行转换，该操作是一个以FlowCollect为接收器的挂载函数。操作中需要调用
- *          emit函数。
- *              map操作符，操作符的操作可以获取流中的值并对其进行转换，得到一个转换之后的流。
- *              mapNotNull操作符，过滤掉上游流中为null的值，并对其他值进行转换，得到转换后的流。
- *              filter操作符，接受上游流中的值，返回满足给定谓词函数的值构成的流。
- *              filterNot操作符，接受上游流的值，返回不满足指定谓词函数的值构成的流。
- *              filterIsInstance操作符，接受上游流的值，返回指定数据类型的值构成的流。
- *              filterNotNull操作符，接受上游流的值，返回非null值构成的流。
- *              zip操作符，使用指定的转换函数，将当前流与指定的流进行合并，每一对value应用转换函数，返回新的流。当其中的一个流
- *              完成并且剩余流调用了取消之后新的流立即完成。
- *          1.3.4 限制操作符
- *              take操作符，接收一个int类型的参数，获取上游流中按顺序发出的指定数目的value，返回这些value构成的新流。如果
- *              count大于等于上游流的size，则返回整个上游流。
- *              takeWhile操作符，接收一个谓词函数，获取上游流中按顺序发出的满足谓词函数的value，返回这些value构成的新
- *              流。
- *              drop操作符，接收一个int类型的参数，丢弃掉上游流中按顺序发出的指定数目的value，返回剩下的value构成的新流。
- *              如果count大于等于流的size，则丢弃整个流。
- *          1.3.5 末端流操作符
- *              collect操作符，收集流的value。
- *              toList操作符，将流转换成List。
- *      1.4 Flow的缓冲
- *          通常流是顺序执行的，各个操作符的代码是运行在同一个协程的，Flow执行的总时间是各个操作
- *          符代码执行时间的总和。Flow应用buffer操作符可以为流的执行创建单独的协程。在buffer操作符的上游流的执行创建一个协程，buffer
- *          操作符的下游流的执行创建一个协程。可以减少流的总执行时间。
- *  2 https://juejin.cn/post/7046155761948295175/
- *      2.1 Channel的概念
- *          Channel是用于发送者和接收者之间通信的非阻塞原语（primitive），这里的发送者指的是SendChannel、接收者指的是
- *      ReceiveChannel。
- *          原语（primitive）指的是有机器指令编写的完成特定功能的程序，执行过程中不允许中断。
- *          Channel实现了SendChannel和ReceiveChannel。Channel是基于生产者-消费者模式设计的，SendChannel是生产者，
- *      ReceiveChannel是消费者。
- *      2.2 SendChannel
- *          定义发送者的接口。
- *          2.2.1 send
- *              将指定的元素发送到该通道。如果通道的缓冲区已满或者没有缓冲区则挂它的调用方。如果通道已关闭，调用该方法会抛出异常。
- *          2.2.2 trySend
- *              将指定的元素添加到该通道，如果该通道的缓冲区没有满，则返回success result，否则返回failed或者closed result。
- *          当返回非成功的result时候，该元素不会传递到消费者，并且不会调用onUndeliveredElement函数。
- *          2..2.3 close
- *              关闭SendChannel，在概念上调用该函数会向该通道发送一个特殊的关闭令牌。在调用此函数后，SendChannel一侧的
- *          isClosedForSend为true；但是在ReceiveChannel一侧，当先前发送的元素都被接收后，isClosedForReceive是
- *          true。
- *              关闭时没有指定cause的通道，在尝试send时候会抛出CloseSendChannelException。在尝试receive时会抛出
- *          CloseReceiveChannelException。如果cause不为空，则通道为失败通道，在失败的通道send、receive会抛出指定
- *          的cause异常。
- *          2.2.4 isClosedForSend
- *          如果通道调用了close函数，则为true。使用该属性可以在调用send和receive(ReceiveChannel一侧)来判断通道是否已关闭。
- *
- *      2.3 ReceiveChannel
- *          定义接收者的接口。
- *          2.3.1 receive
- *              如果通道不为空，则获取并移除通道中的一个元素；如果通道为空，则挂起调用者。如果通道已关闭则抛出
- *          CloseReceiveChannelException。如果通道因异常而关闭，调用该函数，则会抛出指定关闭通道的异常。
- *          2.3.2 tryReceive
- *              如果通道不为空，则移除通道中的一个元素，返回success result；如果通道为空，返回failed result；如果通道
- *          关闭返回closed result。
- *          2.3.3 cancel(cause CancellationException? = null)
- *              取消从该通道接收剩余的元素；该函数会关闭通道，并移除通道中所有的已缓冲的已发送的元素；如果没有指定原因，则
- *          会创建一个带有默认消息的CancellationException的实例来关闭通道；调用该函数后，isClosedForReceive为true，
- *          SendChannel一侧的isClosedForSend为true。调用该函数之后，任何向该通道发送或接收元素都会抛出异常。
- *      2.4 CoroutineScope#produce构建器构建channel
- *          CoroutineScope的扩展方法produce会启动一个协程，在协程内部通过向通道发送值生成一个value流；该协程是
- *      ProducerCoroutine。ProducerCoroutine是继承ProducerScope和ChannelCoroutine的；而ProducerScope是实现CoroutineScope和
- *      SendChannel的；ChannelCoroutine是继承AbstractCoroutine并实现Channel的。所以ProducerCoroutine即是CoroutineScope
- *      也是Channel。produce方法返回值是ReceiveChannel类型，引用是ProducerCoroutine。
- *          协程完成时，通道关闭。当接收者通道取消，协程取消。协程中任何未捕获的异常都会导致关闭通道。
- *          返回的ReceiveChannel可以通过扩展函数consumeEach来接收通道中的元素，函数调用完之后会取消接收者通道，并取消协程。
- *  3 StateFlow
- *      https://www.jianshu.com/p/29585473ff65
- *      StateFlow是热数据流，并且是只读的，只能接收数据，不能发送数据，是一个可观察的数据流。
- *      通过Flow#collect即获得流的收集器，通常这个收集器的执行永远不会完成，并挂起调用者，收集器也被视作订阅者。
- *      StateFlow始终具有一个value，不缓冲之前发出的值，保留最后发出的值，它的接收器接收的是最新发出的值。
- *      3.1 MutableStateFlow
- *          MutableStateFlow是可读写的StateFlow，可以发送、接收数据，该接口继承了StateFlow和MutableSharedFlow。
- *          3.1.1 compareAndSet(expect: T, update: T)
- *              将当前值与expect比较，如果相等，则设置当前value未update，返回true；否则不修改当前值，返回false。函数是
- *          线程安全的。
- *      3.2 Flow#stateIn(scope: CoroutineScope)
- *          Flow的扩展函数，且是一个挂起函数，调用该函数会挂起所在的协程，直到发出第一个值为止。返回一个StateFlow。
- *  4 SharedFlow
- *      也是一种热流，也是只读的。通过广播的方式在它的所有收集器之间共享发送的value。通过Flow#collect的操作符获取流的收集器，也被视为
- *  订阅者，通常收集器操作永远不会完成，它会挂起调用者协程。
- *      在SharedFlow上应用末端流操作符，比如toList，对应的操作也是不会完成的。
- *      SharedFlow可以用在应用中向发送广播这样的场景。
- *      replayCache，流中重新向新的订阅者发送的value的集合。
- *      4.1 MutableSharedFlow
- *          一个可读写的热数据流，可以向流中发送value。emit、tryEmit方法是线程安全的。
- *          4.1.1 MutableSharedFlow的构造函数
- *              replay - 重新向新的订阅者发送的value的数量；
- *              extraBufferCapacity - 除了replay之外，缓冲的值的数量；
- *              onBufferOverFlow - 当向流中发送value，缓冲区溢出时的处理策略，
- *                  SUSPEND - 当缓冲区满时，上游流的执行会挂起
- *                  DROP_OLDEST - 当缓冲区满时，丢弃最旧值，将新值添加到缓冲区，不挂起。
- *                  DROP_LATEST - 当缓冲区满时，丢弃正在添加到缓冲区的新值，不挂起。
- *              MutableSharedFlow缓冲容量是replay + extraBufferCapacity
- *          4.1.2 emit(value: T)
- *              是个挂起函数，向流中发送指定的value；当缓冲满时，且使用的是BufferOverflow.SUSPEND,则挂起所在的协程。该函数是
- *          线程安全的。
- *          4.1.3 tryEmit(value: T)
- *              尝试向流中发送指定的值，不会挂起所在的协程，如果返回值为true，则表明发送成功了，否则发送失败。如果配置参数onBufferOverflow
- *          为BufferOverflow.DROP_OLDEST或者BufferOverflow.DROP_LATEST则始终返回true。
- *      4.2 Flow#shareIn
- *          将一个冷流转换成一个只读的SharedFlow。流的执行策略受replay和SharingStarted共同影响。
- *          4.2.1 SharingStarted
- *              启动和停止上游流的策略。内置了三种策略，也可以通过实现command函数自定义策略。
- *              通过发出命令来控制上游流的运行，连续发出相同的命令不会有效果。这些命令对应SharingCommand枚举类，有START、
- *          STOP、STOP_RESET_REPLAY_CACHE.
- *              START - 启动上游流
- *              STOP - 停止上游流
- *              STOP_RESET_REPLAY_CACHE - 停止上游流并重置SharedFlow#replayCache为初始值；
- *              初始状态下上游流处在停止，且replayCache为初始值，所在在初始状态发出STOP或STOP_RESET_REPLAY_CACHE没有
- *          效果。
- *              eagerly - 上游流在第一个订阅者出现旧开始运行，当缓冲满时，丢弃replay个最早发送的value。
- *              lazily - 上游流在第一个订阅者出现才开始运行，第一个订阅者获取所有的value。后续的订阅者只能获取replay个缓冲区的value；
- *              WhileSubscribed - 上游流在第一个订阅者出现时开始运行，在最后一个订阅者消失时停止。永久保留replayCache。
- *                  WhileSubscribed(stopTimeoutMillis: Long = 0, replayExpirationMillis: Long = Long.MAX_VALUE)函数
- *                  中的配置参数。
- *                  stopTimeoutMillis - 最后一个订阅者消失和停止上游流运行的延迟时间。
- *                  replayExpirationMillis - 停止上游流运行和重置replayCache之间的延迟时间，默认是Long.MAX_VALUE，即永久
- *              不重置replayCache。
- *  5 Flow在开发中的使用
- *      https://juejin.cn/post/6989032238079803429
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *  2 https://juejin.cn/post/7046155761948295175/
- *  Flow每次收集完后就会销毁。后续也不能发射新的值到流中。
- *  2.1 Channel通道
- *      Channel是个热数据流。
- */
+
 class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "MainActivity"
@@ -215,9 +37,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btn_channel01).setOnClickListener {
-//            channelStudy01()
-//            channelStudy02()
-            channelStudy03()
+            channelStudy01()
+//            closeChannelBeforeSend()
+            handleCloseExceptionBeforeReceive()
         }
 
         findViewById<View>(R.id.btn_produce).setOnClickListener {
@@ -259,25 +81,36 @@ class MainActivity : AppCompatActivity() {
 //        mutableSharedFlowEmitSuspend()
 //        shareInEagerly()
 //        shareInLazily()
-        shareInWhileSubscribed()
+//        shareInWhileSubscribed()
     }
 
     private fun shareInWhileSubscribed() {
         lifecycleScope.launch {
             var start = 0L
-            val sharedFlow = (1 .. 10).asFlow()
+            val sharedFlow = (1..10).asFlow()
                 .onStart { start = currentTime() }
-                .onEach { Log.d(TAG, "shareInWhileSubscribed: wyj each it:$it, ${currentTime() - start}")
+                .onEach {
+                    Log.d(TAG, "shareInWhileSubscribed: wyj each it:$it, ${currentTime() - start}")
                     delay(100L)
                 }
-                .onCompletion { Log.d(TAG, "shareInWhileSubscribed: wyj onCompletion ${currentTime() - start}") }
-                .shareIn(this,
+                .onCompletion {
+                    Log.d(
+                        TAG,
+                        "shareInWhileSubscribed: wyj onCompletion ${currentTime() - start}"
+                    )
+                }
+                .shareIn(
+                    this,
                     SharingStarted.WhileSubscribed(100L, 200L),
-                    replay = 2)
+                    replay = 2
+                )
             val job = launch {
                 Log.d(TAG, "shareInWhileSubscribed: wyj current time")
                 sharedFlow.collect {
-                    Log.d(TAG, "shareInWhileSubscribed: wyj collect it:$it, ${currentTime() - start}")
+                    Log.d(
+                        TAG,
+                        "shareInWhileSubscribed: wyj collect it:$it, ${currentTime() - start}"
+                    )
                 }
             }
             launch {
@@ -285,7 +118,10 @@ class MainActivity : AppCompatActivity() {
                 job.cancel()
                 delay(110L)
                 sharedFlow.collect {
-                    Log.d(TAG, "shareInWhileSubscribed: wyj again collect it:$it, ${currentTime() - start}")
+                    Log.d(
+                        TAG,
+                        "shareInWhileSubscribed: wyj again collect it:$it, ${currentTime() - start}"
+                    )
                 }
                 Log.d(TAG, "shareInWhileSubscribed: wyj sharedFlow has stop")
             }
@@ -300,12 +136,22 @@ class MainActivity : AppCompatActivity() {
                 .onEach { Log.d(TAG, "shareInLazily: wyj each it:$it") }
                 .shareIn(this, SharingStarted.Lazily, replay = 2)
             launch {
-                sharedFlow.collect { value1 -> Log.d(TAG, "shareInLazily: wyj collect value1:$value1") }
+                sharedFlow.collect { value1 ->
+                    Log.d(
+                        TAG,
+                        "shareInLazily: wyj collect value1:$value1"
+                    )
+                }
             }
 
             delay(10L)
             launch {
-                sharedFlow.collect { value2 -> Log.d(TAG, "shareInLazily: wyj collect value2:$value2") }
+                sharedFlow.collect { value2 ->
+                    Log.d(
+                        TAG,
+                        "shareInLazily: wyj collect value2:$value2"
+                    )
+                }
             }
         }
 
@@ -319,7 +165,12 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "shareInOperator: wyj onCompletion")
                 }
             launch {
-                sharedFlow.collect { value -> Log.d(TAG, "shareInOperator: wyj collect value:$value") }
+                sharedFlow.collect { value ->
+                    Log.d(
+                        TAG,
+                        "shareInOperator: wyj collect value:$value"
+                    )
+                }
             }
         }
     }
@@ -328,10 +179,15 @@ class MainActivity : AppCompatActivity() {
         val shareFlow = MutableSharedFlow<Int>(4, 3)
         lifecycleScope.launch {
             launch {
-                shareFlow.collect { value -> Log.d(TAG, "mutableSharedFlowEmitSuspend: wyj collect value:$value") }
+                shareFlow.collect { value ->
+                    Log.d(
+                        TAG,
+                        "mutableSharedFlowEmitSuspend: wyj collect value:$value"
+                    )
+                }
             }
             launch {
-                (1 .. 10).forEach {
+                (1..10).forEach {
                     shareFlow.emit(it)
                     Log.d(TAG, "mutableSharedFlowEmitSuspend: wyj emit it:$it")
                 }
@@ -340,7 +196,12 @@ class MainActivity : AppCompatActivity() {
             val list = shareFlow.replayCache
             Log.d(TAG, "mutableSharedFlowEmitSuspend: wyj list:$list")
             launch {
-                shareFlow.collect { value2 -> Log.d(TAG, "mutableSharedFlowEmitSuspend: wyj collect value2:$value2") }
+                shareFlow.collect { value2 ->
+                    Log.d(
+                        TAG,
+                        "mutableSharedFlowEmitSuspend: wyj collect value2:$value2"
+                    )
+                }
             }
         }
     }
@@ -349,10 +210,15 @@ class MainActivity : AppCompatActivity() {
         val shareFlow = MutableSharedFlow<Int>(4, 3)
         lifecycleScope.launch {
             launch {
-                shareFlow.collect { value -> Log.d(TAG, "mutableSharedFlowTryEmit: wyj collect value:$value") }
+                shareFlow.collect { value ->
+                    Log.d(
+                        TAG,
+                        "mutableSharedFlowTryEmit: wyj collect value:$value"
+                    )
+                }
             }
             launch {
-                (1 .. 10).forEach {
+                (1..10).forEach {
                     val result = shareFlow.tryEmit(it)
                     Log.d(TAG, "mutableSharedFlowTryEmit: wyj emit it:$it, result:$result")
                     delay(100L)
@@ -361,7 +227,12 @@ class MainActivity : AppCompatActivity() {
             }
             delay(900L)
             launch {
-                shareFlow.collect { value2 -> Log.d(TAG, "mutableSharedFlowTryEmit: wyj collect value2:$value2") }
+                shareFlow.collect { value2 ->
+                    Log.d(
+                        TAG,
+                        "mutableSharedFlowTryEmit: wyj collect value2:$value2"
+                    )
+                }
             }
         }
     }
@@ -393,7 +264,7 @@ class MainActivity : AppCompatActivity() {
     private fun stateFlowStudy() {
 //        stateFlowCollector()
 //        stateFlowCollectValue()
-        stateInOperator()
+//        stateInOperator()
 //        stateFlowNoBuffer()
 //        compareAndSet()
     }
@@ -402,7 +273,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val stateFlow = MutableStateFlow(1)
             launch {
-                for (value in 1 .. 5) {
+                for (value in 1..5) {
                     delay(100L)
                     stateFlow.emit(value)
                 }
@@ -416,16 +287,20 @@ class MainActivity : AppCompatActivity() {
             }
 
             launch {
-                stateFlow.collect { value2 -> Log.d(TAG, "compareAndSet: wyj collect value2:$value2") }
+                stateFlow.collect { value2 ->
+                    Log.d(
+                        TAG,
+                        "compareAndSet: wyj collect value2:$value2"
+                    )
+                }
             }
         }
-
     }
 
     private fun stateFlowNoBuffer() {
         lifecycleScope.launch {
             val stateFlow = flow {
-                for (value in 1 .. 5) {
+                for (value in 1..5) {
                     Log.d(TAG, "stateFlowNoBuffer: wyj emit value:$value")
                     emit(value)
                 }
@@ -433,7 +308,8 @@ class MainActivity : AppCompatActivity() {
 
             launch {
                 stateFlow.collect { value ->
-                    Log.d(TAG, "stateFlowNoBuffer: wyj collect value:$value") }
+                    Log.d(TAG, "stateFlowNoBuffer: wyj collect value:$value")
+                }
             }
         }
     }
@@ -441,7 +317,7 @@ class MainActivity : AppCompatActivity() {
     private fun stateInOperator() {
         lifecycleScope.launch {
             val stateFlow = flow {
-                for (element in 0 .. 3) {
+                for (element in 0..3) {
                     emit(element)
                     delay(100)
                 }
@@ -469,10 +345,18 @@ class MainActivity : AppCompatActivity() {
             }
 
             launch {
-                stateFlow.collect { value2 -> Log.d(TAG, "stateFlowCollectValue: wyj collect value2:$value2") }
+                stateFlow.collect { value2 ->
+                    Log.d(
+                        TAG,
+                        "stateFlowCollectValue: wyj collect value2:$value2"
+                    )
+                }
             }
             delay(200L)
-            Log.d(TAG, "stateFlowCollectValue: wyj collectJob isCompleted:${collectJob.isCompleted}")
+            Log.d(
+                TAG,
+                "stateFlowCollectValue: wyj collectJob isCompleted:${collectJob.isCompleted}"
+            )
         }
     }
 
@@ -493,7 +377,8 @@ class MainActivity : AppCompatActivity() {
 //        simple().forEach { value -> Log.d(TAG, "test: wyj value:$value") }
 //        cancelFlow()
         lifecycleScope.launch {
-            flowBuildStudy()
+//            flowBuildStudy()
+            flowExecuteAnalyse()
 //            asFlowBuildStudy()
 //            flowOfBuildStudy()
 //            flowBuildStudy02()
@@ -516,7 +401,8 @@ class MainActivity : AppCompatActivity() {
                 delay(100L)
                 emit(i)
             }
-        }.flowOn(Dispatchers.IO)
+        }
+            .flowOn(Dispatchers.IO)
             .map {
                 Log.d(TAG, "flowOnStudy: wyj map context:${currentCoroutineContext()}")
                 it * 2
@@ -623,8 +509,44 @@ class MainActivity : AppCompatActivity() {
         (1..3).asFlow().collect { value -> Log.d(TAG, "asFlowBuildStudy: wyj value:$value") }
     }
 
+    private suspend fun flowExecuteAnalyse() {
+//        flow {
+//            for (element in 1..3) {
+//                emit(element)
+//            }
+//        }
+//            .map {
+//                it + 10
+//            }
+//            .collect(object : FlowCollector<Int> {
+//                override suspend fun emit(value: Int) {
+//                    Log.d(TAG, "emit: emit value:$value")
+//                }
+//
+//            })
+
+        val safeFlow = flow {
+            for (element in 1..3) {
+                Log.d(TAG, "flowExecuteAnalyse: flow operator element:$element")
+                emit(element)
+            }
+        }
+        val flowOn = safeFlow.flowOn(Dispatchers.IO)
+        val mapFlow = flowOn.map {
+            Log.d(TAG, "flowExecuteAnalyse: map operator it:$it")
+            it + 10
+        }
+        val collector = object : FlowCollector<Int> {
+            override suspend fun emit(value: Int) {
+                Log.d(TAG, "flowExecuteAnalyse collect operator value:$value")
+            }
+
+        }
+        mapFlow.collect(collector)
+    }
+
     /**
-     *  通过扩展函数flow构建一个冷数据流Flow，通过emit函数来发射数据，通过collect函数来收集这些
+     *  通过顶层函数flow构建一个冷数据流Flow，通过emit函数来发射数据，通过collect函数来收集这些
      *  数据，因为collect函数是挂起函数，所以需要在协程中操作。
      *  Flow没有提供取消的操作，Flow的取消可以依赖协程的取消，
      */
@@ -670,7 +592,7 @@ class MainActivity : AppCompatActivity() {
 //            }, 200L
 //        )
         lifecycleScope.launch {
-            startEachCompletionOperator()
+//            startEachCompletionOperator()
 //            flowExceptionStudy()
 //            catchOperatorStudy()
 //            transformOperatorStudy()
@@ -683,9 +605,8 @@ class MainActivity : AppCompatActivity() {
 //            zipOperatorStudy()
 //            takeOperatorStudy()
 //            takeWhileOperatorStudy()
-//            takeWhileOperatorStudy()
 //            dropOperatorStudy()
-//            toListOperator()
+            toListOperator()
         }
     }
 
@@ -698,7 +619,7 @@ class MainActivity : AppCompatActivity() {
      */
     private suspend fun dropOperatorStudy() {
         flowOf(0, 1, 2, 3, 5)
-            .drop(6)
+            .drop(3)
             .onCompletion { cause -> Log.d(TAG, "dropOperatorStudy: wyj cause:$cause") }
             .collect { Log.d(TAG, "dropOperatorStudy: wyj value:$it") }
     }
@@ -747,7 +668,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun filterNotOperator() {
-        (1 .. 5).asFlow()
+        (1..5).asFlow()
             .filterNot {
                 it % 2 == 0
             }.collect { value ->
@@ -811,8 +732,8 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "flowCatchStudy: wyj catch cause:$cause")
             emit(2)
         }.map { value ->
-            value * 2
             throw IllegalStateException("map operator throw exception.")
+            value * 2
         }.onCompletion { cause ->
             Log.d(TAG, "flowCatchStudy: wyj onCompletion cause:$cause")
         }.collect { value -> Log.d(TAG, "flowCatchStudy: wyj collect value:$value") }
@@ -936,7 +857,7 @@ class MainActivity : AppCompatActivity() {
     /**
      *  Channel关闭之后，继续调用receive方法，导致协程异常结束。
      */
-    private fun channelStudy02() {
+    private fun closeChannelBeforeReceive() {
         lifecycleScope.launch {
             val channel = Channel<Int>()
             launch {
@@ -961,7 +882,7 @@ class MainActivity : AppCompatActivity() {
      *  通过判断isClosedForSend 来控制是否send和receive来规避异常。
      */
     @ExperimentalCoroutinesApi
-    private fun channelStudy03() {
+    private fun handleCloseExceptionBeforeReceive() {
         lifecycleScope.launch {
             val channel = Channel<Int>()
             launch {
@@ -1005,7 +926,10 @@ class MainActivity : AppCompatActivity() {
             receiveChannel.consumeEach { Log.d(TAG, "produceStudy: wyj it:$it") }
             Log.d(TAG, "produceStudy: wyj isClosedForReceive:${receiveChannel.isClosedForReceive}")
             if (receiveChannel is CoroutineScope) {
-                Log.d(TAG, "produceStudy: isCancelled:${(receiveChannel as CoroutineScope).isActive}")
+                Log.d(
+                    TAG,
+                    "produceStudy: isCompleted:${(receiveChannel as CoroutineScope).coroutineContext[Job]?.isCompleted}"
+                )
             }
             Log.d(TAG, "produceStudy: wyj done")
         }

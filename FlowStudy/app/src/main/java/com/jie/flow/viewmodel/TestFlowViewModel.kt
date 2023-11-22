@@ -16,13 +16,13 @@ class TestFlowViewModel : ViewModel() {
         private const val TAG = "TestFlowViewModel"
     }
     private val _state: MutableStateFlow<Int> = MutableStateFlow(0)
-    val mState: StateFlow<Int>
+    val stateFlow: StateFlow<Int>
         get() = _state
     private val _name: MutableStateFlow<String> = MutableStateFlow("第二个StateFlow")
-    val mName: MutableStateFlow<String>
+    val nameStateFlow: MutableStateFlow<String>
         get() = _name
     private val _shared: MutableSharedFlow<Int> = MutableSharedFlow(2)
-    val mShareFlow: SharedFlow<Int>
+    val numberStateFlow: SharedFlow<Int>
         get() = _shared
 
     fun downloadByStateFlow() {

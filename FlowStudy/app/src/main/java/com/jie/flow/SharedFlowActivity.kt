@@ -13,7 +13,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
@@ -30,9 +29,9 @@ class SharedFlowActivity : AppCompatActivity() {
         setContentView(R.layout.activity_shared_flow)
         lifecycleScope.launch {
 //            sharedFlowImpReplayStudy()
-//            sharedFlowReplayCacheStudy()
+            sharedFlowReplayCacheStudy()
 //            shareInFunction()
-            repeatOnLifecycleFunction()
+//            repeatOnLifecycleFunction()
 
         }
         viewModel.downloadBySharedFlow()
@@ -44,10 +43,10 @@ class SharedFlowActivity : AppCompatActivity() {
      */
     private suspend fun AppCompatActivity.repeatOnLifecycleFunction() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.mShareFlow.collect {
+            viewModel.numberStateFlow.collect {
                 Log.d(
                     TAG,
-                    "onCreate: wyj element:$it, replayCache:${viewModel.mShareFlow.replayCache}"
+                    "onCreate: wyj element:$it, replayCache:${viewModel.numberStateFlow.replayCache}"
                 )
             }
         }
@@ -70,31 +69,27 @@ class SharedFlowActivity : AppCompatActivity() {
      */
     private suspend fun sharedFlowReplayCacheStudy() {
         var index = 0
-        viewModel.mShareFlow.collect {
+        viewModel.numberStateFlow.collect {
             Log.d(
                 TAG,
-                "onCreate: wyj 第${index++}次变化，element:$it, replayCache:${viewModel.mShareFlow.replayCache}"
+                "onCreate: wyj 第${index++}次变化，element:$it, replayCache:${viewModel.numberStateFlow.replayCache}"
             )
         }
     }
 
     private fun CoroutineScope.sharedFlowImpReplayStudy() {
         launch {
-            viewModel.mShareFlow.collect {
+            viewModel.numberStateFlow.collect {
                 Log.d(TAG, "onCreate: wyj shared first launch element:$it")
             }
         }
 
         launch {
             delay(3000L)
-            viewModel.mShareFlow.collect {
+            viewModel.numberStateFlow.collect {
                 Log.d(TAG, "onCreate: wyj shared second launch element:$it")
             }
         }
     }
 
-    override fun onDestroy() {
-        lifecycleScope.cancel()
-        super.onDestroy()
-    }
 }

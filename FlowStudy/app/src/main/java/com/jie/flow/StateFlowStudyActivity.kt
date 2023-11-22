@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.jie.flow.viewmodel.TestFlowViewModel
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.lang.RuntimeException
@@ -23,7 +22,7 @@ class StateFlowStudyActivity : AppCompatActivity() {
             //当StateFlow的状态为某一个临界值的时候，终止对这个数据流数据收集，执行下一个StateFlow数据流
             //的收集
             try {
-                viewModel.mState.collect {
+                viewModel.stateFlow.collect {
                     Log.d(TAG, "onCreate: wyj state:$it")
                     if (it == 3) {
                         throw RuntimeException("终止第一个StateFlow 数据流的收集")
@@ -33,15 +32,12 @@ class StateFlowStudyActivity : AppCompatActivity() {
                 Log.d(TAG, "onCreate: wyj e:$e")
             }
 
-            viewModel.mName.collect {
+            viewModel.nameStateFlow.collect {
                 Log.d(TAG, "onCreate: wyj name:$it")
             }
+
         }
         viewModel.downloadByStateFlow()
     }
 
-    override fun onDestroy() {
-        lifecycleScope.cancel()
-        super.onDestroy()
-    }
 }
