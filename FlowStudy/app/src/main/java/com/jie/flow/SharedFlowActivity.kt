@@ -29,9 +29,9 @@ class SharedFlowActivity : AppCompatActivity() {
         setContentView(R.layout.activity_shared_flow)
         lifecycleScope.launch {
 //            sharedFlowImpReplayStudy()
-            sharedFlowReplayCacheStudy()
-//            shareInFunction()
-//            repeatOnLifecycleFunction()
+//            sharedFlowReplayCacheStudy()
+            shareInFunction()
+            repeatOnLifecycleFunction()
 
         }
         viewModel.downloadBySharedFlow()
@@ -41,7 +41,7 @@ class SharedFlowActivity : AppCompatActivity() {
      *  通过使用repeatOnLifecycle方法来避免在使用StateFlow或SharedFlow的时候引起的内存泄漏问题。
      *  repeatOnLifecycle是通过观察指定组件的声明周期方法来避免内存泄漏。
      */
-    private suspend fun AppCompatActivity.repeatOnLifecycleFunction() {
+    private suspend fun repeatOnLifecycleFunction() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.numberStateFlow.collect {
                 Log.d(

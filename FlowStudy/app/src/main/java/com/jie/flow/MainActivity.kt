@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btn_channel01).setOnClickListener {
             channelStudy01()
-//            closeChannelBeforeSend()
-            handleCloseExceptionBeforeReceive()
+//            closeChannelBeforeReceive()
+//            handleCloseExceptionBeforeReceive()
         }
 
         findViewById<View>(R.id.btn_produce).setOnClickListener {
@@ -76,11 +76,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sharedFlowStudy() {
-        mutableSharedFlowEmit()
+        hotSharedFlowTest()
+//        mutableSharedFlowEmit()
 //        mutableSharedFlowTryEmit()
 //        mutableSharedFlowEmitSuspend()
 //        shareInEagerly()
-//        shareInLazily()
+        shareInLazily()
 //        shareInWhileSubscribed()
     }
 
@@ -161,16 +162,18 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val sharedFlow = flowOf(1, 2, 3, 4)
                 .onEach { Log.d(TAG, "shareInOperator: wyj each it:$it") }
-                .shareIn(this, SharingStarted.Eagerly, replay = 2).onCompletion {
+                .shareIn(this, SharingStarted.Eagerly, replay = 2)
+                .onCompletion {
                     Log.d(TAG, "shareInOperator: wyj onCompletion")
                 }
             launch {
-                sharedFlow.collect { value ->
-                    Log.d(
-                        TAG,
-                        "shareInOperator: wyj collect value:$value"
-                    )
-                }
+//                delay(100)
+//                sharedFlow.collect { value ->
+//                    Log.d(
+//                        TAG,
+//                        "shareInOperator: wyj collect value:$value"
+//                    )
+//                }
             }
         }
     }
@@ -237,6 +240,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun hotSharedFlowTest() {
+        lifecycleScope.launch {
+            val coldFlow = flowOf(1, 2, 3, 4, 5)
+                .onStart { Log.d(TAG, "hotSharedFlowTest: start") }
+                .onEach {
+                    Log.d(TAG, "hotSharedFlowTest: each data:$it")
+                }
+                .onCompletion {
+                    Log.d(TAG, "hotSharedFlowTest: completion")
+                }
+            coldFlow.shareIn(this, SharingStarted.Eagerly, 2)
+        }
+    }
+
     private fun mutableSharedFlowEmit() {
         val shareFlow = MutableSharedFlow<Int>(4, 3)
         lifecycleScope.launch {
@@ -265,7 +282,7 @@ class MainActivity : AppCompatActivity() {
 //        stateFlowCollector()
 //        stateFlowCollectValue()
 //        stateInOperator()
-//        stateFlowNoBuffer()
+        stateFlowNoBuffer()
 //        compareAndSet()
     }
 

@@ -41,9 +41,9 @@ class FlowPractiseActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btn_flow).setOnClickListener {
             lifecycleScope.launch {
-                val result = countDown(10_000, 2_000) {remainTime -> 100}
+                val result = countDown(10_000, 2_000) {100}
                     .onStart { Log.d(TAG, "flow start") }
-                    .onEach { Log.d(TAG, "wyj flow it:$it") }
+                    .onEach { Log.d(TAG, "wyj each it:$it") }
                     .onCompletion { Log.d(TAG, "wyj flow onCompletion") }
                     .reduce { accumulator, value -> accumulator + value }
                 Log.d(TAG, "onCreate: wyj flow result:$result")
