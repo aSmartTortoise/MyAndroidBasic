@@ -72,7 +72,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
+        findViewById<View>(R.id.btn_cheese_query).setOnClickListener {
+            Intent(this@MainActivity, CheeseActivity::class.java).apply {
+                this@MainActivity.startActivity(this)
+            }
+        }
     }
 
     private fun sharedFlowStudy() {
