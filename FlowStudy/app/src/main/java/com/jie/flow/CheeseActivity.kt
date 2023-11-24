@@ -37,5 +37,4 @@ class CheeseActivity : BaseSearchActivity() {
             .launchIn(lifecycleScope)
     }
 
-
 }
