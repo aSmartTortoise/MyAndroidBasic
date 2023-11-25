@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -41,7 +42,7 @@ public class WaveProgressView extends View {
     //画笔
     private Paint mPaint;
     //正弦路径
-    private Path mPath;
+    private Path mWavePath;
     //startPoint在X方向上移动的距离
     private float mTotalOffsetX = 0;
     //进度
@@ -56,18 +57,17 @@ public class WaveProgressView extends View {
     private float mProgressBottom;
     //圆半径
     private float mRadius;
+    private ValueAnimator mWaveMoveAnimator;
 
     public WaveProgressView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public WaveProgressView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.WaveView);
         mXVelocity = a.getFloat(R.styleable.WaveView_x_velocity, DEFAULT_X_VELOCITY);
         mTotalDuration = a.getInt(R.styleable.WaveView_total_duration, DEFAULT_TOTAL_DURATION);
-
 
         mColor = a.getColor(R.styleable.WaveView_color, DEFAULT_COLOR);
         a.recycle();
@@ -75,7 +75,7 @@ public class WaveProgressView extends View {
         mPaint.setColor(mColor);
 
         mStartPoint = new PointF();
-        mPath = new Path();
+        mWavePath = new Path();
         mClipPath = new Path();
     }
 
@@ -140,13 +140,13 @@ public class WaveProgressView extends View {
     }
 
     public void startAnim() {
-        ValueAnimator animator = ValueAnimator.ofInt(0, 100);
-        animator.setDuration(1500);
-        animator.setInterpolator(new LinearInterpolator());
-        animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.start();
+        mWaveMoveAnimator = ValueAnimator.ofInt(0, 100);
+        mWaveMoveAnimator.setDuration(1050);
+        mWaveMoveAnimator.setInterpolator(new LinearInterpolator());
+        mWaveMoveAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mWaveMoveAnimator.start();
 
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        mWaveMoveAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int currentValue = (int) animation.getAnimatedValue();
@@ -202,12 +202,11 @@ public class WaveProgressView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         mRadius = w < h ? w / 2f : h / 2f;
         mClipPath.addCircle(w / 2f, h / 2f, mRadius, Path.Direction.CCW);
-        mWaveLength = mRadius;
-        mPeak = mWaveLength / 8;
+        mWaveLength = 3 * mRadius / 2;
+        mPeak = mWaveLength / 11;
         //初始化StartPoint,左边预留出一个周期的移动长度
         mStartPoint.x = -mWaveLength;
         setMyProgress(0);
-        postInvalidate();
     }
 
     public void setMyProgress(float progress) {
@@ -215,15 +214,16 @@ public class WaveProgressView extends View {
         float gap = (h - 2 * mRadius) / 2f;
         mProgressBottom = h - gap + mPeak - progress * (h + 2 * mPeak);
         mStartPoint.y = mProgressBottom;
+        postInvalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         canvas.clipPath(mClipPath);
-        mPath.reset();
-        mPath.moveTo(mStartPoint.x, mStartPoint.y);
+        canvas.drawColor(Color.parseColor("#ffBEE0C0"));
+        mWavePath.reset();
+        mWavePath.moveTo(mStartPoint.x, mStartPoint.y);
 
         //波峰或波谷坐标
         float peakX, peakY;
@@ -231,19 +231,29 @@ public class WaveProgressView extends View {
         float nowX = mStartPoint.x;
 
         boolean isPeak = true;
-        while (nowX < getMeasuredWidth()) {
+        while (nowX <= getMeasuredWidth()) {
             peakX = nowX + mWaveLength / 4f;
             // 二阶贝塞尔曲线，当控制点的横坐标位于两个数据点横坐标的中间时，曲线上横坐标为两个数据点横坐标中间的点对应的
-            // u为0.5，该点的纵坐标为控制点坐标的0.5，即控制点纵坐标时振幅的2倍。
+            // u为0.5，该点的纵坐标为控制点坐标的0.5，即控制点纵坐标是振幅的2倍。
             peakY = mStartPoint.y + (isPeak ? - 2 * mPeak : 2 * mPeak);
             isPeak = !isPeak;
             nowX += mWaveLength / 2f;
-            mPath.quadTo(peakX, peakY, nowX, mStartPoint.y);
+            mWavePath.quadTo(peakX, peakY, nowX, mStartPoint.y);
         }
 
-        mPath.lineTo(nowX, getMeasuredHeight());
-        mPath.lineTo(mStartPoint.x, getMeasuredHeight());
-        mPath.close();
-        canvas.drawPath(mPath, mPaint);
+        mWavePath.lineTo(nowX, getMeasuredHeight());
+        mWavePath.lineTo(mStartPoint.x, getMeasuredHeight());
+        mWavePath.close();
+
+        canvas.drawPath(mWavePath, mPaint);
+        canvas.restore();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mWaveMoveAnimator != null) {
+            mWaveMoveAnimator.cancel();
+        }
     }
 }

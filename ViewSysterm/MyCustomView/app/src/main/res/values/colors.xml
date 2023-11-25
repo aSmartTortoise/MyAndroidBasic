@@ -6,4 +6,6 @@
     <color name="blue">#0082D7</color>
     <color name="canvas_red_color">#ca2374</color>
     <color name="canvas_orange_color">#fe9191</color>
+    <color name="pink_water">#ff69b4</color>
+    <color name="green_container">#BEE0C0</color>
 </resources>

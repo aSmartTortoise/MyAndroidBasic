@@ -15,10 +15,10 @@ public class WaveProgressActivity extends AppCompatActivity {
     }
 
     public void onClick(View view){
-        WaveProgressView waveView=(WaveProgressView)findViewById(R.id.wave);
+        WaveProgressView waveView = (WaveProgressView)findViewById(R.id.wave);
         switch (view.getId()){
             case R.id.btn_begin:
-                waveView.setMyProgress(0.5f);
+                waveView.setMyProgress(0.6f);
                 waveView.startAnim();
                 break;
             default:
