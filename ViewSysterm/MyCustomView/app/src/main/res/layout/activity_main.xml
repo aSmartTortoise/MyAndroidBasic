@@ -39,10 +39,11 @@
         android:id="@+id/btn_bezier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:text="学习贝塞尔曲线"
-        app:layout_constraintLeft_toLeftOf="@id/btn_canvas_api"
-        app:layout_constraintTop_toBottomOf="@id/btn_path" />
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_path"
+        app:layout_constraintLeft_toRightOf="@id/btn_path" />
 
     <Button
         android:id="@+id/btn_fill_type"
@@ -50,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="学习Path填充模式"
-        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
+        app:layout_constraintLeft_toLeftOf="@id/btn_path"
         app:layout_constraintTop_toBottomOf="@id/btn_bezier" />
 
     <Button
@@ -59,8 +60,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="学习Path布尔运算"
-        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
-        app:layout_constraintTop_toBottomOf="@id/btn_fill_type" />
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_fill_type"
+        app:layout_constraintLeft_toRightOf="@id/btn_fill_type" />
 
     <Button
         android:id="@+id/btn_pathMeasure_api"
@@ -68,8 +69,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="学习PathMeasure api"
-        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
-        app:layout_constraintTop_toBottomOf="@id/btn_op" />
+        app:layout_constraintLeft_toLeftOf="@id/btn_fill_type"
+        app:layout_constraintTop_toBottomOf="@id/btn_fill_type" />
 
     <Button
         android:id="@+id/btn_shopping"
@@ -77,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="添加商品到购物车的动画"
-        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
+        app:layout_constraintLeft_toLeftOf="@id/btn_pathMeasure_api"
         app:layout_constraintTop_toBottomOf="@id/btn_pathMeasure_api" />
 
     <Button
@@ -86,16 +87,27 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="水波进度球"
-        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_shopping" />
 
     <Button
         android:id="@+id/btn_common"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:text="下滑返回"
-        app:layout_constraintLeft_toLeftOf="@id/btn_time_line"
-        app:layout_constraintTop_toBottomOf="@id/btn_wave_progress" />
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_wave_progress"
+        app:layout_constraintLeft_toRightOf="@id/btn_wave_progress" />
 
+
+    <Button
+        android:id="@+id/btn_window_study"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:text="window study"
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_wave_progress"
+        app:layout_constraintLeft_toRightOf="@id/btn_common" />
 </android.support.constraint.ConstraintLayout>

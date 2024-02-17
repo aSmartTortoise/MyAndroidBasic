@@ -14,6 +14,7 @@ import com.wyj.view.base.PathOpActivity;
 import com.wyj.view.bezier.BezierCurveActivity;
 import com.wyj.view.bezier.WaveProgressActivity;
 import com.wyj.view.timeline.TimeLineActivity;
+import com.wyj.view.window.WindowStudyActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,5 +62,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, CommonActivity.class);
             MainActivity.this.startActivity(intent);
         });
+        findViewById(R.id.btn_window_study).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, WindowStudyActivity.class);
+            MainActivity.this.startActivity(intent);
+        });
+
+
     }
 }

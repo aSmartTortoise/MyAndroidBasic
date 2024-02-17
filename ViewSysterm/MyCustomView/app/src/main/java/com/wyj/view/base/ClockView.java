@@ -1,6 +1,7 @@
 package com.wyj.view.base;
 
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -72,6 +73,7 @@ public class ClockView extends View {
         mPointerPath = new Path();
 
         mAnim = ObjectAnimator.ofInt(this, "angle", 0, 360);
+        mAnim.setRepeatCount(ValueAnimator.INFINITE);
         mAnim.setInterpolator(new LinearInterpolator());
     }
 
@@ -92,8 +94,6 @@ public class ClockView extends View {
         width = width - mBorderWidth * 2;
         drawBorder(canvas, width);
         drawPointer(canvas, width);
-        int saveCount = canvas.getSaveCount();
-        Log.d(TAG, "onDraw: saveCount:" + saveCount);
     }
 
     private void drawBorder(Canvas canvas, int width) {
@@ -151,5 +151,13 @@ public class ClockView extends View {
     protected int dpToPx(float dpValue) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         return (int) (dpValue * metrics.density + 0.5f);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mAnim != null) {
+            mAnim.cancel();
+        }
     }
 }
