@@ -55,7 +55,7 @@ class EasyWindow private constructor(val context: Context) {
     }
 
     private constructor(application: Application) : this(application as Context) {
-        Log.d(TAG, "constructor setWindowType")
+        Log.d(TAG, "constructor setWindowType sdk version:${Build.VERSION.SDK_INT}")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setWindowType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
         }
