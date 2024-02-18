@@ -36,6 +36,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation project(path: ':library')
-
+    implementation project(path: ':easyFloat')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

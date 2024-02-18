@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import android.view.WindowManager
+import com.wyj.easyfloat.EasyWindow
 import com.wyj.view.R
 
 class FloatingWindowService : Service() {
