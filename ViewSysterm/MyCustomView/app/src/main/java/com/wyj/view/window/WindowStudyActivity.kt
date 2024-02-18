@@ -21,11 +21,11 @@ class WindowStudyActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_window_study)
         findViewById<View>(R.id.btn_main_anim).setOnClickListener(this)
+        findViewById<View>(R.id.btn_main_view).setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
-        val viewId = v?.id
-        when (viewId) {
+        when (v?.id) {
             R.id.btn_main_anim -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (Settings.canDrawOverlays(this)) {
@@ -37,16 +37,15 @@ class WindowStudyActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
             }
+            R.id.btn_main_view -> {
+                Log.d(TAG, "onClick: 点击显示在View下方了")
+            }
         }
     }
 
     private fun showWindow() {
-        EasyWindow.with(application)
-            .setContentView(R.layout.window_hint)
-            .addWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-            .setText(android.R.id.message, "hello WindowManager")
-            .show()
+        Log.d(TAG, "showWindow: startService")
+        startService(Intent(this, FloatingWindowService::class.java))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

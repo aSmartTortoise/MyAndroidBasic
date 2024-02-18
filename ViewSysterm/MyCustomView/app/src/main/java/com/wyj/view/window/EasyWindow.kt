@@ -49,8 +49,7 @@ class EasyWindow private constructor(val context: Context) {
             // 设置触摸外层布局（除 WindowManager 外的布局，默认是 WindowManager 显示的时候外层不可触摸）
             // 需要注意的是设置了 FLAG_NOT_TOUCH_MODAL 必须要设置 FLAG_NOT_FOCUSABLE，否则就会导致用户按返回键无效
             flags = (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                    or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH)
+                    or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
         }
     }
 
