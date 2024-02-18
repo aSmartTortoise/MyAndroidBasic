@@ -7,7 +7,7 @@ import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.content.Context;
 import android.graphics.PointF;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -19,7 +19,7 @@ import com.wyj.view.utils.BezierUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GoodsView extends android.support.v7.widget.AppCompatImageView {
+public class GoodsView extends androidx.appcompat.widget.AppCompatImageView {
     private static final String TAG = "ShoppingView";
     private AnimatorSet mAnimatorSet;
     // 缩放动画

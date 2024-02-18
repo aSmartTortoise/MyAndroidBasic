@@ -1,6 +1,7 @@
 package com.wyj.motionevent
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.Button
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.wyj.motionevent.R
 
@@ -37,6 +39,7 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener, View.OnClickList
         val longPressTimeout = ViewConfiguration.getLongPressTimeout()
         val pressedStateDuration = ViewConfiguration.getPressedStateDuration()
         Log.d(TAG, "onCreate: longPressTimeout:$longPressTimeout, pressedStateDuration:$pressedStateDuration")
+        Toast.makeText(this, "Hello, Toast", Toast.LENGTH_LONG).show()
     }
 
     @SuppressLint("ClickableViewAccessibility")

@@ -1,8 +1,8 @@
 package com.wyj.view;
 
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.wyj.view.animation.ShoppingActivity;

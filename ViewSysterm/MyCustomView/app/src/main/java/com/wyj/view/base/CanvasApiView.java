@@ -1,16 +1,13 @@
 package com.wyj.view.base;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
-
-import com.wyj.view.R;
 
 /**
  * https://www.gcssloop.com/customview/Canvas_BasicGraphics.html

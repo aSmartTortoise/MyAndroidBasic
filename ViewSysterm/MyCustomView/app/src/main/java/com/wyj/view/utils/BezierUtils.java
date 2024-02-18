@@ -1,7 +1,7 @@
 package com.wyj.view.utils;
 
 import android.graphics.PointF;
-import android.support.annotation.IntRange;
+import androidx.annotation.IntRange;
 
 import java.util.ArrayList;
 import java.util.List;

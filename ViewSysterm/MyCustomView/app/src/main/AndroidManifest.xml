@@ -62,7 +62,8 @@
                 android:value="" />
         </activity>
         <activity android:name=".base.PathApiActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
