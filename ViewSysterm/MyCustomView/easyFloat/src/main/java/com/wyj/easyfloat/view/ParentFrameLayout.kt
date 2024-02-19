@@ -3,6 +3,7 @@ package com.wyj.easyfloat.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.widget.FrameLayout
@@ -15,6 +16,7 @@ import com.wyj.easyfloat.utils.InputMethodUtils
  *  date : 2024/2/19 11:09
  *  description : 系统浮窗的父布局，对touch事件进行了重新分发
  */
+
 @SuppressLint("ViewConstructor")
 internal class ParentFrameLayout @JvmOverloads constructor(
     private val config: FloatConfig,
@@ -22,6 +24,10 @@ internal class ParentFrameLayout @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
+
+    companion object {
+        const val TAG = "ParentFrameLayout"
+    }
 
     var touchListener: OnFloatTouchListener? = null
     var layoutListener: OnLayoutListener? = null

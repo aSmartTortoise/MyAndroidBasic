@@ -1,4 +1,4 @@
-package com.wyj.easyfloat
+package com.wyj.easyfloat.view
 
 import android.content.Context
 import android.util.AttributeSet

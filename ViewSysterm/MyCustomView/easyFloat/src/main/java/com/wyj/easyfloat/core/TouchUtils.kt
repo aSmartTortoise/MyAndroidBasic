@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Rect
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -20,6 +21,10 @@ import kotlin.math.min
  *  description : 根据吸附模式，实现相应的拖拽效果
  */
 internal class TouchUtils(val context: Context, val config: FloatConfig) {
+
+    companion object {
+        const val TAG = "TouchUtils"
+    }
     // 窗口所在的矩形
     private var parentRect: Rect = Rect()
 
@@ -71,6 +76,7 @@ internal class TouchUtils(val context: Context, val config: FloatConfig) {
 
         when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
+                Log.d(TAG, "updateFloat: down")
                 config.isDrag = false
                 // 记录触摸点的位置
                 lastX = event.rawX
@@ -80,6 +86,7 @@ internal class TouchUtils(val context: Context, val config: FloatConfig) {
             }
 
             MotionEvent.ACTION_MOVE -> {
+                Log.d(TAG, "updateFloat: move")
                 // 过滤边界值之外的拖拽
                 if (event.rawX < leftBorder || event.rawX > rightBorder + view.width
                     || event.rawY < topBorder || event.rawY > bottomBorder + view.height
@@ -160,6 +167,7 @@ internal class TouchUtils(val context: Context, val config: FloatConfig) {
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                Log.d(TAG, "updateFloat: up or cancel")
                 if (!config.isDrag) return
                 // 回调拖拽事件的ACTION_UP
                 config.callback?.drag(view, event)
@@ -205,6 +213,7 @@ internal class TouchUtils(val context: Context, val config: FloatConfig) {
         // 获取在整个屏幕内的绝对坐标
         view.getLocationOnScreen(location)
         // 通过绝对高度和相对高度比较，判断包含顶部状态栏
+        Log.d(TAG, "initBoarderValue: location[1]:${location[1]}, params.y:${params.y}")
         statusBarHeight = if (location[1] > params.y) statusBarHeight(view) else 0
         emptyHeight = parentHeight - view.height - statusBarHeight
 
@@ -231,6 +240,7 @@ internal class TouchUtils(val context: Context, val config: FloatConfig) {
             else
                 min(emptyHeight, config.bottomBorder - view.height)
         }
+        Log.d(TAG, "initBoarderValue: leftBorder:$leftBorder, rightBorder:$rightBorder, topBorder:$topBorder, bottomBorder:$bottomBorder")
     }
 
     private fun sideAnim(
