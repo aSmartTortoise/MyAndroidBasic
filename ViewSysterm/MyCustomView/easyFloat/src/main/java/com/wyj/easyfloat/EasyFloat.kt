@@ -1,0 +1,134 @@
+package com.wyj.easyfloat
+
+import android.app.Application
+import android.content.Context
+import android.util.Log
+import android.view.View
+import com.wyj.easyfloat.`interface`.FloatCallback
+import com.wyj.easyfloat.`interface`.OnInvokeView
+import com.wyj.easyfloat.core.FloatingWindowManager
+import com.wyj.easyfloat.utils.PermissionUtils
+import java.lang.Exception
+
+class EasyFloat {
+
+    companion object {
+        const val TAG = "EasyFloat"
+
+        @JvmStatic
+        fun with(application: Application) = Builder(application)
+    }
+
+    class Builder(private val context: Context) {
+
+        // 创建浮窗数据类，方便管理配置
+        private val config = FloatConfig()
+
+        /**
+         * 设置浮窗的显示模式
+         * @param showPattern   浮窗显示模式
+         */
+        fun setShowPattern(showPattern: ShowPattern) = apply { config.showPattern = showPattern }
+
+        /**
+         * 设置浮窗的吸附模式
+         * @param sidePattern   浮窗吸附模式
+         */
+        fun setSidePattern(sidePattern: SidePattern) = apply { config.sidePattern = sidePattern }
+
+        /**
+         * 设置浮窗是否状态栏沉浸
+         * @param immersionStatusBar    是否状态栏沉浸
+         */
+        fun setImmersionStatusBar(immersionStatusBar: Boolean) = apply {
+            config.immersionStatusBar = immersionStatusBar
+        }
+
+        /**
+         * 设置浮窗的对齐方式，以及偏移量
+         * @param gravity   对齐方式
+         * @param offsetX   目标坐标的水平偏移量
+         * @param offsetY   目标坐标的竖直偏移量
+         */
+        @JvmOverloads
+        fun setGravity(gravity: Int, offsetX: Int = 0, offsetY: Int = 0) = apply {
+            config.gravity = gravity
+            config.offsetPair = Pair(offsetX, offsetY)
+        }
+
+        /**
+         * 设置浮窗的布局文件，以及布局的操作接口
+         * @param layoutId      布局文件的资源Id
+         * @param invokeView    布局文件的操作接口
+         */
+        @JvmOverloads
+        fun setLayout(layoutId: Int, invokeView: OnInvokeView? = null) = apply {
+            config.layoutId = layoutId
+            config.invokeView = invokeView
+        }
+
+        /**
+         * 设置浮窗的布局视图，以及布局的操作接口
+         * @param layoutView    自定义的布局视图
+         * @param invokeView    布局视图的操作接口
+         */
+        @JvmOverloads
+        fun setLayout(layoutView: View, invokeView: OnInvokeView? = null) = apply {
+            config.layoutView = layoutView
+            config.invokeView = invokeView
+        }
+
+        /**
+         * 针对kotlin 用户，传入带FloatCallback.Builder 返回值的 lambda，可按需回调
+         * 为了避免方法重载时 出现编译错误的情况，更改了方法名
+         * @param builder   事件回调的构建者
+         */
+        fun registerCallback(builder: FloatCallback.Builder.() -> Unit) =
+            apply { config.floatCallback = FloatCallback().apply { registerListener(builder) } }
+
+
+
+
+        /**
+         * 创建浮窗，包括Activity浮窗和系统浮窗，如若系统浮窗无权限，先进行权限申请
+         */
+        fun show() = when {
+            // 未设置浮窗布局文件/布局视图，不予创建
+            config.layoutId == null && config.layoutView == null ->
+                callbackCreateFailed(WARN_NO_LAYOUT)
+            // 仅当页显示，则直接创建activity浮窗
+            config.showPattern == ShowPattern.CURRENT_ACTIVITY -> createFloat()
+            // 系统浮窗需要先进行权限审核，有权限则创建app浮窗
+            PermissionUtils.checkPermission(context) -> createFloat()
+            // 申请浮窗权限
+            else -> requestPermission()
+        }
+
+        /**
+         * 通过浮窗管理类，统一创建浮窗
+         */
+        private fun createFloat() = FloatingWindowManager.create(context, config)
+
+        /**
+         * 通过Fragment去申请系统悬浮窗权限
+         */
+        private fun requestPermission() {
+            Log.d(TAG, "requestPermission")
+        }
+
+        /**
+         * 回调创建失败
+         * @param reason    失败原因
+         */
+        private fun callbackCreateFailed(reason: String) {
+            config.callback?.createdResult(false, reason, null)
+            config.floatCallback?.builder?.createdResult?.invoke(false, reason, null)
+            Log.w(TAG, "callbackCreateFailed: reason:$reason", )
+            if (reason == WARN_NO_LAYOUT || reason == WARN_UNINITIALIZED
+                || reason == WARN_CONTEXT_ACTIVITY) {
+                // 针对无布局、未按需初始化、Activity浮窗上下文错误，直接抛异常
+                throw Exception(reason)
+            }
+        }
+    }
+}
