@@ -17,7 +17,7 @@ import kotlin.math.min
 /**
  *  author : jie wang
  *  date : 2024/2/19 11:03
- *  description :
+ *  description : 根据吸附模式，实现相应的拖拽效果
  */
 internal class TouchUtils(val context: Context, val config: FloatConfig) {
     // 窗口所在的矩形

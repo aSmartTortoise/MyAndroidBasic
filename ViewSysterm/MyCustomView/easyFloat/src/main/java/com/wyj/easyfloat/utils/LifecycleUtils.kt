@@ -84,7 +84,7 @@ internal object LifecycleUtils {
         if (!activity.isFinishing && isForeground()) return
         FloatingWindowManager.windowMap.forEach { (tag, manager) ->
             // 判断浮窗是否需要关闭
-            if (activity.isFinishing) manager.params.token?.let {
+            if (activity.isFinishing) manager.windowParams.token?.let {
                 // 如果token不为空，并且是当前销毁的Activity，关闭浮窗，防止窗口泄漏
                 if (it == activity.window?.decorView?.windowToken) {
                     FloatingWindowManager.dismiss(tag, true)

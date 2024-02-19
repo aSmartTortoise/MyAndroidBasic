@@ -33,8 +33,8 @@ object InputMethodUtils {
     fun openInputMethod(editText: EditText, tag: String? = null) {
         FloatingWindowManager.getHelper(tag)?.apply {
             // 更改flags，并刷新布局，让系统浮窗获取焦点
-            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-            windowManager.updateViewLayout(frameLayout, params)
+            windowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+            windowManager.updateViewLayout(frameLayout, windowParams)
         }
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -52,9 +52,9 @@ object InputMethodUtils {
     @JvmOverloads
     fun closedInputMethod(tag: String? = null) =
         FloatingWindowManager.getHelper(tag)?.run {
-            params.flags =
+            windowParams.flags =
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            windowManager.updateViewLayout(frameLayout, params)
+            windowManager.updateViewLayout(frameLayout, windowParams)
         }
 
 }

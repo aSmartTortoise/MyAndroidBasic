@@ -57,7 +57,7 @@ data class FloatConfig(
     var rightBorder: Int = 9999,
     var bottomBorder: Int = 9999,
 
-    // Callbacks
+    // Callback
     var invokeView: OnInvokeView? = null,
     var callback: OnFloatCallback? = null,
     // 通过Kotlin DSL设置回调，无需复写全部方法，按需复写

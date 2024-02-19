@@ -10,6 +10,12 @@ import com.wyj.easyfloat.core.FloatingWindowManager
 import com.wyj.easyfloat.utils.PermissionUtils
 import java.lang.Exception
 
+/**
+ *  author : jie wang
+ *  date : 2024/2/19 14:03
+ *  description : 悬浮窗使用工具类
+ */
+
 class EasyFloat {
 
     companion object {
@@ -86,22 +92,22 @@ class EasyFloat {
         fun registerCallback(builder: FloatCallback.Builder.() -> Unit) =
             apply { config.floatCallback = FloatCallback().apply { registerListener(builder) } }
 
-
-
-
         /**
          * 创建浮窗，包括Activity浮窗和系统浮窗，如若系统浮窗无权限，先进行权限申请
          */
-        fun show() = when {
-            // 未设置浮窗布局文件/布局视图，不予创建
-            config.layoutId == null && config.layoutView == null ->
-                callbackCreateFailed(WARN_NO_LAYOUT)
-            // 仅当页显示，则直接创建activity浮窗
-            config.showPattern == ShowPattern.CURRENT_ACTIVITY -> createFloat()
-            // 系统浮窗需要先进行权限审核，有权限则创建app浮窗
-            PermissionUtils.checkPermission(context) -> createFloat()
-            // 申请浮窗权限
-            else -> requestPermission()
+        fun show() {
+            Log.d(TAG, "show")
+            when {
+                // 未设置浮窗布局文件/布局视图，不予创建
+                config.layoutId == null && config.layoutView == null ->
+                    callbackCreateFailed(WARN_NO_LAYOUT)
+                // 仅当页显示，则直接创建activity浮窗
+                config.showPattern == ShowPattern.CURRENT_ACTIVITY -> createFloat()
+                // 系统浮窗需要先进行权限审核，有权限则创建app浮窗
+                PermissionUtils.checkPermission(context) -> createFloat()
+                // 申请浮窗权限
+                else -> requestPermission()
+            }
         }
 
         /**

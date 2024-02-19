@@ -31,22 +31,22 @@ class FloatingWindowService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand: show window")
-//        EasyWindow.with(application)
+        showFloatWindow()
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+   private fun showFloatWindow() {
+       //        EasyWindow.with(application)
 //            .setContentView(R.layout.window_hint)
 //            .addWindowFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH)
 //            .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
 //            .setText(android.R.id.message, "hello WindowManager")
 //            .show()
-        showFloatWindow()
-        return super.onStartCommand(intent, flags, startId)
-    }
-
-    fun showFloatWindow() {
         EasyFloat.with(application)
             .setShowPattern(ShowPattern.ALL_TIME)
-            .setSidePattern(SidePattern.AUTO_SIDE)
+            .setSidePattern(SidePattern.DEFAULT)
             .setImmersionStatusBar(true)
-            .setGravity(Gravity.START, 0, 10)
+            .setGravity(Gravity.START, 0, 0)
             .setLayout(R.layout.window_hint, object : OnInvokeView {
                 override fun invoke(view: View) {
                     Log.d(TAG, "invoke: view:$view")
@@ -54,8 +54,9 @@ class FloatingWindowService : Service() {
 
             })
             .registerCallback {
+                Log.d(TAG, "showFloatWindow: createResult")
                 createResult { b, s, view ->
-                    Log.d(TAG, "showFloatWindow: b:$b, s:$s")
+                    Log.d(TAG, "createResult action: b:$b, s:$s")
                 }
             }
             .show()

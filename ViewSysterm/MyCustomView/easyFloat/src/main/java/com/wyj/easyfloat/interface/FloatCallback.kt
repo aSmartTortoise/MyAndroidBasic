@@ -11,7 +11,7 @@ import android.view.View
 class FloatCallback {
     lateinit var builder: Builder
 
-    // 带Builder返回值的lambda
+    // 带Builder接收者的高阶函数
     fun registerListener(block: Builder.() -> Unit) {
         this.builder = Builder().also(block)
     }
