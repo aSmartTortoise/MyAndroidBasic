@@ -3,6 +3,7 @@ package com.wyj.easyfloat.anim
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import com.wyj.easyfloat.SidePattern
@@ -16,6 +17,10 @@ import kotlin.math.min
  *  description : 系统浮窗的默认效果，选择靠近左右侧的一边进行出入
  */
 open class DefaultAnimator : OnFloatAnimator {
+
+    companion object {
+        const val TAG = "DefaultAnimator"
+    }
     override fun enterAnim(
         view: View,
         params: WindowManager.LayoutParams,
@@ -74,6 +79,7 @@ open class DefaultAnimator : OnFloatAnimator {
         // 水平、垂直方向的距离最小值
         val minX = min(leftDistance, rightDistance)
         val minY = min(topDistance, bottomDistance)
+        Log.d(TAG, "initValue: minX:$minX, minY:$minY")
 
         val isHorizontal: Boolean
         val endValue: Int
@@ -107,7 +113,7 @@ open class DefaultAnimator : OnFloatAnimator {
                 // 水平位移，哪边距离屏幕近，从哪侧移动
                 isHorizontal = true
                 endValue = params.x
-                if (leftDistance < rightDistance) -view.right else parentRect.right
+                if (leftDistance < rightDistance) - view.right else parentRect.right
             }
             SidePattern.AUTO_VERTICAL, SidePattern.RESULT_VERTICAL -> {
                 // 垂直位移，哪边距离屏幕近，从哪侧移动
@@ -128,6 +134,10 @@ open class DefaultAnimator : OnFloatAnimator {
                 else parentRect.bottom + getCompensationHeight(view, params)
             }
         }
+        Log.d(
+            TAG,
+            "initValue: startValue:$startValue, endValue:$endValue, isHorizontal:$isHorizontal"
+        )
         return Triple(startValue, endValue, isHorizontal)
     }
 

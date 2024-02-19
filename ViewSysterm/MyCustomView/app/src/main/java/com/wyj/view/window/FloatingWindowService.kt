@@ -12,6 +12,7 @@ import com.wyj.easyfloat.EasyWindow
 import com.wyj.easyfloat.ShowPattern
 import com.wyj.easyfloat.SidePattern
 import com.wyj.easyfloat.`interface`.OnInvokeView
+import com.wyj.easyfloat.utils.DisplayUtils
 import com.wyj.view.R
 
 class FloatingWindowService : Service() {
@@ -42,11 +43,12 @@ class FloatingWindowService : Service() {
 //            .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
 //            .setText(android.R.id.message, "hello WindowManager")
 //            .show()
-        EasyFloat.with(application)
+       val statusBarHeight = DisplayUtils.getStatusBarHeight(this)
+       EasyFloat.with(application)
             .setShowPattern(ShowPattern.ALL_TIME)
             .setSidePattern(SidePattern.DEFAULT)
             .setImmersionStatusBar(true)
-            .setGravity(Gravity.START, 0, 0)
+            .setGravity(Gravity.CENTER_HORIZONTAL, 0, statusBarHeight)
             .setLayout(R.layout.window_hint, object : OnInvokeView {
                 override fun invoke(view: View) {
                     Log.d(TAG, "invoke: view:$view")

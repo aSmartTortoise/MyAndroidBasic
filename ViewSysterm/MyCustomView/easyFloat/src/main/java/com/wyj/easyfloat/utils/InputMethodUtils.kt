@@ -34,7 +34,7 @@ object InputMethodUtils {
         FloatingWindowManager.getHelper(tag)?.apply {
             // 更改flags，并刷新布局，让系统浮窗获取焦点
             windowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-            windowManager.updateViewLayout(frameLayout, windowParams)
+            windowManager.updateViewLayout(decorView, windowParams)
         }
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -54,7 +54,7 @@ object InputMethodUtils {
         FloatingWindowManager.getHelper(tag)?.run {
             windowParams.flags =
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            windowManager.updateViewLayout(frameLayout, windowParams)
+            windowManager.updateViewLayout(decorView, windowParams)
         }
 
 }

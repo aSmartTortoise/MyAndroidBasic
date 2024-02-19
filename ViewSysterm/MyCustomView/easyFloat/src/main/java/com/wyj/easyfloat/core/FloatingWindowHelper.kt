@@ -35,7 +35,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
 
     lateinit var windowManager: WindowManager
     lateinit var windowParams: WindowManager.LayoutParams
-    var frameLayout: ParentFrameLayout? = null
+    var decorView: ParentFrameLayout? = null
     private lateinit var touchUtils: TouchUtils
     private var enterAnimator: Animator? = null
     private var lastLayoutMeasureWidth = -1
@@ -86,10 +86,15 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             // 设置浮窗以外的触摸事件可以传递给后面的窗口、不自动获取焦点
             flags = if (config.immersionStatusBar)
             // 没有边界限制，允许窗口扩展到屏幕外
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-            else WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            width = if (config.widthMatch) WindowManager.LayoutParams.MATCH_PARENT else WindowManager.LayoutParams.WRAP_CONTENT
-            height = if (config.heightMatch) WindowManager.LayoutParams.MATCH_PARENT else WindowManager.LayoutParams.WRAP_CONTENT
+                (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+            else (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+            width = if (config.widthMatch) WindowManager.LayoutParams.MATCH_PARENT
+                    else WindowManager.LayoutParams.WRAP_CONTENT
+            height = if (config.heightMatch) WindowManager.LayoutParams.MATCH_PARENT
+                    else WindowManager.LayoutParams.WRAP_CONTENT
 
             if (config.immersionStatusBar && config.heightMatch) {
                 height = DisplayUtils.getScreenHeight(context)
@@ -116,29 +121,31 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
     private fun addView() {
         //浮窗父布局ParentFrameLayout与子view的context保持一致
         val rootViewContext = config.layoutView?.run { context } ?: context
-        // 创建一个frameLayout作为浮窗布局的父容器
-        frameLayout = ParentFrameLayout(rootViewContext, config)
-        frameLayout?.tag = config.floatTag
-        // 将浮窗布局文件添加到父容器frameLayout中，并返回该浮窗文件
-        val floatingView = config.layoutView?.also { frameLayout?.addView(it) }
-            ?: LayoutInflater.from(context).inflate(config.layoutId!!, frameLayout, true)
+        // 创建一个FrameLayout作为浮窗布局的父容器
+        decorView = ParentFrameLayout(config, rootViewContext).apply {
+            tag = config.floatTag
+        }
+        // 将浮窗布局文件添加到父容器FrameLayout中，并返回该浮窗文件
+        val contentView = config.layoutView?.also { decorView?.addView(it) }
+            ?: LayoutInflater.from(context).inflate(config.layoutId!!, decorView, true)
         // 为了避免创建的时候闪一下，我们先隐藏视图，不能直接设置GONE，否则定位会出现问题
-        floatingView.visibility = View.INVISIBLE
-        // 将frameLayout添加到系统windowManager中
-        windowManager.addView(frameLayout, windowParams)
+        contentView.visibility = View.INVISIBLE
+        // 将decorView添加到系统windowManager中
+        windowManager.addView(decorView, windowParams)
 
-        // 通过重写frameLayout的Touch事件，实现拖拽效果
-        frameLayout?.touchListener = object : OnFloatTouchListener {
+        // 通过重写decorView的Touch事件，实现拖拽效果
+        decorView?.touchListener = object : OnFloatTouchListener {
             override fun onTouch(event: MotionEvent) =
-                touchUtils.updateFloat(frameLayout!!, event, windowManager, windowParams)
+                touchUtils.updateFloat(decorView!!, event, windowManager, windowParams)
         }
 
         // 在浮窗绘制完成的时候，设置初始坐标、执行入场动画
-        frameLayout?.layoutListener = object : ParentFrameLayout.OnLayoutListener {
+        decorView?.layoutListener = object : ParentFrameLayout.OnLayoutListener {
             override fun onLayout() {
-                setGravity(frameLayout)
-                lastLayoutMeasureWidth = frameLayout?.measuredWidth ?: -1
-                lastLayoutMeasureHeight = frameLayout?.measuredHeight ?: -1
+                setGravity(decorView)
+                lastLayoutMeasureWidth = decorView?.measuredWidth ?: -1
+                lastLayoutMeasureHeight = decorView?.measuredHeight ?: -1
+                Log.d(TAG, "onLayout lastLayoutMeasureWidth:$lastLayoutMeasureWidth, lastLayoutMeasureHeight:$lastLayoutMeasureHeight")
                 config.apply {
                     // 如果设置了过滤当前页，或者后台显示前台创建、前台显示后台创建，隐藏浮窗，否则执行入场动画
                     if (filterSelf
@@ -147,13 +154,13 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                     ) {
                         setVisible(View.GONE)
                         initEditText()
-                    } else enterAnim(floatingView)
+                    } else enterAnim(contentView)
 
                     // 设置callbacks
-                    layoutView = floatingView
-                    invokeView?.invoke(floatingView)
-                    callback?.createdResult(true, null, floatingView)
-                    floatCallback?.builder?.createdResult?.invoke(true, null, floatingView)
+                    layoutView = contentView
+                    invokeView?.invoke(contentView)
+                    callback?.createdResult(true, null, contentView)
+                    floatCallback?.builder?.createdResult?.invoke(true, null, contentView)
                 }
             }
         }
@@ -172,12 +179,15 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         // 获取浮窗所在的矩形
         windowManager.defaultDisplay.getRectSize(parentRect)
         val location = IntArray(2)
-        // 获取在整个屏幕内的绝对坐标
+        // 获取View在整个屏幕内的绝对坐标
         view.getLocationOnScreen(location)
         // 通过绝对高度和相对高度比较，判断包含顶部状态栏
-        val statusBarHeight = if (location[1] > windowParams.y) DisplayUtils.statusBarHeight(view) else 0
+        val statusBarHeight = if (location[1] > windowParams.y) DisplayUtils.statusBarHeight(view)
+                              else 0
+        Log.d(TAG, "setGravity: location[1]:${location[1]}, statusBarHeight:$statusBarHeight")
         val parentBottom =
             config.displayHeight.getDisplayRealHeight(context) - statusBarHeight
+        Log.d(TAG, "setGravity: parentBottom:$parentBottom")
         when (config.gravity) {
             // 右上
             Gravity.END, Gravity.END or Gravity.TOP, Gravity.RIGHT, Gravity.RIGHT or Gravity.TOP ->
@@ -237,11 +247,11 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      * 设置浮窗的可见性
      */
     fun setVisible(visible: Int, needShow: Boolean = true) {
-        if (frameLayout == null || frameLayout!!.childCount < 1) return
+        if (decorView == null || decorView!!.childCount < 1) return
         // 如果用户主动隐藏浮窗，则该值为false
         config.needShow = needShow
-        frameLayout!!.visibility = visible
-        val view = frameLayout!!.getChildAt(0)
+        decorView!!.visibility = visible
+        val view = decorView!!.getChildAt(0)
         if (visible == View.VISIBLE) {
             config.isShow = true
             config.callback?.show(view)
@@ -257,13 +267,15 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      * 设置布局变化监听，根据变化时的对齐方式，设置浮窗位置
      */
     private fun setChangedListener() {
-        frameLayout?.apply {
-            // 监听frameLayout布局完成
+        decorView?.apply {
+            // 监听DecorView布局完成
             viewTreeObserver?.addOnGlobalLayoutListener {
-                val filterInvalidVal = lastLayoutMeasureWidth == -1 || lastLayoutMeasureHeight == -1
-                val filterEqualVal =
+                Log.d(TAG, "onGlobalLayout")
+                val filterInvalid = lastLayoutMeasureWidth == -1 || lastLayoutMeasureHeight == -1
+                val filterEqual =
                     lastLayoutMeasureWidth == this.measuredWidth && lastLayoutMeasureHeight == this.measuredHeight
-                if (filterInvalidVal || filterEqualVal) {
+                Log.d(TAG, "setChangedListener: filterInvalid:$filterInvalid, filterEqual:$filterEqual")
+                if (filterInvalid || filterEqual) {
                     return@addOnGlobalLayoutListener
                 }
 
@@ -301,13 +313,13 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                 lastLayoutMeasureHeight = this.measuredHeight
 
                 // 更新浮窗位置信息
-                windowManager.updateViewLayout(frameLayout, windowParams)
+                windowManager.updateViewLayout(decorView, windowParams)
             }
         }
     }
 
     private fun initEditText() {
-        if (config.hasEditText) frameLayout?.let { traverseViewGroup(it) }
+        if (config.hasEditText) decorView?.let { traverseViewGroup(it) }
     }
 
     private fun traverseViewGroup(view: View?) {
@@ -327,13 +339,16 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
     /**
      * 入场动画
      */
-    private fun enterAnim(floatingView: View) {
-        if (frameLayout == null || config.isAnim) return
-        enterAnimator = AnimatorManager(frameLayout!!, windowParams, windowManager, config)
+    private fun enterAnim(contentView: View) {
+        Log.d(TAG, "enterAnim:")
+        if (decorView == null || config.isAnim) return
+        enterAnimator = AnimatorManager(decorView!!, windowParams, windowManager, config)
             .enterAnim()?.apply {
                 // 可以延伸到屏幕外，动画结束按需去除该属性，不然旋转屏幕可能置于屏幕外部
                 windowParams.flags =
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                    (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                            or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
                 addListener(object : Animator.AnimatorListener {
                     override fun onAnimationRepeat(animation: Animator?) {}
@@ -342,7 +357,8 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                         config.isAnim = false
                         if (!config.immersionStatusBar) {
                             // 不需要延伸到屏幕外了，防止屏幕旋转的时候，浮窗处于屏幕外
-                            windowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                            windowParams.flags = (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                                    or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
                         }
                         initEditText()
                     }
@@ -350,15 +366,15 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                     override fun onAnimationCancel(animation: Animator?) {}
 
                     override fun onAnimationStart(animation: Animator?) {
-                        floatingView.visibility = View.VISIBLE
+                        contentView.visibility = View.VISIBLE
                         config.isAnim = true
                     }
                 })
                 start()
             }
         if (enterAnimator == null) {
-            floatingView.visibility = View.VISIBLE
-            windowManager.updateViewLayout(frameLayout, windowParams)
+            contentView.visibility = View.VISIBLE
+            windowManager.updateViewLayout(decorView, windowParams)
         }
     }
 
@@ -366,10 +382,10 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      * 退出动画
      */
     fun exitAnim() {
-        if (frameLayout == null || (config.isAnim && enterAnimator == null)) return
+        if (decorView == null || (config.isAnim && enterAnimator == null)) return
         enterAnimator?.cancel()
         val animator: Animator? =
-            AnimatorManager(frameLayout!!, windowParams, windowManager, config).exitAnim()
+            AnimatorManager(decorView!!, windowParams, windowManager, config).exitAnim()
         if (animator == null) remove() else {
             // 二次判断，防止重复调用引发异常
             if (config.isAnim) return
@@ -397,7 +413,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         config.isAnim = false
         FloatingWindowManager.remove(config.floatTag)
         // removeView是异步删除，在Activity销毁的时候会导致窗口泄漏，所以使用removeViewImmediate直接删除view
-        windowManager.run { if (force) removeViewImmediate(frameLayout) else removeView(frameLayout) }
+        windowManager.run { if (force) removeViewImmediate(decorView) else removeView(decorView) }
     } catch (e: Exception) {
         Log.e(TAG, "浮窗关闭出现异常：$e")
     }

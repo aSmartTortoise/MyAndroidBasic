@@ -16,9 +16,9 @@ import com.wyj.easyfloat.utils.InputMethodUtils
  *  description : 系统浮窗的父布局，对touch事件进行了重新分发
  */
 @SuppressLint("ViewConstructor")
-internal class ParentFrameLayout(
-    context: Context,
+internal class ParentFrameLayout @JvmOverloads constructor(
     private val config: FloatConfig,
+    context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {

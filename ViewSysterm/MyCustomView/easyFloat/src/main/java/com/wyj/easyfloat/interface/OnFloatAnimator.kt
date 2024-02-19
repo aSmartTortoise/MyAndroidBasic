@@ -8,7 +8,7 @@ import com.wyj.easyfloat.SidePattern
 /**
  *  author : jie wang
  *  date : 2024/2/19 10:13
- *  description :
+ *  description : 系统浮窗的出入动画
  */
 interface OnFloatAnimator {
     fun enterAnim(

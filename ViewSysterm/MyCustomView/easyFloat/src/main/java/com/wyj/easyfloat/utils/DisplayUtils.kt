@@ -1,5 +1,6 @@
 package com.wyj.easyfloat.utils
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
 import android.content.res.Configuration
@@ -69,6 +70,7 @@ object DisplayUtils {
     /**
      * 获取状态栏高度
      */
+    @SuppressLint("InternalInsetResource")
     fun getStatusBarHeight(context: Context): Int {
         var result = 0
         val resources = context.resources
