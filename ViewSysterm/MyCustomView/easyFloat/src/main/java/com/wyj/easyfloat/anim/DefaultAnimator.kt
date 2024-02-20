@@ -57,6 +57,7 @@ open class DefaultAnimator : OnFloatAnimator {
                     cancel()
                 }
             }
+            duration = 300L
         }
     }
 

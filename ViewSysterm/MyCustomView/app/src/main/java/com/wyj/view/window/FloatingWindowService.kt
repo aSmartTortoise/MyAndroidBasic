@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import com.wyj.easyfloat.EasyFloat
 import com.wyj.easyfloat.EasyWindow
 import com.wyj.easyfloat.ShowPattern
@@ -49,10 +50,11 @@ class FloatingWindowService : Service() {
             .setSidePattern(SidePattern.DEFAULT)
             .setImmersionStatusBar(true)
             .setDragEnable(true)
-            .setGravity(Gravity.CENTER_HORIZONTAL, 0, statusBarHeight)
+            .setGravity(Gravity.END or Gravity.BOTTOM, 0, statusBarHeight)
             .setLayout(R.layout.window_hint, object : OnInvokeView {
                 override fun invoke(view: View) {
                     Log.d(TAG, "invoke: view:$view")
+
                 }
 
             })

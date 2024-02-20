@@ -5,8 +5,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_toast_bg"
     android:gravity="center_horizontal"
-    android:minWidth="120dp"
-    android:minHeight="120dp"
+    android:minWidth="160dp"
+    android:minHeight="160dp"
     android:orientation="vertical">
 
     <ImageView
@@ -17,13 +17,13 @@
         tools:src="@drawable/ic_dialog_tip_warning" />
 
     <TextView
-        android:id="@android:id/message"
+        android:id="@+id/tv_toast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="14dp"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:text="点击，弹toast"
         android:textColor="#ffffff"
-        android:textSize="14sp"
-        tools:text="提示语" />
+        android:textSize="14sp" />
 
 </LinearLayout>
