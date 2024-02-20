@@ -49,7 +49,7 @@ class FloatingWindowService : Service() {
             .setSidePattern(SidePattern.DEFAULT)
             .setImmersionStatusBar(true)
             .setDragEnable(true)
-            .setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
+            .setGravity(Gravity.CENTER_HORIZONTAL, 0, statusBarHeight)
             .setLayout(R.layout.window_hint, object : OnInvokeView {
                 override fun invoke(view: View) {
                     Log.d(TAG, "invoke: view:$view")
@@ -72,6 +72,10 @@ class FloatingWindowService : Service() {
 
                 dismiss {
                     Log.d(TAG, "dismiss 悬浮窗。")
+                }
+
+                outsideTouch { view, motionEvent ->
+                    Log.d(TAG, "outsideTouch，点击到窗体区域外。")
                 }
             }
             .show()

@@ -91,6 +91,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                         or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
             else (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                     or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+            flags = flags or config.windowParamsFlag
             width = if (config.widthMatch) WindowManager.LayoutParams.MATCH_PARENT
                     else WindowManager.LayoutParams.WRAP_CONTENT
             height = if (config.heightMatch) WindowManager.LayoutParams.MATCH_PARENT
@@ -129,7 +130,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         val contentView = config.layoutView?.also { decorView?.addView(it) }
             ?: LayoutInflater.from(context).inflate(config.layoutId!!, decorView, true)
         // 为了避免创建的时候闪一下，我们先隐藏视图，不能直接设置GONE，否则定位会出现问题
-        contentView.visibility = View.VISIBLE
+        contentView.visibility = View.INVISIBLE
         // 将decorView添加到系统windowManager中
         windowManager.addView(decorView, windowParams)
 
@@ -156,7 +157,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                         setVisible(View.GONE)
                         initEditText()
                     } else {
-//                        enterAnim(contentView)
+                        enterAnim(contentView)
                     }
 
                     // 设置callbacks
@@ -236,7 +237,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
 
         if (config.immersionStatusBar) {
             if (config.showPattern != ShowPattern.CURRENT_ACTIVITY) {
-//                windowParams.y -= statusBarHeight
+                windowParams.y -= statusBarHeight
             }
         } else {
             if (config.showPattern == ShowPattern.CURRENT_ACTIVITY) {
@@ -350,7 +351,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             .enterAnim()?.apply {
                 // 可以延伸到屏幕外，动画结束按需去除该属性，不然旋转屏幕可能置于屏幕外部
                 windowParams.flags =
-                    (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    config.windowParamsFlag or (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                             or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                             or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
@@ -361,7 +362,8 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                         config.isAnim = false
                         if (!config.immersionStatusBar) {
                             // 不需要延伸到屏幕外了，防止屏幕旋转的时候，浮窗处于屏幕外
-                            windowParams.flags = (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            windowParams.flags = config.windowParamsFlag or
+                                    (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                                     or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
                         }
                         initEditText()
@@ -394,7 +396,8 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             // 二次判断，防止重复调用引发异常
             if (config.isAnim) return
             config.isAnim = true
-            windowParams.flags = (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+            windowParams.flags = config.windowParamsFlag or
+                    (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                     or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                     or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
             animator.addListener(object : Animator.AnimatorListener {

@@ -139,6 +139,11 @@ class EasyFloat {
         fun registerCallback(builder: FloatCallback.Builder.() -> Unit) =
             apply { config.floatCallback = FloatCallback().apply { registerListener(builder) } }
 
+        fun setWindowParamsFlag(flag: Int) = apply {
+            config.windowParamsFlag = flag
+        }
+
+
 
         /**
          * 创建浮窗，包括Activity浮窗和系统浮窗，如若系统浮窗无权限，先进行权限申请

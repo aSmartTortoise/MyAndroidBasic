@@ -24,6 +24,7 @@ class FloatCallback {
         internal var touchEvent: ((View, MotionEvent) -> Unit)? = null
         internal var drag: ((View, MotionEvent) -> Unit)? = null
         internal var dragEnd: ((View) -> Unit)? = null
+        internal var outsideTouch: ((View, MotionEvent) -> Unit)? = null
 
         fun createResult(action: (Boolean, String?, View?) -> Unit) {
             createdResult = action
@@ -51,6 +52,10 @@ class FloatCallback {
 
         fun dragEnd(action: (View) -> Unit) {
             dragEnd = action
+        }
+
+        fun outsideTouch(action: (View, MotionEvent) -> Unit) {
+            outsideTouch = action
         }
     }
 }

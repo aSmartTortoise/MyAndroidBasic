@@ -2,6 +2,7 @@ package com.wyj.easyfloat
 
 import android.view.Gravity
 import android.view.View
+import android.view.WindowManager
 import com.wyj.easyfloat.`interface`.*
 import com.wyj.easyfloat.anim.DefaultAnimator
 import com.wyj.easyfloat.utils.DefaultDisplayHeight
@@ -77,5 +78,7 @@ data class FloatConfig(
     internal var needShow: Boolean = true,
 
     // 当layout大小变化后，整体view的位置的摆放
-    var layoutChangedGravity: Int = Gravity.TOP.or(Gravity.START)
+    var layoutChangedGravity: Int = Gravity.TOP.or(Gravity.START),
+    // 观察窗体区域外的触摸事件
+    var windowParamsFlag: Int = WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
 )

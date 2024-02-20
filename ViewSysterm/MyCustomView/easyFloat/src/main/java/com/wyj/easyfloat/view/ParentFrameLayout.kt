@@ -47,6 +47,16 @@ internal class ParentFrameLayout @JvmOverloads constructor(
         }
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        val actionMasked = ev?.action?.and(MotionEvent.ACTION_MASK)
+        Log.d(WindowDecorView.TAG, "dispatchTouchEvent: actionMasked:$actionMasked")
+        if (actionMasked == MotionEvent.ACTION_OUTSIDE) {
+            Log.d(WindowDecorView.TAG, "dispatchTouchEvent: 点击到外部区域了~")
+
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
     override fun onInterceptTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) touchListener?.onTouch(event)
         // 是拖拽事件就进行拦截，反之不拦截

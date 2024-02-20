@@ -24,6 +24,8 @@ interface OnFloatCallback {
 
     fun dismiss()
 
+    fun onOutsideTouch()
+
     /**
      * 触摸事件的回调
      */
