@@ -48,7 +48,8 @@ class FloatingWindowService : Service() {
             .setShowPattern(ShowPattern.ALL_TIME)
             .setSidePattern(SidePattern.DEFAULT)
             .setImmersionStatusBar(true)
-            .setGravity(Gravity.CENTER_HORIZONTAL, 0, statusBarHeight)
+            .setDragEnable(true)
+            .setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
             .setLayout(R.layout.window_hint, object : OnInvokeView {
                 override fun invoke(view: View) {
                     Log.d(TAG, "invoke: view:$view")
@@ -59,6 +60,18 @@ class FloatingWindowService : Service() {
                 Log.d(TAG, "showFloatWindow: createResult")
                 createResult { b, s, view ->
                     Log.d(TAG, "createResult action: b:$b, s:$s")
+                }
+
+                show {
+                    Log.d(TAG, "show 悬浮窗。")
+                }
+
+                hide {
+                    Log.d(TAG, "hide 悬浮窗。")
+                }
+
+                dismiss {
+                    Log.d(TAG, "dismiss 悬浮窗。")
                 }
             }
             .show()

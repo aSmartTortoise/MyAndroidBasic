@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import com.wyj.easyfloat.EasyFloat
 import com.wyj.view.R
 
 
@@ -38,7 +39,8 @@ class WindowStudyActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             R.id.btn_main_view -> {
-                Log.d(TAG, "onClick: 点击显示在View下方了")
+                Log.d(TAG, "onClick: 点击显示在View下方了 隐藏悬浮窗。")
+                EasyFloat.dismiss()
             }
         }
     }

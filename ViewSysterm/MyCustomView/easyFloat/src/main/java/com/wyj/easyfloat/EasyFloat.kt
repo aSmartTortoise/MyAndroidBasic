@@ -23,6 +23,40 @@ class EasyFloat {
 
         @JvmStatic
         fun with(application: Application) = Builder(application)
+
+        /**
+         * 关闭当前浮窗
+         * @param tag       浮窗标签
+         * @param force     立即关闭，有退出动画也不执行
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun dismiss(tag: String? = null, force: Boolean = false) =
+            FloatingWindowManager.dismiss(tag, force)
+
+        /**
+         * 隐藏当前浮窗
+         * @param tag   浮窗标签
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun hide(tag: String? = null) = FloatingWindowManager.visible(false, tag, false)
+
+        /**
+         * 设置当前浮窗是否可拖拽，先获取浮窗的config，后修改相应属性
+         * @param dragEnable    是否可拖拽
+         * @param tag           浮窗标签
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun dragEnable(dragEnable: Boolean, tag: String? = null) =
+            getConfig(tag)?.let { it.dragEnable = dragEnable }
+
+        /**
+         * 获取当前浮窗的config
+         * @param tag   浮窗标签
+         */
+        private fun getConfig(tag: String?) = FloatingWindowManager.getHelper(tag)?.config
     }
 
     class Builder(private val context: Context) {
@@ -41,6 +75,19 @@ class EasyFloat {
          * @param sidePattern   浮窗吸附模式
          */
         fun setSidePattern(sidePattern: SidePattern) = apply { config.sidePattern = sidePattern }
+
+        /**
+         * 设置浮窗的标签：只有一个浮窗时，可以不设置；
+         * 有多个浮窗必须设置不容的浮窗，不然没法管理，所以禁止创建相同标签的浮窗
+         * @param floatTag      浮窗标签
+         */
+        fun setTag(floatTag: String?) = apply { config.floatTag = floatTag }
+
+        /**
+         * 设置浮窗是否可拖拽
+         * @param dragEnable    是否可拖拽
+         */
+        fun setDragEnable(dragEnable: Boolean) = apply { config.dragEnable = dragEnable }
 
         /**
          * 设置浮窗是否状态栏沉浸
@@ -91,6 +138,7 @@ class EasyFloat {
          */
         fun registerCallback(builder: FloatCallback.Builder.() -> Unit) =
             apply { config.floatCallback = FloatCallback().apply { registerListener(builder) } }
+
 
         /**
          * 创建浮窗，包括Activity浮窗和系统浮窗，如若系统浮窗无权限，先进行权限申请

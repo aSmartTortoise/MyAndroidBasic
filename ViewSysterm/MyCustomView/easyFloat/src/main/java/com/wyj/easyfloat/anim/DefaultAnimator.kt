@@ -76,6 +76,9 @@ open class DefaultAnimator : OnFloatAnimator {
         val rightDistance = parentRect.right - (leftDistance + view.right)
         val topDistance = params.y
         val bottomDistance = parentRect.bottom - (topDistance + view.bottom)
+        Log.d(TAG, "initValue: topDistance:$topDistance, view bottom:${view.bottom}" +
+                ", parentRec bottom:${parentRect.bottom}")
+        Log.d(TAG, "initValue: leftDistance:$leftDistance, rightDistance:$rightDistance")
         // 水平、垂直方向的距离最小值
         val minX = min(leftDistance, rightDistance)
         val minY = min(topDistance, bottomDistance)

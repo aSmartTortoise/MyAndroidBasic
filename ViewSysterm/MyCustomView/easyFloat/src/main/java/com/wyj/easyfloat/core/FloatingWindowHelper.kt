@@ -129,7 +129,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         val contentView = config.layoutView?.also { decorView?.addView(it) }
             ?: LayoutInflater.from(context).inflate(config.layoutId!!, decorView, true)
         // 为了避免创建的时候闪一下，我们先隐藏视图，不能直接设置GONE，否则定位会出现问题
-        contentView.visibility = View.INVISIBLE
+        contentView.visibility = View.VISIBLE
         // 将decorView添加到系统windowManager中
         windowManager.addView(decorView, windowParams)
 
@@ -142,6 +142,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         // 在浮窗绘制完成的时候，设置初始坐标、执行入场动画
         decorView?.layoutListener = object : ParentFrameLayout.OnLayoutListener {
             override fun onLayout() {
+                Log.d(TAG, "onLayout: setGravity")
                 setGravity(decorView)
                 lastLayoutMeasureWidth = decorView?.measuredWidth ?: -1
                 lastLayoutMeasureHeight = decorView?.measuredHeight ?: -1
@@ -154,7 +155,9 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                     ) {
                         setVisible(View.GONE)
                         initEditText()
-                    } else enterAnim(contentView)
+                    } else {
+//                        enterAnim(contentView)
+                    }
 
                     // 设置callbacks
                     layoutView = contentView
@@ -165,7 +168,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             }
         }
 
-        setChangedListener()
+//        setChangedListener()
     }
 
     /**
@@ -184,7 +187,8 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         // 通过绝对高度和相对高度比较，判断包含顶部状态栏
         val statusBarHeight = if (location[1] > windowParams.y) DisplayUtils.statusBarHeight(view)
                               else 0
-        Log.d(TAG, "setGravity: location[1]:${location[1]}, statusBarHeight:$statusBarHeight")
+        Log.d(TAG, "setGravity: location[1]:${location[1]}, windowParams.y:${windowParams.y}, " +
+                "statusBarHeight:$statusBarHeight")
         val parentBottom =
             config.displayHeight.getDisplayRealHeight(context) - statusBarHeight
         Log.d(TAG, "setGravity: parentBottom:$parentBottom")
@@ -232,7 +236,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
 
         if (config.immersionStatusBar) {
             if (config.showPattern != ShowPattern.CURRENT_ACTIVITY) {
-                windowParams.y -= statusBarHeight
+//                windowParams.y -= statusBarHeight
             }
         } else {
             if (config.showPattern == ShowPattern.CURRENT_ACTIVITY) {
@@ -390,7 +394,9 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             // 二次判断，防止重复调用引发异常
             if (config.isAnim) return
             config.isAnim = true
-            windowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            windowParams.flags = (WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                    or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
             animator.addListener(object : Animator.AnimatorListener {
                 override fun onAnimationRepeat(animation: Animator?) {}
 
