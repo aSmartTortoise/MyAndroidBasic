@@ -49,11 +49,16 @@ class FloatingWindowService : Service() {
             .setShowPattern(ShowPattern.ALL_TIME)
             .setSidePattern(SidePattern.DEFAULT)
             .setImmersionStatusBar(true)
+           .setWindowParamsFlag(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                   or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH)
             .setDragEnable(true)
             .setGravity(Gravity.END or Gravity.BOTTOM, 0, statusBarHeight)
             .setLayout(R.layout.window_hint, object : OnInvokeView {
                 override fun invoke(view: View) {
                     Log.d(TAG, "invoke: view:$view")
+                    view.findViewById<View>(R.id.tv_toast).setOnClickListener {
+                        Toast.makeText(this@FloatingWindowService, "嘿哈", Toast.LENGTH_LONG).show()
+                    }
 
                 }
 
