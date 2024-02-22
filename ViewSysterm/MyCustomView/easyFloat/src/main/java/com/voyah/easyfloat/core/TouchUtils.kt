@@ -1,4 +1,4 @@
-package com.wyj.easyfloat.core
+package com.voyah.easyfloat.core
 
 import android.animation.Animator
 import android.animation.ValueAnimator
@@ -8,10 +8,10 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
-import com.wyj.easyfloat.FloatConfig
-import com.wyj.easyfloat.ShowPattern
-import com.wyj.easyfloat.SidePattern
-import com.wyj.easyfloat.utils.DisplayUtils
+import com.voyah.easyfloat.FloatConfig
+import com.voyah.easyfloat.ShowPattern
+import com.voyah.easyfloat.SidePattern
+import com.voyah.easyfloat.utils.DisplayUtils
 import kotlin.math.max
 import kotlin.math.min
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.wyj.easyfloat'
+    namespace 'com.voyah.easyfloat'
     compileSdk 32
 
     defaultConfig {

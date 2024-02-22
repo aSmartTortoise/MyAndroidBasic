@@ -8,8 +8,7 @@ import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
-import com.wyj.easyfloat.EasyFloat
+import com.voyah.easyfloat.EasyFloat
 import com.wyj.view.R
 
 

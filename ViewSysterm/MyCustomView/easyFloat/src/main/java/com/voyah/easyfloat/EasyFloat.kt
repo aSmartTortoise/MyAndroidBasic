@@ -1,13 +1,13 @@
-package com.wyj.easyfloat
+package com.voyah.easyfloat
 
 import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.view.View
-import com.wyj.easyfloat.`interface`.FloatCallback
-import com.wyj.easyfloat.`interface`.OnInvokeView
-import com.wyj.easyfloat.core.FloatingWindowManager
-import com.wyj.easyfloat.utils.PermissionUtils
+import com.voyah.easyfloat.`interface`.FloatCallback
+import com.voyah.easyfloat.`interface`.OnInvokeView
+import com.voyah.easyfloat.core.FloatingWindowManager
+import com.voyah.easyfloat.utils.PermissionUtils
 import java.lang.Exception
 
 /**
@@ -149,7 +149,7 @@ class EasyFloat {
          * 创建浮窗，包括Activity浮窗和系统浮窗，如若系统浮窗无权限，先进行权限申请
          */
         fun show() {
-            Log.d(TAG, "show")
+            Log.d(EasyFloat.Companion.TAG, "show")
             when {
                 // 未设置浮窗布局文件/布局视图，不予创建
                 config.layoutId == null && config.layoutView == null ->
@@ -172,7 +172,7 @@ class EasyFloat {
          * 通过Fragment去申请系统悬浮窗权限
          */
         private fun requestPermission() {
-            Log.d(TAG, "requestPermission")
+            Log.d(EasyFloat.Companion.TAG, "requestPermission")
         }
 
         /**
@@ -182,9 +182,10 @@ class EasyFloat {
         private fun callbackCreateFailed(reason: String) {
             config.callback?.createdResult(false, reason, null)
             config.floatCallback?.builder?.createdResult?.invoke(false, reason, null)
-            Log.w(TAG, "callbackCreateFailed: reason:$reason", )
+            Log.w(EasyFloat.Companion.TAG, "callbackCreateFailed: reason:$reason", )
             if (reason == WARN_NO_LAYOUT || reason == WARN_UNINITIALIZED
-                || reason == WARN_CONTEXT_ACTIVITY) {
+                || reason == WARN_CONTEXT_ACTIVITY
+            ) {
                 // 针对无布局、未按需初始化、Activity浮窗上下文错误，直接抛异常
                 throw Exception(reason)
             }

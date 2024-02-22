@@ -1,4 +1,4 @@
-package com.wyj.easyfloat
+package com.voyah.easyfloat
 
 import android.R
 import android.app.Activity
@@ -16,7 +16,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.wyj.easyfloat.view.WindowDecorView
+import com.voyah.easyfloat.view.WindowDecorView
 
 class EasyWindow private constructor(val context: Context) {
 

@@ -1,7 +1,7 @@
-package com.wyj.easyfloat.utils
+package com.voyah.easyfloat.utils
 
 import android.content.Context
-import com.wyj.easyfloat.`interface`.OnDisplayHeight
+import com.voyah.easyfloat.`interface`.OnDisplayHeight
 
 /**
  *  author : jie wang

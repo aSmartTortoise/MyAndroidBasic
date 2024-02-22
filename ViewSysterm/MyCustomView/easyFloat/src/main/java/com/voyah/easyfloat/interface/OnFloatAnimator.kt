@@ -1,9 +1,9 @@
-package com.wyj.easyfloat.`interface`
+package com.voyah.easyfloat.`interface`
 
 import android.animation.Animator
 import android.view.View
 import android.view.WindowManager
-import com.wyj.easyfloat.SidePattern
+import com.voyah.easyfloat.SidePattern
 
 /**
  *  author : jie wang

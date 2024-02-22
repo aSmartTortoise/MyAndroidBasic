@@ -1,4 +1,4 @@
-package com.wyj.easyfloat.utils
+package com.voyah.easyfloat.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,7 +8,7 @@ import android.view.MotionEvent
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import com.wyj.easyfloat.core.FloatingWindowManager
+import com.voyah.easyfloat.core.FloatingWindowManager
 
 /**
  *  author : jie wang

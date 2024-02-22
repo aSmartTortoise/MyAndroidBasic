@@ -1,4 +1,4 @@
-package com.wyj.easyfloat
+package com.voyah.easyfloat
 
 /**
  *  author : jie wang

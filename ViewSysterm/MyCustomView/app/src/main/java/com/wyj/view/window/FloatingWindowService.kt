@@ -6,14 +6,12 @@ import android.os.IBinder
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
-import com.wyj.easyfloat.EasyFloat
-import com.wyj.easyfloat.EasyWindow
-import com.wyj.easyfloat.ShowPattern
-import com.wyj.easyfloat.SidePattern
-import com.wyj.easyfloat.`interface`.OnInvokeView
-import com.wyj.easyfloat.utils.DisplayUtils
+import com.voyah.easyfloat.EasyFloat
+import com.voyah.easyfloat.ShowPattern
+import com.voyah.easyfloat.SidePattern
+import com.voyah.easyfloat.`interface`.OnInvokeView
+import com.voyah.easyfloat.utils.DisplayUtils
 import com.wyj.view.R
 
 class FloatingWindowService : Service() {
@@ -49,8 +47,6 @@ class FloatingWindowService : Service() {
             .setShowPattern(ShowPattern.ALL_TIME)
             .setSidePattern(SidePattern.DEFAULT)
             .setImmersionStatusBar(true)
-           .setWindowParamsFlag(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                   or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH)
             .setDragEnable(true)
             .setGravity(Gravity.END or Gravity.BOTTOM, 0, statusBarHeight)
             .setLayout(R.layout.window_hint, object : OnInvokeView {

@@ -1,9 +1,9 @@
-package com.wyj.easyfloat.anim
+package com.voyah.easyfloat.anim
 
 import android.animation.Animator
 import android.view.View
 import android.view.WindowManager
-import com.wyj.easyfloat.FloatConfig
+import com.voyah.easyfloat.FloatConfig
 
 /**
  *  author : jie wang

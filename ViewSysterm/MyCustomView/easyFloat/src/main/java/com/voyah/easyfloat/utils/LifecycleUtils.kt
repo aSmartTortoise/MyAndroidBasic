@@ -1,10 +1,10 @@
-package com.wyj.easyfloat.utils
+package com.voyah.easyfloat.utils
 
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import com.wyj.easyfloat.ShowPattern
-import com.wyj.easyfloat.core.FloatingWindowManager
+import com.voyah.easyfloat.ShowPattern
+import com.voyah.easyfloat.core.FloatingWindowManager
 import java.lang.ref.WeakReference
 
 /**

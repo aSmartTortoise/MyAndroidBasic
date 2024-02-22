@@ -1,4 +1,4 @@
-package com.wyj.easyfloat.`interface`
+package com.voyah.easyfloat.`interface`
 
 import android.content.Context
 

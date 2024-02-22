@@ -1,4 +1,4 @@
-package com.wyj.easyfloat
+package com.voyah.easyfloat
 
 import org.junit.Test
 

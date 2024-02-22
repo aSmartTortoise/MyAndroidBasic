@@ -1,4 +1,4 @@
-package com.wyj.easyfloat.view
+package com.voyah.easyfloat.view
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,9 +7,9 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import com.wyj.easyfloat.FloatConfig
-import com.wyj.easyfloat.`interface`.OnFloatTouchListener
-import com.wyj.easyfloat.utils.InputMethodUtils
+import com.voyah.easyfloat.FloatConfig
+import com.voyah.easyfloat.`interface`.OnFloatTouchListener
+import com.voyah.easyfloat.utils.InputMethodUtils
 
 /**
  *  author : jie wang

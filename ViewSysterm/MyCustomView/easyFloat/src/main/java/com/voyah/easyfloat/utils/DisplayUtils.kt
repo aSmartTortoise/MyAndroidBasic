@@ -1,4 +1,4 @@
-package com.wyj.easyfloat.utils
+package com.voyah.easyfloat.utils
 
 import android.annotation.SuppressLint
 import android.app.Service

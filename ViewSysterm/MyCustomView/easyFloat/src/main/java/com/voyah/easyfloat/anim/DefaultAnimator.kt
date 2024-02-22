@@ -1,4 +1,4 @@
-package com.wyj.easyfloat.anim
+package com.voyah.easyfloat.anim
 
 import android.animation.Animator
 import android.animation.ValueAnimator
@@ -6,9 +6,9 @@ import android.graphics.Rect
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import com.wyj.easyfloat.SidePattern
-import com.wyj.easyfloat.`interface`.OnFloatAnimator
-import com.wyj.easyfloat.utils.DisplayUtils
+import com.voyah.easyfloat.SidePattern
+import com.voyah.easyfloat.`interface`.OnFloatAnimator
+import com.voyah.easyfloat.utils.DisplayUtils
 import kotlin.math.min
 
 /**

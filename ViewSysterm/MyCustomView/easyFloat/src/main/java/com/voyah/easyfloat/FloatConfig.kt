@@ -1,11 +1,11 @@
-package com.wyj.easyfloat
+package com.voyah.easyfloat
 
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import com.wyj.easyfloat.`interface`.*
-import com.wyj.easyfloat.anim.DefaultAnimator
-import com.wyj.easyfloat.utils.DefaultDisplayHeight
+import com.voyah.easyfloat.`interface`.*
+import com.voyah.easyfloat.anim.DefaultAnimator
+import com.voyah.easyfloat.utils.DefaultDisplayHeight
 
 /**
  *  author : jie wang

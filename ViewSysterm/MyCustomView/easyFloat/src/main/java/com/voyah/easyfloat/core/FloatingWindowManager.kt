@@ -1,10 +1,10 @@
-package com.wyj.easyfloat.core
+package com.voyah.easyfloat.core
 
 import android.content.Context
 import android.util.Log
 import android.view.View
-import com.wyj.easyfloat.FloatConfig
-import com.wyj.easyfloat.WARN_REPEATED_TAG
+import com.voyah.easyfloat.FloatConfig
+import com.voyah.easyfloat.WARN_REPEATED_TAG
 import java.util.concurrent.ConcurrentHashMap
 
 /**

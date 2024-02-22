@@ -1,4 +1,4 @@
-package com.wyj.easyfloat.core
+package com.voyah.easyfloat.core
 
 import android.animation.Animator
 import android.annotation.SuppressLint
@@ -12,15 +12,15 @@ import android.os.IBinder
 import android.util.Log
 import android.view.*
 import android.widget.EditText
-import com.wyj.easyfloat.FloatConfig
-import com.wyj.easyfloat.ShowPattern
-import com.wyj.easyfloat.WARN_ACTIVITY_NULL
-import com.wyj.easyfloat.`interface`.OnFloatTouchListener
-import com.wyj.easyfloat.anim.AnimatorManager
-import com.wyj.easyfloat.utils.DisplayUtils
-import com.wyj.easyfloat.utils.InputMethodUtils
-import com.wyj.easyfloat.utils.LifecycleUtils
-import com.wyj.easyfloat.view.ParentFrameLayout
+import com.voyah.easyfloat.FloatConfig
+import com.voyah.easyfloat.ShowPattern
+import com.voyah.easyfloat.WARN_ACTIVITY_NULL
+import com.voyah.easyfloat.`interface`.OnFloatTouchListener
+import com.voyah.easyfloat.anim.AnimatorManager
+import com.voyah.easyfloat.utils.DisplayUtils
+import com.voyah.easyfloat.utils.InputMethodUtils
+import com.voyah.easyfloat.utils.LifecycleUtils
+import com.voyah.easyfloat.view.ParentFrameLayout
 
 /**
  *  author : jie wang
