@@ -4,7 +4,9 @@ import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.wyj.view.animation.ShoppingActivity;
 import com.wyj.view.base.CanvasApiActivity;
 import com.wyj.view.base.PathApiActivity;
@@ -14,9 +16,10 @@ import com.wyj.view.base.PathOpActivity;
 import com.wyj.view.bezier.BezierCurveActivity;
 import com.wyj.view.bezier.WaveProgressActivity;
 import com.wyj.view.timeline.TimeLineActivity;
-import com.wyj.view.window.WindowStudyActivity;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +66,13 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.startActivity(intent);
         });
         findViewById(R.id.btn_window_study).setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, WindowStudyActivity.class);
-            MainActivity.this.startActivity(intent);
+            Log.d(TAG, "onCreate: card");
+            ARouter.getInstance()
+                    .build("/card/WindowStudyActivity")
+//                    .withString("key1","value1")//携带参数1
+//                    .withString("key2","value2")//携带参数2
+                    .navigation();
+
         });
 
 

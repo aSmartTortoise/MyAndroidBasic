@@ -8,10 +8,19 @@ import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.voyah.easyfloat.EasyFloat
 
-
+@Route(path = "/card/WindowStudyActivity")
 class WindowStudyActivity : AppCompatActivity(), View.OnClickListener {
+
+//    @Autowired
+//    public var param1: String? = null
+//    @Autowired
+//    @JvmField var key1: String? = null
+
     companion object {
         const val TAG = "WindowStudyActivity"
         const val REQUEST_CODE_MANAGE_OVERLAY_PERMISSION = 100
@@ -19,6 +28,7 @@ class WindowStudyActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_window_study)
+        ARouter.getInstance().inject(this)
         findViewById<View>(R.id.btn_main_anim).setOnClickListener(this)
         findViewById<View>(R.id.btn_main_view).setOnClickListener(this)
     }
@@ -45,6 +55,7 @@ class WindowStudyActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun showWindow() {
         Log.d(TAG, "showWindow: startService")
+//        Log.d(TAG, "showWindow: param1:$param1")
         startService(Intent(this, FloatingWindowService::class.java))
     }
 

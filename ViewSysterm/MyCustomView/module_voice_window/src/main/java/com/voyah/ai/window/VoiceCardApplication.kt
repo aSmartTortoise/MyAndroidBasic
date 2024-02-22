@@ -2,6 +2,7 @@ package com.voyah.ai.window
 
 import android.app.Application
 import android.util.Log
+import com.alibaba.android.arouter.launcher.ARouter
 
 /**
  *  author : jie wang
@@ -17,5 +18,6 @@ class VoiceCardApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "onCreate")
+
     }
 }
