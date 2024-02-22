@@ -1,0 +1,29 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.voyah.ai.window" >
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+
+    <application android:name=".VoiceCardApplication"
+        android:allowBackup="true"
+        android:hardwareAccelerated="false"
+        android:label="语音卡片"
+        android:supportsRtl="true"
+        android:theme="@style/WindowAppTheme">
+
+        <activity android:name=".WindowStudyActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".FloatingWindowService"
+            android:enabled="true"
+            android:exported="true"/>
+
+    </application>
+
+</manifest>

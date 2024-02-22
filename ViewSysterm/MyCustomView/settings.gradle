@@ -1,2 +1,3 @@
 include ':app', 'library'
 include ':easyFloat'
+include ':module_voice_window'

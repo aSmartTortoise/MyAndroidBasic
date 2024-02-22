@@ -1,4 +1,4 @@
-package com.wyj.view.window
+package com.voyah.ai.window
 
 import android.app.Service
 import android.content.Intent
@@ -12,7 +12,6 @@ import com.voyah.easyfloat.ShowPattern
 import com.voyah.easyfloat.SidePattern
 import com.voyah.easyfloat.`interface`.OnInvokeView
 import com.voyah.easyfloat.utils.DisplayUtils
-import com.wyj.view.R
 
 class FloatingWindowService : Service() {
 

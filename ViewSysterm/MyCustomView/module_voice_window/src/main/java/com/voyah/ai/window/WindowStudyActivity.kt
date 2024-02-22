@@ -1,4 +1,4 @@
-package com.wyj.view.window
+package com.voyah.ai.window
 
 import android.content.Intent
 import android.net.Uri
@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import com.voyah.easyfloat.EasyFloat
-import com.wyj.view.R
 
 
 class WindowStudyActivity : AppCompatActivity(), View.OnClickListener {
