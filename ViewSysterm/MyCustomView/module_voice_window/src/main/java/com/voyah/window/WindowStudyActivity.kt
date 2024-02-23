@@ -1,4 +1,4 @@
-package com.voyah.ai.window
+package com.voyah.window
 
 import android.content.Intent
 import android.net.Uri
@@ -11,15 +11,15 @@ import android.view.View
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.voyah.window.R
 import com.voyah.easyfloat.EasyFloat
 
-@Route(path = "/card/WindowStudyActivity")
+@Route(path = PATH_PAGE_WINDOW_STUDY)
 class WindowStudyActivity : AppCompatActivity(), View.OnClickListener {
 
-//    @Autowired
-//    public var param1: String? = null
-//    @Autowired
-//    @JvmField var key1: String? = null
+    @JvmField
+    @Autowired(name = "key1")
+    var param1: String? = null
 
     companion object {
         const val TAG = "WindowStudyActivity"
@@ -55,7 +55,7 @@ class WindowStudyActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun showWindow() {
         Log.d(TAG, "showWindow: startService")
-//        Log.d(TAG, "showWindow: param1:$param1")
+        Log.d(TAG, "showWindow: param1:$param1")
         startService(Intent(this, FloatingWindowService::class.java))
     }
 

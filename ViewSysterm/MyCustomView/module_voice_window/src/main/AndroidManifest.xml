@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.voyah.ai.window" >
+    package="com.voyah.window" >
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application>
 
-        <activity android:name=".WindowStudyActivity"
+        <activity android:name="com.voyah.window.WindowStudyActivity"
             android:exported="true"/>
 
         <service
-            android:name=".FloatingWindowService"
+            android:name="com.voyah.window.FloatingWindowService"
             android:enabled="true"
             android:exported="true"/>
 

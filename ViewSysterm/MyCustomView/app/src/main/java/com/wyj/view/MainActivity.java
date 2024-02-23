@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.voyah.window.WindowServiceUtil;
 import com.wyj.view.animation.ShoppingActivity;
 import com.wyj.view.base.CanvasApiActivity;
 import com.wyj.view.base.PathApiActivity;
@@ -66,12 +67,8 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.startActivity(intent);
         });
         findViewById(R.id.btn_window_study).setOnClickListener(view -> {
-            Log.d(TAG, "onCreate: card");
-            ARouter.getInstance()
-                    .build("/card/WindowStudyActivity")
-//                    .withString("key1","value1")//携带参数1
-//                    .withString("key2","value2")//携带参数2
-                    .navigation();
+            Log.d(TAG, "onCreate: floating window.");
+            WindowServiceUtil.navigateWindowStudyPage("嘿 悬浮窗。");
 
         });
 

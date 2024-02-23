@@ -1,4 +1,4 @@
-package com.voyah.ai.window
+package com.voyah.window
 
 import android.app.Application
 import android.util.Log

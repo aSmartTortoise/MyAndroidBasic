@@ -1,4 +1,4 @@
-package com.voyah.ai.window
+package com.voyah.window
 
 import android.app.Service
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
+import com.voyah.window.R
 import com.voyah.easyfloat.EasyFloat
 import com.voyah.easyfloat.ShowPattern
 import com.voyah.easyfloat.SidePattern

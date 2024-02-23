@@ -12,7 +12,7 @@ if (isModule.toBoolean()) {
 
 
 android {
-//    namespace 'com.voyah.ai.window'
+//    namespace 'com.voyah.window'
     compileSdk 32
 
     defaultConfig {
@@ -20,7 +20,7 @@ android {
         targetSdk 32
 
         if (isModule.toBoolean()) {
-            applicationId "com.voyah.ai.window"
+            applicationId "com.voyah.window"
         }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -70,6 +70,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation project(path: ':easyFloat')
-    compileOnly 'com.alibaba:arouter-api:1.5.2'
+    api 'com.alibaba:arouter-api:1.5.2'
     kapt 'com.alibaba:arouter-compiler:1.5.2'
 }
