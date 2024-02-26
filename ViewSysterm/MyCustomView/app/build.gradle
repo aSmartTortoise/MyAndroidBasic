@@ -2,24 +2,18 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-android-extensions'
-    id 'kotlin-kapt'
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.wyj.view"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
-        kapt {
-            arguments {
-                arg("AROUTER_MODULE_NAME", project.getName())
-            }
-        }
     }
     buildTypes {
         release {
@@ -46,5 +40,5 @@ dependencies {
     implementation project(path: ':module_voice_window')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 //    implementation 'com.alibaba:arouter-api:1.5.2'
-    kapt "com.alibaba:arouter-compiler:1.5.2"
+//    kapt "com.alibaba:arouter-compiler:1.5.2"
 }
