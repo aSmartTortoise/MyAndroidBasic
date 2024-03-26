@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.*
 import android.widget.EditText
 import com.voyah.easyfloat.FloatConfig
+import com.voyah.easyfloat.R
 import com.voyah.easyfloat.ShowPattern
 import com.voyah.easyfloat.WARN_ACTIVITY_NULL
 import com.voyah.easyfloat.`interface`.OnFloatTouchListener
@@ -427,6 +428,23 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         Log.e(TAG, "浮窗关闭出现异常：$e")
     }
 
+    /**
+     * 更新浮窗坐标信息
+     */
+    fun updateFloat(x: Int = -1, y: Int = -1, width: Int = -1, height: Int = -1) {
+        decorView?.let {
+            if (x == -1 && y == -1 && width == -1 && height == -1) {
+                // 未指定具体坐标，执行吸附动画
+                it.postDelayed({ touchUtils.updateFloat(it, windowParams, windowManager) }, 200)
+            } else {
+                if (x != -1) windowParams.x = x
+                if (y != -1) windowParams.y = y
+                if (width != -1) windowParams.width = width
+                if (height != -1) windowParams.height = height
+                windowManager.updateViewLayout(it, windowParams)
+            }
+        }
+    }
 
     interface CreateCallback {
         fun onCreate(success: Boolean)

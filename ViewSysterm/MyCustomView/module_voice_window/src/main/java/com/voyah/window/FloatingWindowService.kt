@@ -3,9 +3,13 @@ package com.voyah.window
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import com.voyah.window.R
 import com.voyah.easyfloat.EasyFloat
@@ -18,6 +22,10 @@ class FloatingWindowService : Service() {
 
     companion object {
         const val TAG = "FloatingWindowService"
+    }
+
+    private var screenWidth: Lazy<Int> = lazy {
+        DisplayUtils.getScreenWidth(this)
     }
 
     override fun onCreate() {
@@ -36,26 +44,52 @@ class FloatingWindowService : Service() {
     }
 
    private fun showFloatWindow() {
-       //        EasyWindow.with(application)
-//            .setContentView(R.layout.window_hint)
-//            .addWindowFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH)
-//            .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-//            .setText(android.R.id.message, "hello WindowManager")
-//            .show()
        val statusBarHeight = DisplayUtils.getStatusBarHeight(this)
+       val dp620 = resources.getDimensionPixelSize(R.dimen.dp_620)
+       val dp230 = resources.getDimensionPixelSize(R.dimen.dp_230)
+       Log.d(TAG, "showFloatWindow: dp620:$dp620")
+       val x = (screenWidth.value - dp230) / 2
        EasyFloat.with(application)
             .setShowPattern(ShowPattern.ALL_TIME)
-            .setSidePattern(SidePattern.DEFAULT)
             .setImmersionStatusBar(true)
-            .setDragEnable(true)
-            .setGravity(Gravity.END or Gravity.BOTTOM, 0, statusBarHeight)
-            .setLayout(R.layout.window_hint, object : OnInvokeView {
+            .setDragEnable(false)
+            .setLocation(x, 0)
+            .setLayout(R.layout.window_vpa_typewriter_card2, object : OnInvokeView {
                 override fun invoke(view: View) {
                     Log.d(TAG, "invoke: view:$view")
-                    view.findViewById<View>(R.id.tv_toast).setOnClickListener {
-                        Toast.makeText(this@FloatingWindowService, "嘿哈", Toast.LENGTH_LONG).show()
+                    val llContent = view.findViewById<LinearLayout>(R.id.ll_content)
+                    Log.d(TAG, "invoke: llContent width:${llContent.width}")
+                    val tvText = view.findViewById<TextView>(R.id.tv_text).apply {
+                        addTextChangedListener(object: TextWatcher {
+                            override fun beforeTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                count: Int,
+                                after: Int
+                            ) {
+                            }
+
+                            override fun onTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                before: Int,
+                                count: Int
+                            ) {
+                                llContent.post {
+                                    Log.d(TAG, "onTextChanged: llContentWidth:${llContent.width}")
+                                }
+
+                            }
+
+                            override fun afterTextChanged(s: Editable?) {
+                            }
+
+                        })
                     }
 
+                    tvText.postDelayed(Runnable {
+                        tvText.text = getString(R.string.typewriterLong)
+                    }, 1000L)
                 }
 
             })

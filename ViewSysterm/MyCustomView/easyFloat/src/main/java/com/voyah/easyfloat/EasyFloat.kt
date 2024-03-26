@@ -53,10 +53,39 @@ class EasyFloat {
             getConfig(tag)?.let { it.dragEnable = dragEnable }
 
         /**
+         * 获取当前浮窗中，我们传入的View
+         * @param tag   浮窗标签
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun getFloatView(tag: String? = null): View? = getConfig(tag)?.layoutView
+
+        /**
+         * 更新浮窗坐标、以及大小，未指定数值（全为-1）执行吸附动画；
+         * 需要修改的参数，传入具体数值，不需要修改的参数保持-1即可
+         * @param tag       浮窗标签
+         * @param x         更新后的X轴坐标
+         * @param y         更新后的Y轴坐标
+         * @param width     更新后的宽度
+         * @param height    更新后的高度
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun updateFloat(
+            tag: String? = null,
+            x: Int = -1,
+            y: Int = -1,
+            width: Int = -1,
+            height: Int = -1
+        ) = FloatingWindowManager.getHelper(tag)?.updateFloat(x, y, width, height)
+
+        /**
          * 获取当前浮窗的config
          * @param tag   浮窗标签
          */
-        private fun getConfig(tag: String?) = FloatingWindowManager.getHelper(tag)?.config
+        @JvmStatic
+        @JvmOverloads
+        fun getConfig(tag: String?) = FloatingWindowManager.getHelper(tag)?.config
     }
 
     class Builder(private val context: Context) {
@@ -108,6 +137,23 @@ class EasyFloat {
             config.gravity = gravity
             config.offsetPair = Pair(offsetX, offsetY)
         }
+
+        /**
+         * 当layout大小变化后，整体view的位置的对齐方式
+         * 比如，当设置为 Gravity.END 时，当view的宽度变小或者变大时，都将会以原有的右边对齐 <br/>
+         * 默认对齐方式为左上角
+         * @param gravity   对齐方式
+         */
+        fun setLayoutChangedGravity(gravity: Int) = apply {
+            config.layoutChangedGravity = gravity;
+        }
+
+        /**
+         * 设置浮窗的起始坐标，优先级高于setGravity
+         * @param x     起始水平坐标
+         * @param y     起始竖直坐标
+         */
+        fun setLocation(x: Int, y: Int) = apply { config.locationPair = Pair(x, y) }
 
         /**
          * 设置浮窗的布局文件，以及布局的操作接口

@@ -1,3 +1,7 @@
 <resources>
+    <string name="voice_state_listening">聆听中…</string>
+    <string name="typewriterLong">来来来，喝完这杯，还有三杯~沧海一声笑，啦啦啦啦啦，水煮沉浮，啊啊啊啊啊啊~</string>
+    <string name="typewriterShorty">yiya</string>
+
 
 </resources>
