@@ -8,4 +8,10 @@
         <attr name="x_velocity" format="float"/>
         <attr name="total_duration" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="NoPaddingTextView">
+        <attr name="removeDefaultPadding" format="boolean"/>
+    </declare-styleable>
+
+
 </resources>

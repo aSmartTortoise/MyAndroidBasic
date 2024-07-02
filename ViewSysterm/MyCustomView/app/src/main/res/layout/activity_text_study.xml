@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".text.TextStudyActivity">
+
+    <TextView
+        android:id="@+id/tv_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_100"
+        android:layout_marginTop="@dimen/dp_100"
+        android:text="给我一杯酒啊"
+        android:textColor="#FF6666CA"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_100"
+        android:layout_marginTop="@dimen/dp_100"
+        android:text="给我一杯酒啊"
+        android:textColor="#FF89D389"
+        android:textSize="@dimen/sp_14"
+        android:includeFontPadding="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_text" />
+
+    <com.wyj.view.text.NoPaddingTextView
+        android:id="@+id/tv_text3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_100"
+        android:layout_marginTop="@dimen/dp_100"
+        android:text="给我一杯酒啊"
+        android:textColor="#FFCC6E6E"
+        android:textSize="@dimen/sp_14"
+        android:includeFontPadding="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:removeDefaultPadding="true"
+        app:layout_constraintTop_toBottomOf="@id/tv_text2" />
+
+    <Button
+        android:id="@+id/btn_font_metrics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="fontMetrics"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

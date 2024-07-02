@@ -3,6 +3,7 @@ package com.wyj.view;
 import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 
@@ -16,6 +17,7 @@ import com.wyj.view.base.PathMeasureApiActivity;
 import com.wyj.view.base.PathOpActivity;
 import com.wyj.view.bezier.BezierCurveActivity;
 import com.wyj.view.bezier.WaveProgressActivity;
+import com.wyj.view.text.TextStudyActivity;
 import com.wyj.view.timeline.TimeLineActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -69,8 +71,12 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_window_study).setOnClickListener(view -> {
             Log.d(TAG, "onCreate: floating window.");
             WindowServiceUtil.navigateWindowStudyPage("嘿 悬浮窗。");
-
         });
+        findViewById(R.id.btn_text).setOnClickListener(view -> {
+                    Intent intent = new Intent(MainActivity.this, TextStudyActivity.class);
+                    MainActivity.this.startActivity(intent);
+                }
+        );
 
 
     }

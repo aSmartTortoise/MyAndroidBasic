@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.wyj.view">
 
-
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -12,7 +10,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity
+            android:name=".text.TextStudyActivity"
+            android:exported="false" />
         <activity
             android:name=".base.CanvasApiActivity"
             android:exported="false">
@@ -63,7 +63,8 @@
                 android:value="" />
         </activity>
         <activity android:name=".base.PathApiActivity" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
@@ -79,8 +80,6 @@
         <activity
             android:name=".CommonActivity"
             android:theme="@style/Theme.MusicPlayer" />
-
-
     </application>
 
 </manifest>
