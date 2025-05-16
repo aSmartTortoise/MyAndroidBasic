@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val pid = Process.myPid()
-        println("onCreate, pid:$pid")
+        Log.d(TAG, "onCreate: pid:$pid")
         findViewById<View>(R.id.btn_handler).setOnClickListener(View.OnClickListener {
             startActivity(
                 Intent(this@MainActivity, TestActivity::class.java)

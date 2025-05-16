@@ -15,7 +15,7 @@
         android:id="@+id/btn_handler"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="非静态的内部类持有外部类" />
+        android:text="非静态的内部类持有外部类对象的引用" />
 
     <Button
         android:layout_marginTop="10dp"

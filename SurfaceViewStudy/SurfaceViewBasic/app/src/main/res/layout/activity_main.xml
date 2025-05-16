@@ -2,9 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <com.wyj.surfaceview.MySurfaceView
+<!--    <com.wyj.surfaceview.HandWritingSurfaceView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"/>-->
+
+    <com.wyj.surfaceview.SinFunSurfaceView
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
