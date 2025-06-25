@@ -292,7 +292,7 @@ Dispatcher.java
 
 # 4 RealCall#enqueue
 
-同exuecute一样，enqueue方法调用之后，其executed为true，多次调用会抛出异常。然后调用client.dispatcher().enqueue(new AsyncCall(responseCallback))。
+同execute一样，enqueue方法调用之后，其executed为true，多次调用会抛出异常。然后调用client.dispatcher().enqueue(new AsyncCall(responseCallback))。
 
 ```java
 RealCall.java
@@ -524,19 +524,19 @@ RealCall.java
 
 首先将以下拦截器添加到List中：
 
-(1) OkHttpClient设置的拦截器interceptors()；
+(1) `OkHttpClient`设置的拦截器`interceptors()`；
 
-(2) 重试、重定向的拦截器RetryAndFollowUpInterceptor；
+(2) 重试、重定向的拦截器`RetryAndFollowUpInterceptor`；
 
-(3) 把用户请求转换为网络请求、把网络响应转换为用户响应的BridgeInterceptor；
+(3) 把用户请求转换为网络请求、把网络响应转换为用户响应的`BridgeInterceptor`；
 
-(4) 从缓存中读取响应并返回、将响应写入到缓存的CacheInterceptor；
+(4) 从缓存中读取响应、将响应写入到缓存的`CacheInterceptor`；
 
-(5) 与服务器建立连接的ConnectionInterceptor；
+(5) 与服务器建立连接的`ConnectionInterceptor`；
 
-(6) OkHttpClient设置的网络拦截器networkInterceptors()；
+(6) OkHttpClient设置的网络拦截器`networkInterceptors()`；
 
-(7) 真正执行网络请求的CallServerInterceptor。
+(7) 真正执行网络请求的`CallServerInterceptor`。
 
 将所有的拦截器保存在interceptors之后，创建一个拦截器责任链RealInterceptorChain，并调用proceed开始处理网络请求。
 
@@ -643,13 +643,13 @@ public final class RealInterceptorChain implements Interceptor.Chain {
 
 责任链设计模式的实现过程如下：
 
-RealCall#getResponseWithInterceptorChain是执行网络请求过程的开始。首先获取处理网络请求的拦截器对象，这些对象会按照次序添加到集合中，依次是OkHttpClient设置的拦截器、重试_重定向的拦截器(RetryAndFollowUpInterceptor)、负责根据用户请求构建网络请求根据网络响应获取网络响应的BridgeInterceptor、负责从缓存中获取Response将response保存到缓存中的CacheInteceptor、负责与服务器建立连接的ConnectionInterceptor、OkHttpClient设置的网络拦截器、负责真正与服务器通信的拦截器CallServerInterceptor。这些拦截器都是Interceptor接口的实现类，Interceptor可以观察、修改、拦截已发出去的请求和已返回的响应。
+``RealCall#getResponseWithInterceptorChain`是执行网络请求过程的开始。首先获取处理网络请求的拦截器对象，这些对象会按照次序添加到集合中，依次是OkHttpClient设置的拦截器、重试重定向的拦截器(`RetryAndFollowUpInterceptor`)、负责根据用户请求构建网络请求根据网络响应获取网络响应的BridgeInterceptor`、负责从缓存中获取Response将response保存到缓存中的`CacheInteceptor`、负责与服务器建立连接的`ConnectionInterceptor`、`OkHttpClient`设置的网络拦截器、负责真正与服务器通信的拦截器`CallServerInterceptor`。这些拦截器都是`Interceptor`接口的实现类，Interceptor可以观察、修改、拦截已发出去的请求和已返回的响应。
 
-OkHttp会将这些Interceptor组织成一个拦截器责任链，将网络请求从链的头部开始沿着链一直传递到尾部的CallServerInterceptor，由它与服务器实时通信并获取response。然后response从尾部的interceptor开始沿着链的反方向传递到RealCall的getResponseWithInterceptorChain方法中结束网络请求。
+`OkHttp`会将这些`Interceptor`组织成一个拦截器责任链，将网络请求从链的头部开始沿着链一直传递到尾部的`CallServerInterceptor`，由它与服务器实时通信并获取response。然后response从尾部的interceptor开始沿着链的反方向传递到RealCall的getResponseWithInterceptorChain方法中结束网络请求。
 
 下图为OkHttp工作的大致流程，参考自[拆轮子系列：拆OkHttp](https://blog.piasy.com/2016/07/11/Understand-OkHttp/index.html)
 
-![okhttp_overview](C:\Users\wangjie\Desktop\study\OkHttp3\img\okhttp_overview.jpg)
+![okhttp_overview](C:\Users\wangjie\Desktop\study\Android\OkHttp3\img\okhttp_overview.jpg)
 
 # 6 RetryAndFollowUpInterceptor
 
@@ -742,6 +742,11 @@ RetryAndFollowUpInterceptor.java
   }
 ```
 
+1. 调用RealInterceptorChain的proceed方法，将请求沿着责任链传递给BridgeInterceptor。如果遇到异常，则根据异常的类型判断是否
+可以恢复，如果不能恢复则抛出异常，结束请求。
+2. 根据Response的响应码判断是否需要重试，若不需要则直接返回Response，若需要则检查重试的次数是否达到阈值（20），如果达到阈值则抛出
+异常；否则继续重试。
+
 # 7 BridgeInterceptor
 
 将用户请求转换成网络请求，将网络请求沿着责任链传递给CacheInterceptor。将网络响应转换成用户响应。
@@ -817,7 +822,7 @@ BridgeInterceptor.java
   }
 ```
 
-BridgeInterceptor总体上做了两件事：(1) 对原始的Request进行检查，设置Content-Type、Content-Length、Transfer-Encoding、Host、Connection、Accept-Encoding、Cookie、UserAgent这些header；(2) 进行网络请求；(3) 得到的网络响应数据如果采用了gzip压缩，则对响应进行gzip处理。
+`BridgeInterceptor`总体上做了三件事：(1) 对原始的Request进行检查，设置Content-Type、Content-Length、Transfer-Encoding、Host、Connection、Accept-Encoding、Cookie、UserAgent这些header；(2) 将请求传递给CacheInterceptor；(3) 得到的网络响应数据如果采用了gzip压缩，则对响应进行gzip处理。
 
 在请求前使用了CookieJar的实例读取url关联的Cookie。
 
@@ -826,7 +831,9 @@ BridgeInterceptor总体上做了两件事：(1) 对原始的Request进行检查�
     if (!cookies.isEmpty()) {
       requestBuilder.header("Cookie", cookieHeader(cookies));
     }
-
+```
+`cookieHeader`就是将cookies里面的键值对拼接成一个字符串k1=v1; k2=v2，其实现如下：
+```java
   private String cookieHeader(List<Cookie> cookies) {
     StringBuilder cookieHeader = new StringBuilder();
     for (int i = 0, size = cookies.size(); i < size; i++) {
@@ -883,13 +890,15 @@ Cookie.java
 
 根据Response的Header，获取Set-Cookie字段的Value，由value解析成对应的Cookie对象并使用CookieJar将Cookie存储起来。
 
+**所以，使用OkHttp的Cookie功能时，自定义一个CookieJar就好了，不需要新增拦截器专门处理Cookie问题。**
+
 # 8 CacheInterceptor
 
 该拦截器用来从缓存中读取响应和将响应写入到缓存中。
 
 缓存处理策略一般是：
 
-![cache处理策略](C:\Users\wangjie\Desktop\study\OkHttp3\img\cache处理策略.webp)
+![cache处理策略](C:\Users\wangjie\Desktop\study\Android\OkHttp3\img\cache处理策略.webp)
 
 ```java
 CacheInterceptor.java
@@ -999,21 +1008,30 @@ CacheInterceptor.java
   }
 ```
 
+`CacheInterceptor`处理请求的逻辑是：
+
+1. 根据`request`从磁盘缓存中获取响应，这是个候选缓存响应；然后根据当前时间、请求和候选缓存响应构造缓存策略`CacheStrategy`。
+2. `CacheStrategy`内部有`networkRequest`和`cacheResponse`两个字段。根据`networkRequest`和`cacheResponse`，决定执行网络请求或者使用缓存响应。如果`networkRequest`和`cacheResponse`都为null，则`CacheInterceptor#intercept`返回504的响应；如果`networkRequest`为null，`cacheResponse`不为null则命中了缓存，`CacheInterceptor#intercept`返回`cacheResponse`；如果`networkResponse`不为null，则`CacheInterceptor#intercept`将`networkRequest`继续传递给`ConnectionInterceptor`执行网络请求。
+3. 如果得到的网络响应是**304**，表明同一个请求服务器的响应没有更改。且`CacheStrategy`中的`cacheResponse`不为null，需要更新缓存中的响应；根据网络响应的`Header`更新`cacheResponse`的`Header`，更新`cacheResponse`的发送请求的时间和接受响应的时间；`CacheInterceptor#intercept`返回`cacheResponse`。
+4. 如果得到的网络响应不是**304**，表明同一个请求服务器的响应更改了。将网络响应保存到缓存中，`CacheInterceptor#intercept`返回网络响应。
+
 
 
 ## 8.1 Cache
 
-该类可以将网络响应Response缓存到文件系统中，可以根据Request获取磁盘缓存响应Response。
+该类可以将网络响应Response保存到文件系统中，可以根据Request获取磁盘缓存的响应Response。
 
 ## 8.2 CacheStrategy
 
-根据指定的网络request和缓存响应，决定使用网络或者缓存。其内部有networkRequest和cacheResponse两个字段。如果networkRequest和cacheResponse都为null，则CacheInterceptor#intercept返回504的响应；如果networkRequest为null，cacheResponse不为null则命中了缓存，CacheInterceptor#intercept返回cacheResponse；如果networkResponse不为null，则CacheInterceptor#intercept将networkRequest继续传递给ConnectionInterceptor执行网络请求。
+其内部有`networkRequest`和`cacheResponse`两个字段。根据`networkRequest`和`cacheResponse`，决定执行网络请求或者使用缓存相应。如果`networkRequest`和`cacheResponse`都为null，则`CacheInterceptor#intercept`返回504的响应；如果`networkRequest`为null，`cacheResponse`不为null则命中了缓存，`CacheInterceptor#intercept`返回`cacheResponse`；如果`networkResponse`不为null，则`CacheInterceptor#intercept`将`networkRequest`继续传递给`ConnectionInterceptor`执行网络请求。
 
 ```java
 CacheStrategy.java
     public CacheStrategy get() {
       CacheStrategy candidate = getCandidate();
 
+      // 1. 如果networkRequest不为null，且请求头设置了Cache-Control:only-if-cached字段则CacheStrategy中的
+    // networkRequest和cacheResponse都为null。CacheInterceptor不会继续传递请求并返回504的响应。
       if (candidate.networkRequest != null && request.cacheControl().onlyIfCached()) {
         // We're forbidden from using the network and the cache is insufficient.
         return new CacheStrategy(null, null);
@@ -1083,7 +1101,7 @@ CacheStrategy.java
 
       // Find a condition to add to the request. If the condition is satisfied, the response body
       // will not be transmitted.
-      // 请求条件, 当候选缓存的响应头中含有Date字段、Last-Modified、ETag字段的时候，需要够着网络请求
+      // 请求条件, 当候选缓存的响应头中含有Date字段、Last-Modified、ETag字段的时候，需要构造网络请求
       // 在请求头中添加响应的字段If-None-Match或If-Modified-Since，向服务器确认缓存的有效性。
       String conditionName;
       String conditionValue;
@@ -1102,7 +1120,7 @@ CacheStrategy.java
 
       Headers.Builder conditionalRequestHeaders = request.headers().newBuilder();
       Internal.instance.addLenient(conditionalRequestHeaders, conditionName, conditionValue);
-	  // 构造一个请求询问服务器资源是否过期
+	  // 构造一个请求，该请求到达服务器时会询问服务器资源是否过期
       Request conditionalRequest = request.newBuilder()
           .headers(conditionalRequestHeaders.build())
           .build();
@@ -1110,7 +1128,17 @@ CacheStrategy.java
     }
 ```
 
+`CacheStrategy`满足以下规则：
 
+1. 如果候选的缓存响应为null，则`cacheResponse`为null，没有缓存。
+
+2. 如果请求是`Https`，候选的缓存响应没有`TLS`的握手信息，则`cacheResponse`为null，没有缓存。
+
+3. 如果候选缓存响应的缓存时效时间过期了则`cacheResponse`为null，没有缓存。否则`networkRequest`为null，`cacheResponse`为候选缓存响应，可以命中缓存。
+
+4. 如果候选缓存的响应头中含有Date字段、Last-Modified、ETag字段的时候，需要根据元素的请求构造新的网络请求（请求头添加字段If-None-Match或者If-Modified-Since）询问服务器对应的资源是否更改，`cacheResponse`为候选缓存响应。
+
+   
 
 ## 8.3 CacheControl
 
@@ -1118,27 +1146,375 @@ Cache-Control头部有服务器和客户端的缓存指令，这些指令设置�
 
 # 9 ConnectionInterceptor
 
-该类负责与服务器建立连接。
+该类负责与服务器建立连接，连接池的维护、链接的复用，并将网络请求传递给下一个interceptor。
+
+在创建新connection时，会执行TCP + TLS握手，然后放入连接池中。
 
 ```java
 ConnectionInterceptor.java 
 @Override public Response intercept(Chain chain) throws IOException {
     RealInterceptorChain realChain = (RealInterceptorChain) chain;
     Request request = realChain.request();
-    StreamAllocation streamAllocation = realChain.streamAllocation();
+    Transmitter transmitter = realChain.transmitter();
 
     // We need the network to satisfy this request. Possibly for validating a conditional GET.
     boolean doExtensiveHealthChecks = !request.method().equals("GET");
-    HttpCodec httpCodec = streamAllocation.newStream(client, doExtensiveHealthChecks);
-    RealConnection connection = streamAllocation.connection();
+    Exchange exchange = transmitter.newExchange(chain, doExtensiveHealthChecks);
 
-    return realChain.proceed(request, streamAllocation, httpCodec, connection);
+    return realChain.proceed(request, transmitter, exchange);
   }
 ```
 
-其中StreamAllocation是关键。
+其中`Transmitter`是关键。
 
-## 9.1 StreamAllocation
+`transmitter.newExchange`会建立链接。
+
+
+
+```java
+//Transmitter
+  Exchange newExchange(Interceptor.Chain chain, boolean doExtensiveHealthChecks) {
+    synchronized (connectionPool) {
+      if (noMoreExchanges) {
+        throw new IllegalStateException("released");
+      }
+      if (exchange != null) {
+        throw new IllegalStateException("cannot make a new request because the previous response "
+            + "is still open: please call response.close()");
+      }
+    }
+
+    ExchangeCodec codec = exchangeFinder.find(client, chain, doExtensiveHealthChecks);
+    Exchange result = new Exchange(this, call, eventListener, exchangeFinder, codec);
+
+    synchronized (connectionPool) {
+      this.exchange = result;
+      this.exchangeRequestDone = false;
+      this.exchangeResponseDone = false;
+      return result;
+    }
+  }
+
+```
+
+会调用`ExchangeFinder.find`方法。
+
+```java
+//ExchangeFinder
+  public ExchangeCodec find(
+      OkHttpClient client, Interceptor.Chain chain, boolean doExtensiveHealthChecks) {
+    int connectTimeout = chain.connectTimeoutMillis();
+    int readTimeout = chain.readTimeoutMillis();
+    int writeTimeout = chain.writeTimeoutMillis();
+    int pingIntervalMillis = client.pingIntervalMillis();
+    boolean connectionRetryEnabled = client.retryOnConnectionFailure();
+
+    try {
+      RealConnection resultConnection = findHealthyConnection(connectTimeout, readTimeout,
+          writeTimeout, pingIntervalMillis, connectionRetryEnabled, doExtensiveHealthChecks);
+      return resultConnection.newCodec(client, chain);
+    } catch (RouteException e) {
+      trackFailure();
+      throw e;
+    } catch (IOException e) {
+      trackFailure();
+      throw new RouteException(e);
+    }
+  }
+
+```
+
+
+
+该方法有两处要点，第一处就是调用`findHealthyConnection`得到一个可用的connection，第二处就是调用`resultConnection.newCodec`得到一个对HTTP请求进行编码、HTTP响应进行解码的`HttpCodec`。
+
+先跟踪`findHealthyConnection`方法，该方法会调用`findConnection`得到一个connection，然后对其调用`isHealth(true)`方法进行健康诊断。如果健康，那么就可以返回该connection了；否则，从连接池中移除，并继续while循环。
+
+
+
+```java
+//ExchangeFinder
+  private RealConnection findHealthyConnection(int connectTimeout, int readTimeout,
+      int writeTimeout, int pingIntervalMillis, boolean connectionRetryEnabled,
+      boolean doExtensiveHealthChecks) throws IOException {
+    while (true) {
+      RealConnection candidate = findConnection(connectTimeout, readTimeout, writeTimeout,
+          pingIntervalMillis, connectionRetryEnabled);
+
+      // If this is a brand new connection, we can skip the extensive health checks.
+      synchronized (connectionPool) {
+        if (candidate.successCount == 0 && !candidate.isMultiplexed()) {
+          return candidate;
+        }
+      }
+
+      // Do a (potentially slow) check to confirm that the pooled connection is still good. If it
+      // isn't, take it out of the pool and start again.
+      if (!candidate.isHealthy(doExtensiveHealthChecks)) {
+        candidate.noNewExchanges();
+        continue;
+      }
+
+      return candidate;
+    }
+  }
+
+```
+
+在`findConnection`方法中，会先看已经存在的connection，然后再看连接池，最后都没有就创建新的connection。
+
+```java
+
+  private RealConnection findConnection(int connectTimeout, int readTimeout, int writeTimeout,
+      int pingIntervalMillis, boolean connectionRetryEnabled) throws IOException {
+    boolean foundPooledConnection = false;
+    RealConnection result = null;
+    Route selectedRoute = null;
+    RealConnection releasedConnection;
+    Socket toClose;
+    synchronized (connectionPool) {
+      if (transmitter.isCanceled()) throw new IOException("Canceled");
+      hasStreamFailure = false; // This is a fresh attempt.
+
+      // Attempt to use an already-allocated connection. We need to be careful here because our
+      // already-allocated connection may have been restricted from creating new exchanges.
+      releasedConnection = transmitter.connection;
+      toClose = transmitter.connection != null && transmitter.connection.noNewExchanges
+          ? transmitter.releaseConnectionNoEvents()
+          : null;
+
+      if (transmitter.connection != null) {
+        // We had an already-allocated connection and it's good.
+        result = transmitter.connection;
+        releasedConnection = null;
+      }
+
+      if (result == null) {
+        // Attempt to get a connection from the pool.
+        if (connectionPool.transmitterAcquirePooledConnection(address, transmitter, null, false)) {
+          foundPooledConnection = true;
+          result = transmitter.connection;
+        } else if (nextRouteToTry != null) {
+          selectedRoute = nextRouteToTry;
+          nextRouteToTry = null;
+        } else if (retryCurrentRoute()) {
+          selectedRoute = transmitter.connection.route();
+        }
+      }
+    }
+    closeQuietly(toClose);
+
+    if (releasedConnection != null) {
+      eventListener.connectionReleased(call, releasedConnection);
+    }
+    if (foundPooledConnection) {
+      eventListener.connectionAcquired(call, result);
+    }
+    if (result != null) {
+      // If we found an already-allocated or pooled connection, we're done.
+      return result;
+    }
+
+    // If we need a route selection, make one. This is a blocking operation.
+    boolean newRouteSelection = false;
+    if (selectedRoute == null && (routeSelection == null || !routeSelection.hasNext())) {
+      newRouteSelection = true;
+      routeSelection = routeSelector.next();
+    }
+
+    List<Route> routes = null;
+    synchronized (connectionPool) {
+      if (transmitter.isCanceled()) throw new IOException("Canceled");
+
+      if (newRouteSelection) {
+        // Now that we have a set of IP addresses, make another attempt at getting a connection from
+        // the pool. This could match due to connection coalescing.
+        routes = routeSelection.getAll();
+        if (connectionPool.transmitterAcquirePooledConnection(
+            address, transmitter, routes, false)) {
+          foundPooledConnection = true;
+          result = transmitter.connection;
+        }
+      }
+
+      if (!foundPooledConnection) {
+        if (selectedRoute == null) {
+          selectedRoute = routeSelection.next();
+        }
+
+        // Create a connection and assign it to this allocation immediately. This makes it possible
+        // for an asynchronous cancel() to interrupt the handshake we're about to do.
+        result = new RealConnection(connectionPool, selectedRoute);
+        connectingConnection = result;
+      }
+    }
+
+    // If we found a pooled connection on the 2nd time around, we're done.
+    if (foundPooledConnection) {
+      eventListener.connectionAcquired(call, result);
+      return result;
+    }
+
+    // Do TCP + TLS handshakes. This is a blocking operation.
+    result.connect(connectTimeout, readTimeout, writeTimeout, pingIntervalMillis,
+        connectionRetryEnabled, call, eventListener);
+    connectionPool.routeDatabase.connected(result.route());
+
+    Socket socket = null;
+    synchronized (connectionPool) {
+      connectingConnection = null;
+      // Last attempt at connection coalescing, which only occurs if we attempted multiple
+      // concurrent connections to the same host.
+      if (connectionPool.transmitterAcquirePooledConnection(address, transmitter, routes, true)) {
+        // We lost the race! Close the connection we created and return the pooled connection.
+        result.noNewExchanges = true;
+        socket = result.socket();
+        result = transmitter.connection;
+
+        // It's possible for us to obtain a coalesced connection that is immediately unhealthy. In
+        // that case we will retry the route we just successfully connected with.
+        nextRouteToTry = selectedRoute;
+      } else {
+        connectionPool.put(result);
+        transmitter.acquireConnectionNoEvents(result);
+      }
+    }
+    closeQuietly(socket);
+
+    eventListener.connectionAcquired(call, result);
+    return result;
+  }
+
+```
+
+
+
+```java
+//RealConnection
+  public void connect(int connectTimeout, int readTimeout, int writeTimeout,
+      int pingIntervalMillis, boolean connectionRetryEnabled, Call call,
+      EventListener eventListener) {
+    if (protocol != null) throw new IllegalStateException("already connected");
+
+    RouteException routeException = null;
+    List<ConnectionSpec> connectionSpecs = route.address().connectionSpecs();
+    ConnectionSpecSelector connectionSpecSelector = new ConnectionSpecSelector(connectionSpecs);
+
+    if (route.address().sslSocketFactory() == null) {
+      if (!connectionSpecs.contains(ConnectionSpec.CLEARTEXT)) {
+        throw new RouteException(new UnknownServiceException(
+            "CLEARTEXT communication not enabled for client"));
+      }
+      String host = route.address().url().host();
+      if (!Platform.get().isCleartextTrafficPermitted(host)) {
+        throw new RouteException(new UnknownServiceException(
+            "CLEARTEXT communication to " + host + " not permitted by network security policy"));
+      }
+    } else {
+      if (route.address().protocols().contains(Protocol.H2_PRIOR_KNOWLEDGE)) {
+        throw new RouteException(new UnknownServiceException(
+            "H2_PRIOR_KNOWLEDGE cannot be used with HTTPS"));
+      }
+    }
+
+    while (true) {
+      try {
+        if (route.requiresTunnel()) {
+          connectTunnel(connectTimeout, readTimeout, writeTimeout, call, eventListener);
+          if (rawSocket == null) {
+            // We were unable to connect the tunnel but properly closed down our resources.
+            break;
+          }
+        } else {
+          connectSocket(connectTimeout, readTimeout, call, eventListener);
+        }
+        // 确定协议。
+        establishProtocol(connectionSpecSelector, pingIntervalMillis, call, eventListener);
+        eventListener.connectEnd(call, route.socketAddress(), route.proxy(), protocol);
+        break;
+      } catch (IOException e) {
+        closeQuietly(socket);
+        closeQuietly(rawSocket);
+        socket = null;
+        rawSocket = null;
+        source = null;
+        sink = null;
+        handshake = null;
+        protocol = null;
+        http2Connection = null;
+
+        eventListener.connectFailed(call, route.socketAddress(), route.proxy(), null, e);
+
+        if (routeException == null) {
+          routeException = new RouteException(e);
+        } else {
+          routeException.addConnectException(e);
+        }
+
+        if (!connectionRetryEnabled || !connectionSpecSelector.connectionFailed(e)) {
+          throw routeException;
+        }
+      }
+    }
+
+    if (route.requiresTunnel() && rawSocket == null) {
+      ProtocolException exception = new ProtocolException("Too many tunnel connections attempted: "
+          + MAX_TUNNEL_ATTEMPTS);
+      throw new RouteException(exception);
+    }
+
+    if (http2Connection != null) {
+      synchronized (connectionPool) {
+        allocationLimit = http2Connection.maxConcurrentStreams();
+      }
+    }
+  }
+
+...
+      private void establishProtocol(ConnectionSpecSelector connectionSpecSelector,
+      int pingIntervalMillis, Call call, EventListener eventListener) throws IOException {
+    if (route.address().sslSocketFactory() == null) {
+      if (route.address().protocols().contains(Protocol.H2_PRIOR_KNOWLEDGE)) {
+        socket = rawSocket;
+        protocol = Protocol.H2_PRIOR_KNOWLEDGE;
+        startHttp2(pingIntervalMillis);
+        return;
+      }
+
+      socket = rawSocket;
+      protocol = Protocol.HTTP_1_1;
+      return;
+    }
+
+    eventListener.secureConnectStart(call);
+    connectTls(connectionSpecSelector);
+    eventListener.secureConnectEnd(call, handshake);
+
+    if (protocol == Protocol.HTTP_2) {
+      startHttp2(pingIntervalMillis);
+    }
+  }
+
+  private void startHttp2(int pingIntervalMillis) throws IOException {
+    socket.setSoTimeout(0); // HTTP/2 connection timeouts are set per-stream.
+    http2Connection = new Http2Connection.Builder(true)
+        .socket(socket, route.address().url().host(), source, sink)
+        .listener(this)
+        .pingIntervalMillis(pingIntervalMillis)
+        .build();
+    http2Connection.start();
+  }
+
+```
+
+
+
+在创建新connection时，会执行TCP + TLS握手，然后放入连接池中。
+在调用`connect`进行握手时会调用`establishProtocol`方法确定协议：
+
+也就是说，在建立连接时，如果是HTTP_2，就会初始化一个`http2Connection`。
+
+
 
 # 10 CallServerInterceptor
 
@@ -1221,7 +1597,119 @@ CallServerInterceptor.java
 
 
 
+# 11 通过添加自定义拦截器实现网络数据缓存
+
+[Retrofit和OkHttp使用网络缓存数据](https://www.jianshu.com/p/e0dd6791653d)
+
+[WanAndroidWYJ github](https://github.com/aSmartTortoise/kotlinLearningPlan/tree/master/WanAndroidWYJ)
+
+由上文`CacheInterceptor`处理请求的源码分析，可以在拦截器链上添加自定义拦截器实现网络数据缓存到本地。
+
+## 11.1 CacheControlInterceptor
 
 
 
+```kot
+
+class CacheControlInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request: Request
+        if (!NetWorkUtil.isNetworkAvailable(WanAndroidApplication.context)) {
+            // 无网络时，设置候选缓存响应过期之后的最大可使用的时间24h，如果缓存时间超过了有效期后的12h，
+            // 则因为CacheControl#onlyIfCached 为true，则返回504响应。
+            request = chain.request().newBuilder()
+                .cacheControl(CacheControl.Builder()
+                    .onlyIfCached()
+                    .maxStale(60 * 60 * 24, TimeUnit.SECONDS)
+                    .build())
+                .build()
+
+        } else {
+            // 有网络时，设置候选缓存响应最大有效时间30s，该设置会CacheInterceptor的CacheStrategy有效果
+            // 这样在缓存有效期内的请求会复用缓存响应。
+           request = chain.request().newBuilder()
+                .cacheControl(CacheControl.Builder()
+                    .maxAge(30, TimeUnit.SECONDS)
+                    .build())
+               .build()
+        }
+        return chain.proceed(request)
+    }
+}
+
+```
+
+网络可用修改`Request`的Header，设置`Cache-Control`指定缓存的`max-age`；网络不可用修改`Request`的Header，设置`Cache-Control`指定缓存的`max-stale`。
+
+## 11.2 CacheNetworkInterceptor
+
+
+
+```k
+
+class CacheNetworkInterceptor : Interceptor {
+
+    companion object {
+        private const val TAG = "CacheNetworkInterceptor"
+    }
+
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+
+//        Log.d(TAG, "intercept: request url:${request.url().toString()}")
+
+        val response = chain.proceed(request)
+        val cacheControl = response.cacheControl().toString()
+
+//        Log.d(TAG, "intercept: response header:${response.headers().toString()}")
+//        Log.d(TAG, "intercept: response cache control:$cacheControl")
+        val maxAge = 60
+        return response
+            .newBuilder()
+            .removeHeader("Pragma")
+            //对响应进行最大60秒有效期的缓存，会对CacheInterceptor的CacheStrategy有影响
+//            .header("Cache-Control", "public, max-age=$maxAge")
+            .build()
+    }
+}
+
+```
+
+设置网络响应`Response`的`Cache-Control`，比如移除`Pragma`或者设置缓存的有效时间`max-age`。
+
+将`CacheControlInterceptor`添加到`RetryAndFollowUpInterceptor`的前面，将`CacheNetworkInterceptor`添加到`Interceptor`的后面。
+
+如下在构造`OkHttpClient`对象的时候进行拦截器的添加：
+
+```k
+
+    private fun getOkHttpClient(): OkHttpClient {
+        val httpLoggingInterceptor = HttpLoggingInterceptor()
+        if (BuildConfig.DEBUG) {
+            httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+        } else {
+            httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.NONE
+        }
+
+        //设置 请求的缓存的大小跟位置
+        val cacheFile = File(WanAndroidApplication.context.cacheDir, "cache")
+        val cache = Cache(cacheFile, HttpConstant.MAX_CACHE_SIZE)
+        return OkHttpClient.Builder()
+            .addInterceptor(CacheControlInterceptor())
+            .addInterceptor(httpLoggingInterceptor)
+            .addInterceptor(HeaderInterceptor())
+            .addInterceptor(SaveCookieInterceptor())
+            .addNetworkInterceptor(CacheNetworkInterceptor())
+            .cache(cache)  //添加缓存
+            .connectTimeout(HttpConstant.DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(HttpConstant.DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(HttpConstant.DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true) // 重试
+            .build()
+
+//             cookieJar(CookieManager())
+
+    }
+
+```
 
