@@ -5,15 +5,14 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
+import androidx.appcompat.widget.AppCompatButton
 
-class TestButton : androidx.appcompat.widget.AppCompatButton {
+class TestButton @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null
+) : AppCompatButton(context, attrs) {
     companion object {
         const val TAG = "TestButton"
     }
-    constructor(ctx: Context) : super(ctx)
-    constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
-    constructor(ctx: Context, attrs: AttributeSet, defStyleAttr: Int)
-            : super(ctx, attrs, defStyleAttr)
 
     @SuppressLint("SoonBlockedPrivateApi")
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {

@@ -36,7 +36,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="test click"
-            android:clickable="false"
             tools:targetApi="m" />
     </FrameLayout>
 

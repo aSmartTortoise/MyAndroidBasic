@@ -7,14 +7,14 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import java.lang.reflect.Constructor
 
-class TestConstraintLayout : ConstraintLayout {
+class TestConstraintLayout @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null
+) : ConstraintLayout(context, attrs) {
     companion object {
         const val TAG = "TestConstraintLayout"
     }
-    constructor(ctx: Context) : super(ctx)
-    constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
-    constructor(ctx: Context, attrs: AttributeSet, defStyleAttr: Int): super(ctx, attrs, defStyleAttr)
 
     @SuppressLint("DiscouragedPrivateApi")
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -22,7 +22,7 @@ class TestConstraintLayout : ConstraintLayout {
         val result = super.dispatchTouchEvent(ev)
         Log.d(TAG, "dispatchTouchEvent: result:$result")
         val firstTouchTarget = ViewGroup::class.java.getDeclaredField("mFirstTouchTarget")
-        Log.d(TAG, "dispatchTouchEvent: wyj firstTouchTarget:$firstTouchTarget")
+//        Log.d(TAG, "dispatchTouchEvent: wyj firstTouchTarget:$firstTouchTarget")
         return result
     }
 
