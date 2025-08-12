@@ -1,0 +1,18 @@
+apply plugin: rootProject.ext.plugins.library
+
+android {
+
+    compileSdk rootProject.ext.android.compileSdkVersion
+
+    defaultConfig {
+        minSdk rootProject.ext.android.minSdkVersion
+        targetSdk rootProject.ext.android.targetSdkVersion
+        consumerProguardFiles 'proguard-rules.txt'
+    }
+
+    resourcePrefix 'x_recycler'
+}
+
+dependencies {
+    api rootProject.ext.dependencies.xRecyclerView
+}
