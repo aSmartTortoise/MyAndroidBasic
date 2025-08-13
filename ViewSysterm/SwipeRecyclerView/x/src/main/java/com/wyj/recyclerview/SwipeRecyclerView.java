@@ -99,6 +99,15 @@ public class SwipeRecyclerView extends RecyclerView {
         mScaleTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        if (hasWindowFocus) {
+            int measuredWidth = getMeasuredWidth();
+            Log.d(TAG, "onWindowFocusChanged: measuredWidth:" + measuredWidth);
+        }
+    }
+
     private void initializeItemTouchHelper() {
         if (mItemTouchHelper == null) {
             mItemTouchHelper = new DefaultItemTouchHelper();
@@ -676,6 +685,7 @@ public class SwipeRecyclerView extends RecyclerView {
                     + " showLeftCloseRight:" + showLeftCloseRight);
                     viewParent.requestDisallowInterceptTouchEvent(showRightCloseLeft || showLeftCloseRight);
                 }
+                    break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL: {
                     isIntercepted = handleUnDown(x, y, isIntercepted);

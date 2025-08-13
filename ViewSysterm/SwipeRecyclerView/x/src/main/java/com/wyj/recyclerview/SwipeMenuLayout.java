@@ -118,6 +118,55 @@ public class SwipeMenuLayout extends FrameLayout implements Controller {
         }
     }
 
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        int contentViewHeight;
+        Log.d(TAG, "onLayout: wyj");
+        if (mContentView != null) {
+            int contentViewWidth = mContentView.getMeasuredWidth();
+            contentViewHeight = mContentView.getMeasuredHeight();
+            LayoutParams lp = (LayoutParams)mContentView.getLayoutParams();
+            int start = getPaddingLeft();
+            int top = getPaddingTop() + lp.topMargin;
+            mContentView.layout(start, top, start + contentViewWidth, top + contentViewHeight);
+        }
+
+        if (mSwipeLeftHorizontal != null) {
+            View leftMenu = mSwipeLeftHorizontal.getMenuView();
+            int menuViewWidth = leftMenu.getMeasuredWidth();
+            int menuViewHeight = leftMenu.getMeasuredHeight();
+            LayoutParams lp = (LayoutParams)leftMenu.getLayoutParams();
+            int top = getPaddingTop() + lp.topMargin;
+            leftMenu.layout(-menuViewWidth, top, 0, top + menuViewHeight);
+        }
+
+        if (mSwipeRightHorizontal != null) {
+            View rightMenu = mSwipeRightHorizontal.getMenuView();
+            int menuViewWidth = rightMenu.getMeasuredWidth();
+            int menuViewHeight = rightMenu.getMeasuredHeight();
+            LayoutParams lp = (LayoutParams)rightMenu.getLayoutParams();
+            int top = getPaddingTop() + lp.topMargin;
+
+            int parentViewWidth = getMeasuredWidth();
+            rightMenu.layout(parentViewWidth, top, parentViewWidth + menuViewWidth, top + menuViewHeight);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        if (hasWindowFocus) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    int measuredWidth = getMeasuredWidth();
+                    Log.d(TAG, "onWindowFocusChanged: measuredWidth:" + measuredWidth);
+                }
+            });
+        }
+    }
+
     /**
      * Set whether open swipe. Default is true.
      *
@@ -267,14 +316,10 @@ public class SwipeMenuLayout extends FrameLayout implements Controller {
                         if (disX < 0) {
                             if (mSwipeLeftHorizontal != null) {
                                 mSwipeCurrentHorizontal = mSwipeLeftHorizontal;
-                            } else {
-                                mSwipeCurrentHorizontal = mSwipeRightHorizontal;
                             }
                         } else {
                             if (mSwipeRightHorizontal != null) {
                                 mSwipeCurrentHorizontal = mSwipeRightHorizontal;
-                            } else {
-                                mSwipeCurrentHorizontal = mSwipeLeftHorizontal;
                             }
                         }
                     }
@@ -325,8 +370,10 @@ public class SwipeMenuLayout extends FrameLayout implements Controller {
                 mVelocityTracker.clear();
                 mVelocityTracker.recycle();
                 mVelocityTracker = null;
-                if (Math.abs(mDownX - ev.getX()) > mScaledTouchSlop ||
-                    Math.abs(mDownY - ev.getY()) > mScaledTouchSlop || isLeftMenuOpen() || isRightMenuOpen()) {
+                if (Math.abs(mDownX - ev.getX()) > mScaledTouchSlop
+                        || Math.abs(mDownY - ev.getY()) > mScaledTouchSlop
+                        || isLeftMenuOpen()
+                        || isRightMenuOpen()) {
                     ev.setAction(MotionEvent.ACTION_CANCEL);
                     super.onTouchEvent(ev);
                     return true;
@@ -386,8 +433,9 @@ public class SwipeMenuLayout extends FrameLayout implements Controller {
 
     private void judgeOpenClose(int dx, int dy) {
         if (mSwipeCurrentHorizontal != null) {
-            if (Math.abs(getScrollX()) >=
-                (mSwipeCurrentHorizontal.getMenuView().getWidth() * mOpenPercent)) { // auto open
+            if (Math.abs(getScrollX())
+                    >= (mSwipeCurrentHorizontal.getMenuView().getWidth() * mOpenPercent)) { // auto open
+                Log.d(TAG, "judgeOpenClose: wyj scrollX >= open percent width.");
                 if (Math.abs(dx) > mScaledTouchSlop || Math.abs(dy) > mScaledTouchSlop) { // swipe up
                     if (isMenuOpenNotEqual()) {
                         smoothCloseMenu();
@@ -402,6 +450,7 @@ public class SwipeMenuLayout extends FrameLayout implements Controller {
                     }
                 }
             } else { // auto closeMenu
+                Log.d(TAG, "judgeOpenClose: wyj scrollX < open percent width.");
                 smoothCloseMenu();
             }
         }
@@ -423,6 +472,7 @@ public class SwipeMenuLayout extends FrameLayout implements Controller {
 
     @Override
     public void computeScroll() {
+        super.computeScroll();
         boolean isOffset = mScroller.computeScrollOffset();
         int currX = mScroller.getCurrX();
         Log.d(TAG, "computeScroll: wyj isOffset:" + isOffset + " currX:" + currX);
@@ -492,6 +542,7 @@ public class SwipeMenuLayout extends FrameLayout implements Controller {
 
     @Override
     public void smoothOpenMenu() {
+        Log.d(TAG, "smoothOpenMenu: wyj");
         smoothOpenMenu(mScrollerDuration);
     }
 
@@ -558,41 +609,6 @@ public class SwipeMenuLayout extends FrameLayout implements Controller {
         if (mSwipeCurrentHorizontal != null) {
             mSwipeCurrentHorizontal.autoCloseMenu(mScroller, getScrollX(), duration);
             invalidate();
-        }
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        int contentViewHeight;
-        Log.d(TAG, "onLayout: wyj");
-        if (mContentView != null) {
-            int contentViewWidth = mContentView.getMeasuredWidth();
-            contentViewHeight = mContentView.getMeasuredHeight();
-            LayoutParams lp = (LayoutParams)mContentView.getLayoutParams();
-            int start = getPaddingLeft();
-            int top = getPaddingTop() + lp.topMargin;
-            mContentView.layout(start, top, start + contentViewWidth, top + contentViewHeight);
-        }
-
-        if (mSwipeLeftHorizontal != null) {
-            View leftMenu = mSwipeLeftHorizontal.getMenuView();
-            int menuViewWidth = leftMenu.getMeasuredWidth();
-            int menuViewHeight = leftMenu.getMeasuredHeight();
-            LayoutParams lp = (LayoutParams)leftMenu.getLayoutParams();
-            int top = getPaddingTop() + lp.topMargin;
-            leftMenu.layout(-menuViewWidth, top, 0, top + menuViewHeight);
-        }
-
-        if (mSwipeRightHorizontal != null) {
-            View rightMenu = mSwipeRightHorizontal.getMenuView();
-            int menuViewWidth = rightMenu.getMeasuredWidth();
-            int menuViewHeight = rightMenu.getMeasuredHeight();
-            LayoutParams lp = (LayoutParams)rightMenu.getLayoutParams();
-            int top = getPaddingTop() + lp.topMargin;
-
-            int parentViewWidth = getMeasuredWidth();
-            rightMenu.layout(parentViewWidth, top, parentViewWidth + menuViewWidth, top + menuViewHeight);
         }
     }
 
