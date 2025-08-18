@@ -14,6 +14,7 @@
         android:layout_height="200dp"
         android:layout_marginTop="80dp"
         app:color="@color/pink_water"
+        app:x_velocity="40"
         app:total_duration="6000" />
 
     <Button

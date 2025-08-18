@@ -1,13 +1,16 @@
 package com.wyj.view.bezier;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,10 +34,10 @@ public class WaveProgressView extends View {
     private final static int DEFAULT_X_VELOCITY = 40;
     //X方向上移动速度
     private float mXVelocity;
-    //波长
-    private float mWaveLength;
-    //波峰
-    private float mPeak;
+    //波的周期
+    private float mWavePeriod;
+    //振幅
+    private float mAmplitude;
     //0%到100%进度动画时长
     private int mTotalDuration;
     //绘制起始点坐标
@@ -52,9 +55,7 @@ public class WaveProgressView extends View {
     //画笔颜色
     private int mColor;
     //动画延迟时间
-    private int mAnimationDelay = 0;
-    //startPoint在Y方向初始坐标(控件高度大于宽度，进度在Y方向上位移范围为2*radius，非控件高度)
-    private float mProgressBottom;
+    private long mAnimationDelay = 0;
     //圆半径
     private float mRadius;
     private ValueAnimator mWaveMoveAnimator;
@@ -79,63 +80,14 @@ public class WaveProgressView extends View {
         mClipPath = new Path();
     }
 
-    /**
-     * 用属性动画来设置progress，因为过快的刷新速度会看不到进度效果
-     *
-     * @param progress 设置的进度
-     */
-    public void setProgress(final int progress) {
-        if (mProgress == progress) {
-            return;
-        }
-        final int preProgress = mProgress;
-        //到达100%后为过滤波谷露出的额外进度
-        if (progress <= 100) {
-            mProgress = progress;
-        }
-        //动画时间=0%到100%的时间*（progress-mProgress)/100
-        long duration = mTotalDuration / 100 * (progress - preProgress);
-        ValueAnimator animator = ValueAnimator
-                .ofInt(preProgress, progress)
-                .setDuration(duration);
-        animator.setInterpolator(new LinearInterpolator());
-        animator.setStartDelay(mAnimationDelay);
-        mAnimationDelay += duration;
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            int lastProgress;
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int nowProgress = (int) animation.getAnimatedValue();
-                //出现相同progress不刷新，保证动画的平稳流畅
-                if (lastProgress != nowProgress) {
-                    lastProgress = nowProgress;
-                    mTotalOffsetX += mXVelocity;
-                    mTotalOffsetX %= mWaveLength;
-                    mStartPoint.x = -mWaveLength + mTotalOffsetX;
-                    mStartPoint.y = mProgressBottom - 2 * mRadius * nowProgress / 100f;
-                    invalidate();
-                }
-            }
-        });
-        animator.start();
-
-
-        //进度到100%时防止波谷露出
-        if (progress == 100) {
-            //0%防止波峰露出，位置下移一个振幅，100%防止波谷露出，位置上一一个振幅，所以额外移动距离为2*mPeak
-            //extraProgress = (int) (2*mPeak / (2*mRadius) * 100)
-            int extraProgress = (int) (mPeak / mRadius * 100);
-            setProgress(extraProgress == 0 ? 101 : 100 + extraProgress);
-        }
-    }
-
     public void reset(){
         mProgress=0;
         mAnimationDelay=0;
         mTotalOffsetX=0;
-        mStartPoint.x=-mWaveLength;
-        mStartPoint.y=mProgressBottom;
+        mStartPoint.x=-mWavePeriod;
+        int h = getMeasuredHeight();
+        float gap = (h - 2 * mRadius) / 2f;
+        mStartPoint.y = h - gap + mAmplitude;
         invalidate();
     }
 
@@ -150,33 +102,34 @@ public class WaveProgressView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int currentValue = (int) animation.getAnimatedValue();
-                mStartPoint.x = mWaveLength * currentValue / 100  - mWaveLength;
-                postInvalidate();
+//                mStartPoint.x = mWavePeriod * currentValue / 100  - mWavePeriod;
+                mTotalOffsetX += mXVelocity / 6;
+                mTotalOffsetX %= mWavePeriod;
+                mStartPoint.x = -mWavePeriod + mTotalOffsetX;
+                invalidate();
             }
         });
     }
-
-
 
     public int getProgress() {
         return mProgress;
     }
 
     public float getWaveLength() {
-        return mWaveLength;
+        return mWavePeriod;
     }
 
     public void setWaveLength(float waveLength) {
-        this.mWaveLength = waveLength;
+        this.mWavePeriod = waveLength;
         invalidate();
     }
 
     public float getPeak() {
-        return mPeak;
+        return mAmplitude;
     }
 
     public void setPeak(float peak) {
-        this.mPeak = peak;
+        this.mAmplitude = peak;
         invalidate();
     }
 
@@ -194,34 +147,85 @@ public class WaveProgressView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         Log.d(TAG, "onMeasure: wyj width:" + getMeasuredWidth() + " height:" + getMeasuredHeight());
-
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         mRadius = w < h ? w / 2f : h / 2f;
+        mWavePeriod = 3 * mRadius / 2;
+        mAmplitude = mWavePeriod / 11;
+        //初始化StartPoint,左边预留出一个波周期的长度
+        mStartPoint.x = -mWavePeriod;
+        float gap = (h - 2 * mRadius) / 2f;
+        mStartPoint.y = h - gap + mAmplitude;
         mClipPath.addCircle(w / 2f, h / 2f, mRadius, Path.Direction.CCW);
-        mWaveLength = 3 * mRadius / 2;
-        mPeak = mWaveLength / 11;
-        //初始化StartPoint,左边预留出一个周期的移动长度
-        mStartPoint.x = -mWaveLength;
-        setMyProgress(0);
     }
 
-    public void setMyProgress(float progress) {
-        int h = getMeasuredHeight();
-        float gap = (h - 2 * mRadius) / 2f;
-        mProgressBottom = h - gap + mPeak - progress * (h + 2 * mPeak);
-        mStartPoint.y = mProgressBottom;
-        postInvalidate();
+
+    /**
+     *  用属性动画来设置progress
+     *  动画startValue为0，endValue为指定的进度。
+     *  进度从0变化到100，动画的总时长为mTotalDuration，则可以计算设置指定进度
+     *  的动画时长。
+     *  设置动画插值器为线性的。
+     *
+     *  每次刷新时，mTotalOffsetX加上X速度
+     *  mTotalOffsetX += mXVelocity;
+     *  mTotalOffsetX超过一个周期时，mTotalOffsetX对波的周期取模，重置mTotalOffsetX
+     */
+    public void setProgress(final int progress) {
+        if (mProgress == progress) {
+            return;
+        }
+        final int preProgress = mProgress;
+        //到达100%后为过滤波谷露出的额外进度
+        if (progress <= 100) {
+            mProgress = progress;
+        }
+        //动画时间=0%到100%的时间*（progress-mProgress)/100
+        long duration = (long) mTotalDuration / 100 * (progress - preProgress);
+        Log.d(TAG, "setProgress: wyj preProgress:" + preProgress + " progress:" + progress);
+        ValueAnimator animator = ValueAnimator
+                .ofInt(preProgress, progress)
+                .setDuration(duration);
+        animator.setInterpolator(new LinearInterpolator());
+        animator.setStartDelay(mAnimationDelay);
+        mAnimationDelay += duration;
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            int lastProgress;
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int nowProgress = (int) animation.getAnimatedValue();
+                //出现相同progress不刷新，保证动画的平稳流畅
+                if (lastProgress != nowProgress) {
+                    lastProgress = nowProgress;
+                    // 每次刷新时，mTotalOffsetX加上X速度
+                    mTotalOffsetX += mXVelocity;
+                    // mTotalOffsetX超过一个周期时，mTotalOffsetX对波的周期取模，重置mTotalOffsetX
+                    mTotalOffsetX %= mWavePeriod;
+                    mStartPoint.x = -mWavePeriod + mTotalOffsetX;
+                    int h = getMeasuredHeight();
+                    float gap = (h - 2 * mRadius) / 2f;
+                    mStartPoint.y = h - gap + mAmplitude - lastProgress / 100f * (h + 2 * mAmplitude);
+                    invalidate();
+                }
+
+                if (lastProgress == progress) {
+                    startAnim();
+                }
+            }
+        });
+
+        animator.start();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.clipPath(mClipPath);
-        canvas.drawColor(Color.parseColor("#ffBEE0C0"));
+//        canvas.drawColor(Color.parseColor("#ffBEE0C0"));
         mWavePath.reset();
         mWavePath.moveTo(mStartPoint.x, mStartPoint.y);
 
@@ -231,13 +235,17 @@ public class WaveProgressView extends View {
         float nowX = mStartPoint.x;
 
         boolean isPeak = true;
+        // 起始点在平衡线上，通过二阶贝塞尔曲线来模拟正弦波，先画一个波峰，再画一个波谷；起始点
+        // 是二阶贝塞尔曲线的第一个数据点，这样由第一个数据点和波的周期可以计算二阶
+        // 贝塞尔曲线其他的数据点和控制点；通过while循环移动数据点的坐标，并绘制二阶贝塞尔曲线的方式绘制正弦波，直到起始点的
+        // x坐标到达视图的右边界为止。
         while (nowX <= getMeasuredWidth()) {
-            peakX = nowX + mWaveLength / 4f;
+            peakX = nowX + mWavePeriod / 4;
             // 二阶贝塞尔曲线，当控制点的横坐标位于两个数据点横坐标的中间时，曲线上横坐标为两个数据点横坐标中间的点对应的
             // u为0.5，该点的纵坐标为控制点坐标的0.5，即控制点纵坐标是振幅的2倍。
-            peakY = mStartPoint.y + (isPeak ? - 2 * mPeak : 2 * mPeak);
+            peakY = mStartPoint.y + (isPeak ? - 2 * mAmplitude : 2 * mAmplitude);
             isPeak = !isPeak;
-            nowX += mWaveLength / 2f;
+            nowX += mWavePeriod / 2f;
             mWavePath.quadTo(peakX, peakY, nowX, mStartPoint.y);
         }
 
