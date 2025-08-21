@@ -82,6 +82,15 @@
         app:layout_constraintTop_toBottomOf="@id/btn_pathMeasure_api" />
 
     <Button
+        android:id="@+id/btn_emit_emotion_animation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="喷射表情动画"
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_shopping"
+        app:layout_constraintLeft_toRightOf="@id/btn_shopping"  />
+
+
+    <Button
         android:id="@+id/btn_wave_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

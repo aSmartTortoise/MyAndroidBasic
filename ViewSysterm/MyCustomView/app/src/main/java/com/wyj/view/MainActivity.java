@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.voyah.window.WindowServiceUtil;
+import com.wyj.view.animation.ListActivity;
 import com.wyj.view.animation.ShoppingActivity;
 import com.wyj.view.base.CanvasApiActivity;
 import com.wyj.view.base.PathApiActivity;
@@ -77,6 +78,11 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.this.startActivity(intent);
                 }
         );
+
+        findViewById(R.id.btn_emit_emotion_animation).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ListActivity.class);
+            startActivity(intent);
+        });
 
 
     }

@@ -3,13 +3,16 @@ plugins {
     id 'com.android.library'
 }
 
+def android_config = rootProject.ext.android
+def depLibs = rootProject.ext.depsLibs
+
 android {
     namespace 'com.voyah.easyfloat'
-    compileSdk 33
+    compileSdk android_config.compileSdk
 
     defaultConfig {
-        minSdk 19
-        targetSdk 33
+        minSdk android_config.minSdk
+        targetSdk android_config.targetSdk
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         consumerProguardFiles "consumer-rules.pro"
@@ -32,8 +35,8 @@ android {
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation depLibs.appcompat
+    testImplementation depLibs.junit
+    androidTestImplementation depLibs.extJunit
+    androidTestImplementation depLibs.espressoCore
 }

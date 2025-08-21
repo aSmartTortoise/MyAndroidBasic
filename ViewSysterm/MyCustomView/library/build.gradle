@@ -2,13 +2,16 @@ apply plugin: 'com.android.library'
 //apply plugin: 'org.jetbrains.kotlin.android'
 //apply plugin: 'com.novoda.bintray-release'
 
+def android_config = rootProject.ext.android
+def depLibs = rootProject.ext.depsLibs
+
 android {
-    compileSdkVersion 33
+    compileSdk android_config.compileSdk
 
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 33
+        minSdk android_config.minSdk
+        targetSdk android_config.targetSdk
         versionCode 102
         versionName "1.0.2"
 
@@ -26,13 +29,14 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation depLibs.appcompat
+    implementation depLibs.material
 
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'androidx.customview:customview:1.0.0'
+    testImplementation depLibs.junit
+    androidTestImplementation depLibs.extJunit
+    androidTestImplementation depLibs.espressoCore
+
+    implementation depLibs.customview
 }
 
 //publish {

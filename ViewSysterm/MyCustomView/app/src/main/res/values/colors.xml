@@ -8,4 +8,8 @@
     <color name="canvas_orange_color">#fe9191</color>
     <color name="pink_water">#ff69b4</color>
     <color name="green_container">#BEE0C0</color>
+
+
+    <color name="link_color">#527ACC</color>
+    <color name="link_bg_color">#4D527ACC</color>
 </resources>

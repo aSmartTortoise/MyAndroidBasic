@@ -80,6 +80,7 @@
         <activity
             android:name=".CommonActivity"
             android:theme="@style/Theme.MusicPlayer" />
+        <activity android:name=".animation.ListActivity"/>
     </application>
 
 </manifest>

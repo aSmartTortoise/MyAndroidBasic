@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="MoreTextViewStyle" format="reference"/>
+
+    <declare-styleable name="MoreTextView">
+
+        <attr name="more_action_text_maxLines" format="integer"/>
+        <attr name="more_action_text" format="string"/>
+        <attr name="more_action_text_color" format="color"/>
+        <attr name="more_action_text_size" format="integer"/>
+        <attr name="more_can_click" format="boolean"/>
+    </declare-styleable>
+
+</resources>
